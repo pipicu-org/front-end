@@ -5,6 +5,8 @@ import CardKanban from "../components/cardKanban";
 
 
 
+
+
 const Reception = () => {
     return (
         <div className="grid grid-cols-7">
