@@ -1,5 +1,5 @@
 import Orden from "../Orden";
-
+import { Button } from "@heroui/react";
 const CardKanban = () => {
 
     const estilo = {
@@ -13,7 +13,7 @@ const CardKanban = () => {
     }
     return (
         <>
-        <div className="rounded-xl p-4 bg-[#290D1B0D] mt-5">
+        <div className="rounded-xl p-3 bg-[#290D1B0D] mt-5">
             {/* ~~~ Header ~~~ */}
             <div className="flex items-center justify-between">
                 <div className="inline-flex items-center gap-2">
@@ -26,7 +26,7 @@ const CardKanban = () => {
             </div>
             
             {/* ~~~ Row ~~~ */}
-            <div className="mt-5 flex gap-5  overflow-hidden rounded-xl p-2">
+            <div className="mt-5 flex gap-5  overflow-hidden rounded-xl">
                 <Orden/>
                 <Orden/>
                 <Orden/>

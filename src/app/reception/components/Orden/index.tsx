@@ -1,9 +1,10 @@
+import { Button } from "@heroui/react";
 
 
 const Orden = () => {
     return (
         <>
-        <div 
+        <Button
                 style={{
                     background: `linear-gradient(
                       135deg,
@@ -12,11 +13,13 @@ const Orden = () => {
                       rgba(161, 161, 161, 0.6) 100%
                     ), #ffffff`
                 }} 
-                className="w-[100px] h-[100px] rounded-xl p-3 text-center drop-shadow-orden flex flex-col">
-                    <span className="text-primary text-xs ">Esteban</span>
-                    <h4 className="font-bold text-primary text-sm ">20:30</h4>
-                    <h1 className="font-black text-3xl text-primary mt-2 ">#321</h1>
-                </div>
+                className="min-w-fit aspect-square w-[90px] h-[90px] rounded-xl p-3 text-center drop-shadow-orden flex flex-col">
+                    <div>
+                        <span className="text-primary text-xs ">Esteban</span>
+                        <h4 className="font-bold text-primary text-sm ">20:30</h4>
+                        <h1 className="font-black text-3xl text-primary">#321</h1>
+                    </div>
+        </Button>
         </>
     )
 }

@@ -7,10 +7,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: '#FF00FF',
+        primary: "var(--heroui-primary)",
       },
       fontFamily: {
-        poppins: ['poppins', 'sans-serif'],
+        // poppins: ['poppins', 'sans-serif'],
       },
     },
   },

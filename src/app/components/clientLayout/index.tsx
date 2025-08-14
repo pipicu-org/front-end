@@ -5,13 +5,12 @@ import Navbar from "../navbar";
 const ClientLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) => {
   return (
     <>
-      <HeroUIProvider>
+      {/* <HeroUIProvider className="flex flex-col h-full"> */}
+      <HeroUIProvider className="h-screen flex flex-col">
         <Navbar />
-        {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]"> */}
-          {/* <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start"> */}
-            {children}
-          {/* </main> */}
-        {/* </div> */}
+        <main className="flex flex-col">
+          {children}
+        </main>
       </HeroUIProvider>
     </>
   );

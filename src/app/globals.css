@@ -12,6 +12,10 @@
   --foreground: #171717;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --heroui-primary: 330 52% 11%;
+
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,8 +44,8 @@
 
 @theme{
   --drop-shadow-orden: 0px 4px 5px rgba(0, 0, 0, 0.10);
-  /* --font-poppins: 'poppins', sans-serif; */
-  --color-primary: #290D1B;
+  --font-poppins: 'poppins', sans-serif;
+  /* --color-primary: #290D1B; */
 }
 
 body {
@@ -49,12 +53,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif; */
 
-  font-family: 'poppins', sans-serif;
-  font-weight: 400;
+  /* font-family: 'poppins', sans-serif; */
+  /* font-weight: 400; */
   /* overflow: hidden; */
+  /* height: 100vh; */
   padding-left: 150px;
   padding-right: 150px;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 40px;
+  /* padding-bottom: 40px; */
   background: #f0e6d1, radial-gradient(135.4% 93.48% at 61.18% 32.64%, rgba(250, 245, 241, 0) 18.23%, #e7dadc 65.1%, #dbc7ca 71.88%);
 }
