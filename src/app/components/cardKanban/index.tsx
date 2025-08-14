@@ -1,5 +1,6 @@
-import Orden from "../Orden";
-import { Button } from "@heroui/react";
+"use client";
+import Orden from "../orden/index";
+
 const CardKanban = () => {
 
     const estilo = {
