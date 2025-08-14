@@ -1,11 +1,7 @@
 "use client";
 import { Button, Input } from "@heroui/react";
-import OrderStateColumn from "./components/orderStateColumn";
-import CardKanban from "./components/cardKanban";
-import { div } from "framer-motion/client";
-
-
-
+import CardKanban from "../components/cardKanban";
+// import CardKanban from "../reception/components/cardKanban";
 
 
 
