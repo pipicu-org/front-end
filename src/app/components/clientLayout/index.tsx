@@ -6,7 +6,7 @@ const ClientLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) =>
   return (
     <>
       {/* <HeroUIProvider className="flex flex-col h-full"> */}
-      <HeroUIProvider className="h-screen flex flex-col">
+      <HeroUIProvider className=" flex flex-col">
         <Navbar />
         <main className="flex flex-col">
           {children}
