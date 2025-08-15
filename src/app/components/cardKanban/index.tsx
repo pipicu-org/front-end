@@ -3,15 +3,6 @@ import Orden from "../orden/index";
 
 const CardKanban = () => {
 
-    const estilo = {
-        background: 
-        `linear-gradient
-        (135deg, 
-        rgba(161,161,161,0.5) 0%,
-        rgba(161,161,161,0.05) 66%,
-        rgba(161,161,161,0.6) 100%),
-        #ffffff`
-    }
     return (
         <>
         <div className="rounded-xl p-3 bg-[#290D1B0D] mt-5">

@@ -2,14 +2,14 @@
 import { Button, Input } from "@heroui/react";
 import CardKanban from "../components/cardKanban";
 // import CardKanban from "../reception/components/cardKanban";
-
+import Orden from "./components/orden";
 
 
 
 
 const Reception = () => {
     return (
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7 items-stretch gap-7">
             {/* ~~~ RESUMEN ~~~ */}
             <div className="col-span-4">
                 <div className="flex flex-col ">
@@ -45,7 +45,8 @@ const Reception = () => {
             </div>
 
             {/* ~~~ ORDEN ~~~ */}
-            <div className="col-span-3">
+            <div className="col-span-3 flex flex-col">
+                <Orden/>
             </div>
 
         </div>

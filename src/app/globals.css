@@ -42,6 +42,16 @@
 }
 
 
+@font-face {
+  font-family: 'poppins';
+  src: url('/fonts/Poppins-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal
+}
+
+
+
+
 @theme{
   --drop-shadow-orden: 0px 4px 5px rgba(0, 0, 0, 0.10);
   --font-poppins: 'poppins', sans-serif;
@@ -56,7 +66,7 @@ body {
   /* font-family: 'poppins', sans-serif; */
   /* font-weight: 400; */
   /* overflow: hidden; */
-  /* height: 100vh; */
+  /* height: auto; */
   padding-left: 150px;
   padding-right: 150px;
   padding-top: 40px;
