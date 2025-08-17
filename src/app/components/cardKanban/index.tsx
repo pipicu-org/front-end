@@ -34,7 +34,7 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
                         <Orden
                             key={orden.id}
                             orden={orden}
-                            setOrdenActiva={setOrdenActiva}
+                            setState={setOrdenActiva}
                         />
                     ))
                 }

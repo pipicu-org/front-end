@@ -4,11 +4,11 @@ import Order from "@/entities/order";
 import { Dispatch, SetStateAction } from "react";
 interface OrdenProps {
     orden: Order;
-    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>; // 
+    setState?: Dispatch<SetStateAction<Order | null>>; // 
 }
 
 
-const Orden = ({orden, setOrdenActiva}: OrdenProps) => {
+const Orden = ({orden, setState}: OrdenProps) => {
     return (
         <>
         <Button
@@ -21,7 +21,7 @@ const Orden = ({orden, setOrdenActiva}: OrdenProps) => {
                     ), #ffffff`
                 }} 
                 className="min-w-fit aspect-square w-[90px] h-[90px] rounded-xl p-3 text-center drop-shadow-orden flex flex-col"
-                onClick={() => setOrdenActiva?.(orden)} >
+                onClick={() => setState?.(orden)} >
                     <div>
                         <span className="text-primary text-xs text-wrap m-0 p-0 leading-none ">{orden.client}</span>
                         <h4 className="font-bold text-primary text-sm ">{orden.deliveryTime}</h4>
