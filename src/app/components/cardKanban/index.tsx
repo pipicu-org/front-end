@@ -1,12 +1,13 @@
 "use client";
-import Orden from "../orden/index";
+
+import OrderCard from "../OrderCard";
 import Order from "../../../entities/order"
 import { Dispatch, SetStateAction } from "react";
 
 interface CardKanbanProps {
     estado: String,
-    ordenes?: Order[];
-    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>; // 
+    ordenes: Order[];
+    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>;
 }
 
 const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) => {
@@ -14,8 +15,7 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
 
 
     return (
-        <>
-        <div className="rounded-xl p-3 bg-[#290D1B0D] mt-5">
+        <div className="rounded-xl p-3 bg-[#290D1B0D]">
             {/* ~~~ Header ~~~ */}
             <div className="flex items-center justify-between">
                 <div className="inline-flex items-center gap-2">
@@ -26,12 +26,12 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
                 
                 {/* <span className="font-bold">{ordenes.length}</span> */}
             </div>
-            
+
             {/* ~~~ Row ~~~ */}
             <div className="mt-5 flex gap-5  overflow-hidden rounded-xl">
                 {
                     ordenes.map((orden) => (
-                        <Orden
+                        <OrderCard
                             key={orden.id}
                             orden={orden}
                             setState={setOrdenActiva}
@@ -40,7 +40,6 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
                 }
             </div>
         </div>
-        </>
     )
 }
 

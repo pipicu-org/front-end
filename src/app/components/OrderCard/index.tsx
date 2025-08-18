@@ -8,7 +8,7 @@ interface OrdenProps {
 }
 
 
-const Orden = ({orden, setState}: OrdenProps) => {
+const OrderCard = ({orden, setState}: OrdenProps) => {
     return (
         <>
         <Button
@@ -32,4 +32,4 @@ const Orden = ({orden, setState}: OrdenProps) => {
     )
 }
 
-export default Orden;
+export default OrderCard;

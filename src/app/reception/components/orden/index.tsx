@@ -12,7 +12,7 @@ const Orden = ({orden} : Ordenprops) => {
         <div className="flex flex-col h-full">
             {/* ~~~ HEADER ~~~ */}
             <div>
-                <h1 className="font-poppins font-black text-4xl text-primary mt-3">ORDEN</h1>
+                <h1 className="font-poppins font-black text-4xl text-primary ">ORDEN</h1>
             </div>
             {/* ~~~ MAIN ~~~ */}
             <div className="flex flex-col h-full">
