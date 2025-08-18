@@ -1,28 +1,85 @@
 "use client";
+
+import { useState, useEffect } from "react";
+
+// Componentes de HeroUI
 import { Button, Input } from "@heroui/react";
+// Componentes de App
 import CardKanban from "../components/cardKanban";
 import Summary from "./components/summary/Summary";
 // import CardKanban from "../reception/components/cardKanban";
 
+// Componentes de Recepcion
+import Orden from "./components/orden";
+// Interfaz
+import Order from "@/entities/order";
+import ordenesAleatorias from "../components/OrdenesAleatorias";
 
 
-
+//  <CardKanban setOrdenActiva={setOrdenActiva} estado="Creados" ordenes={ordenes_creados} />
+//                             <CardKanban setOrdenActiva={setOrdenActiva} estado="Pendientes" ordenes={ordenes_pendientes} />
+//                             <CardKanban setOrdenActiva={setOrdenActiva} estado="Preparados" ordenes={ordenes_preparados} />
+//                             <CardKanban setOrdenActiva={setOrdenActiva} estado="En Camino" ordenes={ordenes_enCamino} />
 
 const Reception = () => {
+
+ 
+    const ordenes_creados:Order[] = [];
+    const ordenes_pendientes:Order[] = [];
+    const ordenes_preparados:Order[] = [];
+    const ordenes_enCamino:Order[] = [];
+
+    
+
+    ordenesAleatorias.map( (orden) => {
+        if (orden.state == "Creados"){
+            ordenes_creados.push(orden)
+        } else if (orden.state == "Pendientes"){
+            ordenes_pendientes.push(orden)
+        } else if (orden.state == "Preparados"){
+            ordenes_preparados.push(orden)
+        } else if (orden.state == "En camino"){
+            ordenes_enCamino.push(orden)
+        }
+    });  
+
+    console.log(ordenes_creados);
+    
+
+
+    const [ordenActiva, setOrdenActiva] = useState<Order | null>(null);
+
+
+    useEffect(() => {
+    if (ordenActiva) {
+      console.log("Nueva orden activa:", ordenActiva);
+    } else {
+      console.log("No hay orden activa seleccionada");
+    }
+  }, [ordenActiva]); 
+
+
     return (
         <div className="grid grid-cols-7 gap-6 h-full">
             {/* ~~~ RESUMEN ~~~ */}
             <div className="col-span-4 h-full">
-                <Summary />
+                <Summary
+                    setOrdenActiva={setOrdenActiva} 
+                    creados={ordenes_creados}
+                    pendientes={ordenes_pendientes}
+                    preparados={ordenes_preparados}
+                    enCamino={ordenes_enCamino}
+                />
             </div>
 
             {/* ~~~ ORDEN ~~~ */}
-            <div className="col-span-3 bg-gray-300 h-full">
+            <div className="col-span-3 flex flex-col">
                 {/* Order */}
+                <Orden orden={ordenActiva} />
             </div>
         </div>
 
-    )
+    );
 }
 
 

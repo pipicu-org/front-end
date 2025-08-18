@@ -1,6 +1,19 @@
 import CardKanban from "@/app/components/cardKanban";
+import { Dispatch, SetStateAction } from "react";
+import Order from "@/entities/order";
 
-const Summary = () => {
+
+
+interface SummaryProps {
+    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>; 
+    creados: Order[];
+    pendientes: Order[];
+    preparados: Order[];
+    enCamino: Order[];
+}
+
+
+const Summary = ({setOrdenActiva, creados, pendientes, preparados, enCamino}: SummaryProps) => {
     return (
         <div className="flex flex-col h-full">
             {/*  ~~~ Header ~~~*/}
@@ -19,18 +32,14 @@ const Summary = () => {
                     </div>
                 </div>
 
-                <div className="flex h-max bg-red-300">
-                    das
-                </div>
+                
 
                 {/* ~~~ Kanban ~~~ */}
-                <div className="hidden flex flex-col gap-2 h-24 overflow-y-scroll">
-                    {
-                        // Mock filler
-                        [1, 2, 3, 4].map((i) =>
-                            <CardKanban key={i} />
-                        )
-                    }
+                <div className="flex flex-col gap-2">
+                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Creados" ordenes={creados} />
+                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Pendientes" ordenes={pendientes} />
+                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Preparados" ordenes={preparados} />
+                    <CardKanban setOrdenActiva={setOrdenActiva} estado="En Camino" ordenes={enCamino} />
                 </div>
             </div>
         </div>

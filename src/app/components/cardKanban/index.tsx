@@ -1,18 +1,19 @@
 "use client";
 
-import OrderCard from "../cards";
+import OrderCard from "../OrderCard";
+import Order from "../../../entities/order"
+import { Dispatch, SetStateAction } from "react";
 
-const CardKanban = () => {
+interface CardKanbanProps {
+    estado: String,
+    ordenes: Order[];
+    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>;
+}
 
-    const estilo = {
-        background:
-            `linear-gradient
-        (135deg, 
-        rgba(161,161,161,0.5) 0%,
-        rgba(161,161,161,0.05) 66%,
-        rgba(161,161,161,0.6) 100%),
-        #ffffff`
-    }
+const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) => {
+
+
+
     return (
         <div className="rounded-xl p-3 bg-[#290D1B0D]">
             {/* ~~~ Header ~~~ */}
@@ -20,18 +21,22 @@ const CardKanban = () => {
                 <div className="inline-flex items-center gap-2">
                     {/* ~~~ Pelotita ~~~ */}
                     <div className="w-[5px] h-[5px] bg-white rounded-full shadow-[0_0_10px_5px_rgba(255,255,255,1)]"></div>
-                    <h2 className="font-bold">Creados</h2>
+                    <h2 className="font-bold">{estado}</h2>
                 </div>
-                <span className="font-bold">3</span>
+                
+                {/* <span className="font-bold">{ordenes.length}</span> */}
             </div>
 
             {/* ~~~ Row ~~~ */}
             <div className="mt-5 flex gap-5  overflow-hidden rounded-xl">
                 {
-                    // Mock filler
-                    [1, 2, 3, 4, 5].map((i) =>
-                        <OrderCard key={i} />
-                    )
+                    ordenes.map((orden) => (
+                        <OrderCard
+                            key={orden.id}
+                            orden={orden}
+                            setState={setOrdenActiva}
+                        />
+                    ))
                 }
             </div>
         </div>
