@@ -2,8 +2,6 @@ import CardKanban from "@/app/components/cardKanban";
 import { Dispatch, SetStateAction } from "react";
 import Order from "@/entities/order";
 
-
-
 interface SummaryProps {
     setOrdenActiva?: Dispatch<SetStateAction<Order | null>>; 
     creados: Order[];
@@ -12,14 +10,10 @@ interface SummaryProps {
     enCamino: Order[];
 }
 
-
 const Summary = ({setOrdenActiva, creados, pendientes, preparados, enCamino}: SummaryProps) => {
     return (
         <div className="flex flex-col h-full">
-            {/*  ~~~ Header ~~~*/}
             <h1 className="font-poppins font-black text-4xl text-primary">RESUMEN</h1>
-
-            {/*  ~~~ Main ~~~*/}
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between mt-4">
                     <div className="inline-flex text-sm">
@@ -31,10 +25,6 @@ const Summary = ({setOrdenActiva, creados, pendientes, preparados, enCamino}: Su
                         <img className="w-5 h-5 opacity-25" src="./lupa.png" alt="" />
                     </div>
                 </div>
-
-                
-
-                {/* ~~~ Kanban ~~~ */}
                 <div className="flex flex-col gap-2">
                     <CardKanban setOrdenActiva={setOrdenActiva} estado="Creados" ordenes={creados} />
                     <CardKanban setOrdenActiva={setOrdenActiva} estado="Pendientes" ordenes={pendientes} />

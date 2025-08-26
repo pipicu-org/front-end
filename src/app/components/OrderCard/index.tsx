@@ -2,15 +2,14 @@
 import { Button } from "@heroui/react";
 import Order from "@/entities/order";
 import { Dispatch, SetStateAction } from "react";
+
 interface OrdenProps {
     orden: Order;
     setState?: Dispatch<SetStateAction<Order | null>>; // 
 }
 
-
 const OrderCard = ({orden, setState}: OrdenProps) => {
     return (
-        <>
         <Button
                 style={{
                     background: `linear-gradient(
@@ -28,7 +27,6 @@ const OrderCard = ({orden, setState}: OrdenProps) => {
                         <h1 className="font-black text-3xl text-primary">#{orden.id}</h1>
                     </div>
         </Button>
-        </>
     )
 }
 

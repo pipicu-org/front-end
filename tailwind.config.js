@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "var(--heroui-primary)",
+        black: "var(--heroui-black)",
       },
       fontFamily: {
         // poppins: ['poppins', 'sans-serif'],

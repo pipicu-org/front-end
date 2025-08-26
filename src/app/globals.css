@@ -13,7 +13,8 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --heroui-primary: 330 52% 11%;
+  --heroui-primary: 330 52% 11%; /* 290D1B */
+  --heroui-dark: 0 0% 24%; /* 3D3D3D */
 
 
 }

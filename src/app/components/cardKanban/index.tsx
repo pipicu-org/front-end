@@ -11,9 +11,6 @@ interface CardKanbanProps {
 }
 
 const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) => {
-
-
-
     return (
         <div className="rounded-xl p-3 bg-[#290D1B0D]">
             {/* ~~~ Header ~~~ */}
@@ -24,9 +21,8 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
                     <h2 className="font-bold">{estado}</h2>
                 </div>
                 
-                {/* <span className="font-bold">{ordenes.length}</span> */}
+                <span className="font-bold">{ordenes.length}</span>
             </div>
-
             {/* ~~~ Row ~~~ */}
             <div className="mt-5 flex gap-5  overflow-hidden rounded-xl">
                 {
