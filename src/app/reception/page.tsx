@@ -43,7 +43,7 @@ const Reception = () => {
         <div className="grid grid-cols-7 gap-6 h-full">
             <div className="col-span-4 h-full">
                 <Summary
-                    setOrdenActiva={setOrdenActiva} 
+                    setState={setOrdenActiva} 
                     creados={ordenes_creados}
                     pendientes={ordenes_pendientes}
                     preparados={ordenes_preparados}

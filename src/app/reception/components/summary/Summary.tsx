@@ -3,14 +3,14 @@ import { Dispatch, SetStateAction } from "react";
 import Order from "@/entities/order";
 
 interface SummaryProps {
-    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>; 
+    setState?: Dispatch<SetStateAction<Order | null>>; 
     creados: Order[];
     pendientes: Order[];
     preparados: Order[];
     enCamino: Order[];
 }
 
-const Summary = ({setOrdenActiva, creados, pendientes, preparados, enCamino}: SummaryProps) => {
+const Summary = ({setState, creados, pendientes, preparados, enCamino}: SummaryProps) => {
     return (
         <div className="flex flex-col h-full">
             <h1 className="font-poppins font-black text-4xl text-primary">RESUMEN</h1>
@@ -26,10 +26,10 @@ const Summary = ({setOrdenActiva, creados, pendientes, preparados, enCamino}: Su
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Creados" ordenes={creados} />
-                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Pendientes" ordenes={pendientes} />
-                    <CardKanban setOrdenActiva={setOrdenActiva} estado="Preparados" ordenes={preparados} />
-                    <CardKanban setOrdenActiva={setOrdenActiva} estado="En Camino" ordenes={enCamino} />
+                    <CardKanban setState={setState} estado="Creados" ordenes={creados} />
+                    <CardKanban setState={setState} estado="Pendientes" ordenes={pendientes} />
+                    <CardKanban setState={setState} estado="Preparados" ordenes={preparados} />
+                    <CardKanban setState={setState} estado="En Camino" ordenes={enCamino} />
                 </div>
             </div>
         </div>

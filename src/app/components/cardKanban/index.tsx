@@ -7,10 +7,10 @@ import { Dispatch, SetStateAction } from "react";
 interface CardKanbanProps {
     estado: String,
     ordenes: Order[];
-    setOrdenActiva?: Dispatch<SetStateAction<Order | null>>;
+    setState?: Dispatch<SetStateAction<Order | null>>;
 }
 
-const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) => {
+const CardKanban = ( {setState ,estado, ordenes = []} : CardKanbanProps) => {
     return (
         <div className="rounded-xl p-3 bg-[#290D1B0D]">
             {/* ~~~ Header ~~~ */}
@@ -30,7 +30,7 @@ const CardKanban = ( {setOrdenActiva ,estado, ordenes = []} : CardKanbanProps) =
                         <OrderCard
                             key={orden.id}
                             orden={orden}
-                            setState={setOrdenActiva}
+                            setState={setState}
                         />
                     ))
                 }
