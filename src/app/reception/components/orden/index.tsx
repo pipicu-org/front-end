@@ -1,6 +1,6 @@
 import Order from "@/entities/order"
-import OrdenButton from "../ordenButton";
-import OrdenInput from "../ordenInput";
+import IconButton from "../../../components/iconButton";
+import Input from "../../../components/input";
 
 interface Ordenprops {
     orden?: Order | null;
@@ -99,33 +99,33 @@ const Orden = ({orden} : Ordenprops) => {
                                 <div className="pt-5 flex flex-col gap-4">
                                     <div className="flex flex-col gap-2">
                                         <span className="font-black">¿Quién?</span>
-                                        <OrdenInput value={"Juan"} icon={"user-solid-primary"} />
+                                        <Input value={"Juan"} icon={"user-solid-primary"} />
                                     </div>
                                     {/* Metodos de contacto */}
                                     <div className="flex justify-between">
-                                        <OrdenButton nombre={"Whatsapp"}  icon={"whatsapp-solid-dark"}/>
-                                        <OrdenButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                                        <OrdenButton nombre={"Facebook"}  icon={"facebook-solid-dark"} />
-                                        <OrdenButton nombre={"Otro"}      icon={"share-solid-dark"} />
+                                        <IconButton nombre={"Whatsapp"}  icon={"whatsapp-solid-dark"}/>
+                                        <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
+                                        <IconButton nombre={"Facebook"}  icon={"facebook-solid-dark"} />
+                                        <IconButton nombre={"Otro"}      icon={"share-solid-dark"} />
                                     </div>
 
                                     <div className="flex flex-col gap-2">
                                         <div className="flex gap-3">
-                                            <OrdenInput value={"Juan"} icon={"instagram-outline-primary"} />
-                                            <OrdenInput value={"Juan"} icon={"phone-outline-primary"} />
+                                            <Input value={"Juan"} icon={"instagram-outline-primary"} />
+                                            <Input value={"Juan"} icon={"phone-outline-primary"} />
                                             
                                         </div>
-                                        <OrdenInput value={"Juan"} icon={"www-outline-primary"} />
+                                        <Input value={"Juan"} icon={"www-outline-primary"} />
                                     </div>
 
                                     {/* Metodo de pago */}
                                     <div className="flex flex-col gap-2">
                                         <span className="font-black">¿Cómo?</span>
                                         <div className="flex justify-between">
-                                            <OrdenButton nombre={"Efectivo"}  icon={"efectivo-solid-dark"}/>
-                                            <OrdenButton nombre={"Transferencia"} icon={"transference-outline-dark"} />
-                                            <OrdenButton nombre={"Débito"}  icon={"creditCard-solid-dark"} />
-                                            <OrdenButton nombre={"Otros"}      icon={"payment-outline-dark"} />
+                                            <IconButton nombre={"Efectivo"}  icon={"efectivo-solid-dark"}/>
+                                            <IconButton nombre={"Transferencia"} icon={"transference-outline-dark"} />
+                                            <IconButton nombre={"Débito"}  icon={"creditCard-solid-dark"} />
+                                            <IconButton nombre={"Otros"}      icon={"payment-outline-dark"} />
                                         </div>
                                     </div>
 

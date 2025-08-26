@@ -1,10 +1,10 @@
 
-interface OrdenInputProps {
+interface InputProps {
     value: string;
-    icon: string
+    icon: string;
 }
 
-const OrdenInput = ({value, icon} : OrdenInputProps) => {
+const Input = ({value, icon} : InputProps) => {
     return (
         <div className="flex items-center gap-2 rounded-full pl-2 pr-2 bg-primary/20">
             <img src={"../icons/" + icon + ".png"} alt="" className="w-[15px] h-[15px] opacity-30" />
@@ -14,4 +14,4 @@ const OrdenInput = ({value, icon} : OrdenInputProps) => {
 }
 
 
-export default OrdenInput;
+export default Input;

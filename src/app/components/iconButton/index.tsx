@@ -1,11 +1,11 @@
 import { Button } from "@heroui/react";
 
-interface OrdenButtonProps{
+interface IconButtonProps{
     nombre: string;
     icon: string;
 }
 
-const OrdenButton = ({nombre, icon, } : OrdenButtonProps) => {
+const IconButton = ({nombre, icon, } : IconButtonProps) => {
     const style = {
         background: `linear-gradient(
                       135deg,
@@ -23,4 +23,4 @@ const OrdenButton = ({nombre, icon, } : OrdenButtonProps) => {
     )
 }
 
-export default OrdenButton;
+export default IconButton;
