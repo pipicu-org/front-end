@@ -54,6 +54,8 @@ const Reception = () => {
                     pendientes={ordenes_pendientes}
                     preparados={ordenes_preparados}
                     enCamino={ordenes_enCamino}
+                    entregados={ordenes_entregados}
+                    cancelados={ordenes_cancelados}
                 />
             </div>
             <div className="col-span-3 flex flex-col">

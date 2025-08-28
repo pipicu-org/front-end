@@ -2,6 +2,8 @@ import Order from "@/entities/order"
 import IconButton from "../../../components/iconButton";
 import Input from "../../../components/input";
 
+import { Button } from "@heroui/react";
+
 interface Ordenprops {
     orden?: Order | null;
 }
@@ -28,7 +30,7 @@ const Orden = ({orden} : Ordenprops) => {
             <div className="flex flex-col h-full">
                 <div className="flex mt-4">
                     <div className="inline-flex  text-sm ml-auto">
-                        <span className="inline-flex items-center bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-full">+ Nuevo</span>
+                        <Button className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-full">+ Nuevo</Button>
                     </div>
                 </div>
 
