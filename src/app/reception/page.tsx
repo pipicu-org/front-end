@@ -16,6 +16,8 @@ const Reception = () => {
     const ordenes_pendientes:Order[] = [];
     const ordenes_preparados:Order[] = [];
     const ordenes_enCamino:Order[] = [];
+    const ordenes_entregados:Order[] = [];
+    const ordenes_cancelados:Order[] = [];
 
     ordenesAleatorias.map( (orden) => {
         if (orden.state == "Creados"){
@@ -26,6 +28,10 @@ const Reception = () => {
             ordenes_preparados.push(orden)
         } else if (orden.state == "En camino"){
             ordenes_enCamino.push(orden)
+        } else if (orden.state == "Cancelado"){
+            ordenes_cancelados.push(orden)
+        } else if (orden.state == "Entregado"){
+            ordenes_entregados.push(orden)
         }
     });  
     
