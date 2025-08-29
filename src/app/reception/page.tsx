@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 // Componentes de Recepcion
 import Summary from "./components/summary/Summary";
-import Orden from "./components/orden";
+import { OrdenModal } from "./components/orden";
 
 // Interfaz
 import Order from "@/entities/order";
@@ -37,13 +37,24 @@ const Reception = () => {
     
     const [ordenActiva, setOrdenActiva] = useState<Order | null>(null);
 
-    // useEffect(() => {
-    //     if (ordenActiva) {
-    //     console.log("Nueva orden activa:", ordenActiva);
-    //     } else {
-    //     console.log("No hay orden activa seleccionada");
-    //     }
-    // }, [ordenActiva]); 
+    type estadosDeOrden = "default" | "ver" | "editar" | "nueva";
+
+    const [estadoOrden, setEstadoOrden] = useState<estadosDeOrden>("default");
+
+    const cambiarEstado = (nuevoEstado: estadosDeOrden ) => {
+        if (estadoOrden == "ver" && nuevoEstado == "nueva"){
+            const confirmar = window.confirm("Hay cambios sin guardar");
+            if (!confirmar) return;
+        }
+        setEstadoOrden(nuevoEstado);
+    }
+
+
+    useEffect(() => {
+        if(ordenActiva){
+            setEstadoOrden("ver");
+        }
+    }, [ordenActiva]); 
 
     return (
         <div className="grid grid-cols-7 gap-6 h-full">
@@ -59,7 +70,7 @@ const Reception = () => {
                 />
             </div>
             <div className="col-span-3 flex flex-col">
-                <Orden orden={ordenActiva} />
+                <OrdenModal orden={ordenActiva} estado={estadoOrden} setEstado={cambiarEstado} />
             </div>
         </div>
     );

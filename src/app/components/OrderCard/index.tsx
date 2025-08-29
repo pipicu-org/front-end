@@ -23,8 +23,8 @@ const OrderCard = ({ orden, setState, kitchen }: OrdenProps) => {
             className="min-w-fit aspect-square w-[90px] h-[90px] rounded-xl p-3 text-center drop-shadow-orden flex flex-col"
             onClick={() => setState?.(orden)} >
             {!kitchen ? (
-                <div>
-                    <span className="text-primary text-xs">{orden.client}</span>
+                <div className="max-w-xs">
+                    <span className="text-primary text-xs block whitespace-normal leading-none ">{orden.client}</span>
                     <h4 className="font-bold text-primary text-sm">{orden.deliveryTime}</h4>
                     <h1 className="font-black text-3xl text-primary">#{orden.id}</h1>
                 </div>
