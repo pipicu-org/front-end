@@ -5,7 +5,7 @@ import { Button } from "@heroui/react";
 import { useState } from "react";
 
 interface SummaryProps {
-    setState?: Dispatch<SetStateAction<Order | null>>; 
+    cambiarOrden?: (nuevaOrden: Order) => void; 
     creados: Order[];
     pendientes: Order[];
     preparados: Order[];
@@ -14,7 +14,7 @@ interface SummaryProps {
     cancelados: Order[];
 }
 
-const Summary = ({setState, creados, pendientes, preparados, enCamino, entregados, cancelados}: SummaryProps) => {
+const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados}: SummaryProps) => {
 
     const [modal, setModal] = useState(true);
 
@@ -35,15 +35,15 @@ const Summary = ({setState, creados, pendientes, preparados, enCamino, entregado
                 <div className="flex flex-col gap-2">
                     {modal ? (
                         <>
-                            <CardKanban setState={setState} estado="Creados" ordenes={creados} />
-                            <CardKanban setState={setState} estado="Pendientes" ordenes={pendientes} />
-                            <CardKanban setState={setState} estado="Preparados" ordenes={preparados} />
-                            <CardKanban setState={setState} estado="En Camino" ordenes={enCamino} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Creados" ordenes={creados} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Pendientes" ordenes={pendientes} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Preparados" ordenes={preparados} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="En Camino" ordenes={enCamino} />
                         </>
                     ): (
                         <>
-                            <CardKanban setState={setState} estado="Entregados" ordenes={entregados} />
-                            <CardKanban setState={setState} estado="Cancelados" ordenes={cancelados} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Entregados" ordenes={entregados} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Cancelados" ordenes={cancelados} />
                         </>
                     )}
                     

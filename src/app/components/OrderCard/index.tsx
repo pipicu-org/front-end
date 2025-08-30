@@ -5,11 +5,11 @@ import { Dispatch, SetStateAction } from "react";
 
 interface OrdenProps {
     orden: Order;
-    setState?: Dispatch<SetStateAction<Order | null>>;
+    cambiarOrden?: (nuevaOrden: Order) => void;
     kitchen?: boolean;
 }
 
-const OrderCard = ({ orden, setState, kitchen }: OrdenProps) => {
+const OrderCard = ({ orden, cambiarOrden, kitchen }: OrdenProps) => {
     return (
         <Button
             style={{
@@ -21,7 +21,7 @@ const OrderCard = ({ orden, setState, kitchen }: OrdenProps) => {
                     ), #ffffff`
             }}
             className="min-w-fit aspect-square w-[90px] h-[90px] rounded-xl p-3 text-center drop-shadow-orden flex flex-col"
-            onClick={() => setState?.(orden)} >
+            onClick={() => cambiarOrden?.(orden)} >
             {!kitchen ? (
                 <div className="max-w-xs">
                     <span className="text-primary text-xs block whitespace-normal leading-none ">{orden.client}</span>

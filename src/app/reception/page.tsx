@@ -38,29 +38,41 @@ const Reception = () => {
     const [ordenActiva, setOrdenActiva] = useState<Order | null>(null);
 
     type estadosDeOrden = "default" | "ver" | "editar" | "nueva";
-
     const [estadoOrden, setEstadoOrden] = useState<estadosDeOrden>("default");
 
     const cambiarEstado = (nuevoEstado: estadosDeOrden ) => {
-        if (estadoOrden == "ver" && nuevoEstado == "nueva"){
+        if (estadoOrden == "nueva" && (nuevoEstado == "ver" || nuevoEstado == "default")){
             const confirmar = window.confirm("Hay cambios sin guardar");
-            if (!confirmar) return;
+            // retorna false tanto para la funcion cambiarOrden como tambien para cortar la ejecucion y evitar los proximos condicionales
+            if (!confirmar) return false;
         }
         setEstadoOrden(nuevoEstado);
+        return true;
+    }
+    
+    const cambiarOrden = (nuevaOrden: Order) => {
+        // No uso useEffect porque no me detecta cuando cambia a la misma orden y eso provoca que "cambiarEstado" no se active. 
+        if (ordenActiva == null){
+            setOrdenActiva(nuevaOrden);
+            cambiarEstado("ver");
+        } else {
+            let permitido = cambiarEstado("ver");
+            console.log("Hola");
+            if (permitido) setOrdenActiva(nuevaOrden);
+        } 
     }
 
-
-    useEffect(() => {
-        if(ordenActiva){
-            setEstadoOrden("ver");
-        }
-    }, [ordenActiva]); 
+    // useEffect(() => {
+    //     if(ordenActiva){
+    //         cambiarEstado("ver");
+    //     }
+    // }, [ordenActiva]); 
 
     return (
         <div className="grid grid-cols-7 gap-6 h-full">
             <div className="col-span-4 h-full">
                 <Summary
-                    setState={setOrdenActiva} 
+                    cambiarOrden={cambiarOrden} 
                     creados={ordenes_creados}
                     pendientes={ordenes_pendientes}
                     preparados={ordenes_preparados}
