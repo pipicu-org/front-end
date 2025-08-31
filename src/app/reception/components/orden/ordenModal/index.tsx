@@ -3,21 +3,30 @@ import { Button } from "@heroui/react";
 import OrdenDefault from "../ordenDefault";
 import OrdenVer from "../ordenVer";
 import OrdenForm from "../ordenForm";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { searchClients } from "@/app/services/clients.service";
 
-interface Ordenprops {
+interface OrderModalProps {
     orden: IOrder | null;
     estado: ORDER_UI_STATE;
     setEstado: (nuevoEstado: ORDER_UI_STATE) => void;
-
 }
-const OrdenModal = ({ orden, estado, setEstado }: Ordenprops) => {
+
+const OrderModal = ({ orden, estado, setEstado }: OrderModalProps) => {
     const componentes: Record<ORDER_UI_STATE, ReactNode> = {
         default: <OrdenDefault />,
         ver: <OrdenVer orden={orden} estado={estado} />,
         editar: <OrdenForm />,
         nueva: <OrdenForm />,
     };
+
+    const [clients, setClients] = useState<IClient[]>([]);
+
+    useEffect(() => {
+        searchClients('', 1).then(clientsResponse => {
+            setClients(clientsResponse.data)
+        }).catch(console.error);
+    }, []);
 
     return (
         <div className="flex flex-col h-full">
@@ -35,14 +44,10 @@ const OrdenModal = ({ orden, estado, setEstado }: Ordenprops) => {
                     className="flex flex-col flex-1 w-full mt-5 rounded-2xl opacity-80">
 
                     {componentes[estado]}
-
                 </div>
             </div>
         </div>
     )
-
-
 }
 
-
-export default OrdenModal;
+export default OrderModal;
