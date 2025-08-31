@@ -1,43 +1,41 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // Componentes de Recepcion
 import Summary from "./components/summary/Summary";
-import { OrdenModal } from "./components/orden";
+import { OrderModal } from "./components/orden";
 
 // Interfaz
-import Order from "@/entities/order";
-import ordenesAleatorias from "../components/OrdenesAleatorias";
-
+// import Order from "@/entities/order";
+// import ordenesAleatorias from "../components/OrdenesAleatorias";
 
 const Reception = () => {
-    const [info, setInfo] = useState([]);
+    const ordenes_creados: IOrder[] = [];
+    const ordenes_pendientes: IOrder[] = [];
+    const ordenes_preparados: IOrder[] = [];
+    const ordenes_enCamino: IOrder[] = [];
+    const ordenes_entregados: IOrder[] = [];
+    const ordenes_cancelados: IOrder[] = [];
 
-    const getData = async () => {
-        try {
+    // const [info, setInfo] = useState([]);
 
-            const response = await fetch("/api/client?search=&page=1");
-            if (!response.ok) throw new Error("HTTP error " + response.status);
+    // const getData = async () => {
+    //     try {
 
-            const data = await response.json();
-            console.log("Datos crudos:", data);
-            setInfo(data);
-        } catch (err) {
-            console.error("Error al traer los datos:", err);
-        }
-    };
+    //         const response = await fetch("/api/client?search=&page=1");
+    //         if (!response.ok) throw new Error("HTTP error " + response.status);
 
-    useEffect(() => {
-        getData();
-    }, []);
+    //         const data = await response.json();
+    //         console.log("Datos crudos:", data);
+    //         setInfo(data);
+    //     } catch (err) {
+    //         console.error("Error al traer los datos:", err);
+    //     }
+    // };
 
-    const ordenes_creados: Order[] = [];
-    const ordenes_pendientes: Order[] = [];
-    const ordenes_preparados: Order[] = [];
-    const ordenes_enCamino: Order[] = [];
-    const ordenes_entregados: Order[] = [];
-    const ordenes_cancelados: Order[] = [];
+    // useEffect(() => {
+    //     getData();
+    // }, []);
 
     // ordenesAleatorias.map((orden) => {
     //     if (orden.state == "Creados") {
@@ -55,12 +53,18 @@ const Reception = () => {
     //     }
     // });
 
-    const [ordenActiva, setOrdenActiva] = useState<Order | null>(null);
+    // useEffect(() => {
+    //     if(ordenActiva){
+    //         cambiarEstado("ver");
+    //     }
+    // }, [ordenActiva]); 
 
-    type estadosDeOrden = "default" | "ver" | "editar" | "nueva";
-    const [estadoOrden, setEstadoOrden] = useState<estadosDeOrden>("default");
+    //  return <pre>{JSON.stringify(info, null, 2)}</pre>;
 
-    const cambiarEstado = (nuevoEstado: estadosDeOrden) => {
+    const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
+    const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
+
+    const cambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
         if (estadoOrden == "nueva" && (nuevoEstado == "ver" || nuevoEstado == "default")) {
             const confirmar = window.confirm("Hay cambios sin guardar");
             // retorna false tanto para la funcion cambiarOrden como tambien para cortar la ejecucion y evitar los proximos condicionales
@@ -75,7 +79,7 @@ const Reception = () => {
         return true;
     }
 
-    const cambiarOrden = (nuevaOrden: Order) => {
+    const cambiarOrden = (nuevaOrden: IOrder) => {
         // No uso useEffect porque no me detecta cuando cambia a la misma orden y eso provoca que "cambiarEstado" no se active. 
         if (ordenActiva == null) {
             setOrdenActiva(nuevaOrden);
@@ -86,14 +90,6 @@ const Reception = () => {
             if (permitido) setOrdenActiva(nuevaOrden);
         }
     }
-
-    // useEffect(() => {
-    //     if(ordenActiva){
-    //         cambiarEstado("ver");
-    //     }
-    // }, [ordenActiva]); 
-
-    //  return <pre>{JSON.stringify(info, null, 2)}</pre>;
 
     return (
         <div className="grid grid-cols-7 gap-6 h-full">
@@ -109,7 +105,7 @@ const Reception = () => {
                 />
             </div>
             <div className="col-span-3 flex flex-col">
-                <OrdenModal orden={ordenActiva} estado={estadoOrden} setEstado={cambiarEstado} />
+                <OrderModal orden={ordenActiva} estado={estadoOrden} setEstado={cambiarEstado} />
             </div>
         </div>
     );
