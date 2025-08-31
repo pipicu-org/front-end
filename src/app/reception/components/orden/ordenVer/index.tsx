@@ -1,16 +1,13 @@
 
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
-import Order from "@/entities/order";
 
-type EstadoOrden = "default" | "ver" | "editar" | "nueva";
-
-interface Ordenprops {
-    orden?: Order | null;
-    estado: EstadoOrden;
+interface OrdenVerprops {
+    orden: IOrder | null;
+    estado: ORDER_UI_STATE;
 }
 
-const OrdenVer = ({orden, estado} : Ordenprops) => {
+const OrdenVer = ({orden, estado} : OrdenVerprops) => {
     return (
             <div className="grid grid-cols-5 gap-3 h-full">
                 <div className="col-span-3 text-primary font-poppins p-4">
@@ -70,6 +67,5 @@ const OrdenVer = ({orden, estado} : Ordenprops) => {
 
     )
 }
-
 
 export default OrdenVer;
