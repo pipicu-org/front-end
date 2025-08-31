@@ -1,10 +1,12 @@
 "use client";
 import { Button } from "@heroui/react";
+import { ReactNode, useEffect, useState } from "react";
+
+import { searchClients } from "@/app/services/clients.service";
+
 import OrdenDefault from "../ordenDefault";
 import OrdenVer from "../ordenVer";
 import OrdenForm from "../ordenForm";
-import { ReactNode, useEffect, useState } from "react";
-import { searchClients } from "@/app/services/clients.service";
 
 interface OrderModalProps {
     orden: IOrder | null;

@@ -1,13 +1,8 @@
 "use client";
 import { useState } from "react";
 
-// Componentes de Recepcion
 import Summary from "./components/summary/Summary";
 import { OrderModal } from "./components/orden";
-
-// Interfaz
-// import Order from "@/entities/order";
-// import ordenesAleatorias from "../components/OrdenesAleatorias";
 
 const Reception = () => {
     const ordenes_creados: IOrder[] = [];
@@ -16,50 +11,6 @@ const Reception = () => {
     const ordenes_enCamino: IOrder[] = [];
     const ordenes_entregados: IOrder[] = [];
     const ordenes_cancelados: IOrder[] = [];
-
-    // const [info, setInfo] = useState([]);
-
-    // const getData = async () => {
-    //     try {
-
-    //         const response = await fetch("/api/client?search=&page=1");
-    //         if (!response.ok) throw new Error("HTTP error " + response.status);
-
-    //         const data = await response.json();
-    //         console.log("Datos crudos:", data);
-    //         setInfo(data);
-    //     } catch (err) {
-    //         console.error("Error al traer los datos:", err);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     getData();
-    // }, []);
-
-    // ordenesAleatorias.map((orden) => {
-    //     if (orden.state == "Creados") {
-    //         ordenes_creados.push(orden)
-    //     } else if (orden.state == "Pendientes") {
-    //         ordenes_pendientes.push(orden)
-    //     } else if (orden.state == "Preparados") {
-    //         ordenes_preparados.push(orden)
-    //     } else if (orden.state == "En camino") {
-    //         ordenes_enCamino.push(orden)
-    //     } else if (orden.state == "Cancelado") {
-    //         ordenes_cancelados.push(orden)
-    //     } else if (orden.state == "Entregado") {
-    //         ordenes_entregados.push(orden)
-    //     }
-    // });
-
-    // useEffect(() => {
-    //     if(ordenActiva){
-    //         cambiarEstado("ver");
-    //     }
-    // }, [ordenActiva]); 
-
-    //  return <pre>{JSON.stringify(info, null, 2)}</pre>;
 
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
