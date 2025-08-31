@@ -12,7 +12,6 @@ import ordenesAleatorias from "../components/OrdenesAleatorias";
 
 
 const Reception = () => {
-
     const [info, setInfo] = useState([]);
 
     const getData = async () => {
@@ -32,9 +31,6 @@ const Reception = () => {
     useEffect(() => {
         getData();
     }, []);
-    // useEffect(() => {
-    // console.log(info);
-    // }, [info]);
 
     const ordenes_creados: Order[] = [];
     const ordenes_pendientes: Order[] = [];
@@ -43,21 +39,21 @@ const Reception = () => {
     const ordenes_entregados: Order[] = [];
     const ordenes_cancelados: Order[] = [];
 
-    ordenesAleatorias.map((orden) => {
-        if (orden.state == "Creados") {
-            ordenes_creados.push(orden)
-        } else if (orden.state == "Pendientes") {
-            ordenes_pendientes.push(orden)
-        } else if (orden.state == "Preparados") {
-            ordenes_preparados.push(orden)
-        } else if (orden.state == "En camino") {
-            ordenes_enCamino.push(orden)
-        } else if (orden.state == "Cancelado") {
-            ordenes_cancelados.push(orden)
-        } else if (orden.state == "Entregado") {
-            ordenes_entregados.push(orden)
-        }
-    });
+    // ordenesAleatorias.map((orden) => {
+    //     if (orden.state == "Creados") {
+    //         ordenes_creados.push(orden)
+    //     } else if (orden.state == "Pendientes") {
+    //         ordenes_pendientes.push(orden)
+    //     } else if (orden.state == "Preparados") {
+    //         ordenes_preparados.push(orden)
+    //     } else if (orden.state == "En camino") {
+    //         ordenes_enCamino.push(orden)
+    //     } else if (orden.state == "Cancelado") {
+    //         ordenes_cancelados.push(orden)
+    //     } else if (orden.state == "Entregado") {
+    //         ordenes_entregados.push(orden)
+    //     }
+    // });
 
     const [ordenActiva, setOrdenActiva] = useState<Order | null>(null);
 
