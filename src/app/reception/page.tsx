@@ -15,27 +15,27 @@ const Reception = () => {
 
     const [info, setInfo] = useState([]);
 
-  const getData = async () => {
-    try {
-      
-      const response = await fetch("/api/client?search=&page=1");
-      if (!response.ok) throw new Error("HTTP error " + response.status);
+    const getData = async () => {
+        try {
 
-      const data = await response.json();
-      console.log("Datos crudos:", data);
-      setInfo(data);
-    } catch (err) {
-      console.error("Error al traer los datos:", err);
-    }
-  };
+            const response = await fetch("/api/client?search=&page=1");
+            if (!response.ok) throw new Error("HTTP error " + response.status);
 
-  useEffect(() => {
-    getData();
-  }, []);
+            const data = await response.json();
+            console.log("Datos crudos:", data);
+            setInfo(data);
+        } catch (err) {
+            console.error("Error al traer los datos:", err);
+        }
+    };
+
+    useEffect(() => {
+        getData();
+    }, []);
     // useEffect(() => {
     // console.log(info);
     // }, [info]);
-   
+
     const ordenes_creados: Order[] = [];
     const ordenes_pendientes: Order[] = [];
     const ordenes_preparados: Order[] = [];
