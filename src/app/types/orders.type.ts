@@ -11,4 +11,3 @@ interface IOrder {
   paymentMethod: String;
   totalPrice: number;
 }
-
