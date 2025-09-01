@@ -1,11 +1,10 @@
 "use client";
 import { Button } from "@heroui/react";
-import Order from "@/entities/order";
 import { Dispatch, SetStateAction } from "react";
 
 interface OrdenProps {
-    orden: Order;
-    cambiarOrden?: (nuevaOrden: Order) => void;
+    orden: IOrder;
+    cambiarOrden?: (nuevaOrden: IOrder) => void;
     kitchen?: boolean;
 }
 

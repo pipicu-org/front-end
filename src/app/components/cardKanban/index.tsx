@@ -1,13 +1,12 @@
 "use client";
 
 import OrderCard from "../OrderCard";
-import Order from "../../../entities/order"
 import { Dispatch, SetStateAction } from "react";
 
 interface CardKanbanProps {
     estado: String,
-    ordenes: Order[];
-    cambiarOrden?: (nuevaOrden: Order) => void;
+    ordenes: IOrder[];
+    cambiarOrden?: (nuevaOrden: IOrder) => void;
 }
 
 const CardKanban = ( {cambiarOrden ,estado, ordenes = []} : CardKanbanProps) => {

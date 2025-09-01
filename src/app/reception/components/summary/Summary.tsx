@@ -1,17 +1,16 @@
 import CardKanban from "@/app/components/cardKanban";
 import { Dispatch, SetStateAction } from "react";
-import Order from "@/entities/order";
 import { Button } from "@heroui/react";
 import { useState } from "react";
 
 interface SummaryProps {
-    cambiarOrden?: (nuevaOrden: Order) => void; 
-    creados: Order[];
-    pendientes: Order[];
-    preparados: Order[];
-    enCamino: Order[];
-    entregados: Order[];
-    cancelados: Order[];
+    cambiarOrden?: (nuevaOrden: IOrder) => void; 
+    creados: IOrder[];
+    pendientes: IOrder[];
+    preparados: IOrder[];
+    enCamino: IOrder[];
+    entregados: IOrder[];
+    cancelados: IOrder[];
 }
 
 const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados}: SummaryProps) => {
