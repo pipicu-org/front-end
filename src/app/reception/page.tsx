@@ -1,10 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Summary from "./components/summary/Summary";
 import { OrderModal } from "./components/orden";
 
+import { getOrdersByStateID } from "../services/order.service";
+
 const Reception = () => {
+
+    interface IGetOrders {
+        search: string
+        total: number
+        page: number
+        limit: number
+        data: IOrder[]
+    }
+    const [orders, setOrders] = useState<IGetOrders>();
+    useEffect(() => {
+        getOrdersByStateID("1").then(orderResponse => {
+            setOrders(orderResponse);
+        }).catch(console.error)
+
+    }, []);
+
+
+    useEffect(() => {
+        console.log("ordenes: ", orders);
+
+    }, [orders])
     const ordenes_creados: IOrder[] = [];
     const ordenes_pendientes: IOrder[] = [];
     const ordenes_preparados: IOrder[] = [];
