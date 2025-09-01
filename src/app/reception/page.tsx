@@ -15,32 +15,65 @@ const Reception = () => {
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
 
-    const cambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
-        if (estadoOrden == "nueva" && (nuevoEstado == "ver" || nuevoEstado == "default")) {
-            const confirmar = window.confirm("Hay cambios sin guardar");
-            // retorna false tanto para la funcion cambiarOrden como tambien para cortar la ejecucion y evitar los proximos condicionales
-            if (!confirmar) return false;
+    const puedeCambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
+        // Valida si es posible cambiar al nuevo estado True / False
+        if (estadoOrden == "nueva" && nuevoEstado == "ver"){
+            return window.confirm("¿Desea guardar esta orden?");
         }
 
-        if (estadoOrden == "editar" && (nuevoEstado == "ver" || nuevoEstado == "nueva")) {
-            const confirmar = window.confirm("Hay cambios sin guardar");
-            if (!confirmar) return false;
+        if (estadoOrden == "editar" && (nuevoEstado == "ver" || nuevoEstado == "nueva")){
+            return window.confirm("Hay cambios sin guardar");
         }
-        setEstadoOrden(nuevoEstado);
+
         return true;
     }
 
+
+    const cambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
+        // Cambia de estado en caso de ser posible.
+        if (puedeCambiarEstado(nuevoEstado)) setEstadoOrden(nuevoEstado);
+    }
+
+
     const cambiarOrden = (nuevaOrden: IOrder) => {
-        // No uso useEffect porque no me detecta cuando cambia a la misma orden y eso provoca que "cambiarEstado" no se active. 
-        if (ordenActiva == null) {
+        // Cambia de orden en caso de ser posible.
+        if (ordenActiva == null){
             setOrdenActiva(nuevaOrden);
             cambiarEstado("ver");
         } else {
-            let permitido = cambiarEstado("ver");
-            console.log("Hola");
-            if (permitido) setOrdenActiva(nuevaOrden);
+            if (puedeCambiarEstado("ver")) {
+                setOrdenActiva(nuevaOrden);
+                cambiarEstado("ver");
+            }
         }
     }
+    
+    // const cambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
+    //     if (estadoOrden == "nueva" && (nuevoEstado == "ver" || nuevoEstado == "default")) {
+    //         const confirmar = window.confirm("Hay cambios sin guardar");
+    //         // retorna false tanto para la funcion cambiarOrden como tambien para cortar la ejecucion y evitar los proximos condicionales
+    //         if (!confirmar) return false;
+    //     }
+
+    //     if (estadoOrden == "editar" && (nuevoEstado == "ver" || nuevoEstado == "nueva")) {
+    //         const confirmar = window.confirm("Hay cambios sin guardar");
+    //         if (!confirmar) return false;
+    //     }
+    //     setEstadoOrden(nuevoEstado);
+    //     return true;
+    // }
+
+    // const cambiarOrden = (nuevaOrden: IOrder) => {
+    //     // No uso useEffect porque no me detecta cuando cambia a la misma orden y eso provoca que "cambiarEstado" no se active. 
+    //     if (ordenActiva == null) {
+    //         setOrdenActiva(nuevaOrden);
+    //         cambiarEstado("ver");
+    //     } else {
+    //         let permitido = cambiarEstado("ver");
+    //         console.log("Hola");
+    //         if (permitido) setOrdenActiva(nuevaOrden);
+    //     }
+    // }
 
     return (
         <div className="grid grid-cols-7 gap-6 h-full">
