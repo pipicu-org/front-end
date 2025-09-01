@@ -6,11 +6,6 @@ import { useState, useEffect } from "react";
 import Summary from "./components/summary/Summary";
 import OrdenModal from "./components/orden/ordenModal";
 
-// Interfaz
-
-import ordenesAleatorias from "../components/OrdenesAleatorias";
-
-
 const Reception = () => {
 
     const ordenes_creados: IOrder[] = [];
@@ -19,22 +14,6 @@ const Reception = () => {
     const ordenes_enCamino: IOrder[] = [];
     const ordenes_entregados: IOrder[] = [];
     const ordenes_cancelados: IOrder[] = [];
-
-    ordenesAleatorias.map((orden) => {
-        if (orden.state == "Creados") {
-            ordenes_creados.push(orden)
-        } else if (orden.state == "Pendientes") {
-            ordenes_pendientes.push(orden)
-        } else if (orden.state == "Preparados") {
-            ordenes_preparados.push(orden)
-        } else if (orden.state == "En camino") {
-            ordenes_enCamino.push(orden)
-        } else if (orden.state == "Cancelado") {
-            ordenes_cancelados.push(orden)
-        } else if (orden.state == "Entregado") {
-            ordenes_entregados.push(orden)
-        }
-    });
 
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
