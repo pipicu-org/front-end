@@ -20,6 +20,7 @@ interface OrdenFormProps {
     orden: IOrder | null;
     isEdit: boolean;
     onSave?: (order: IOrder) => void;
+    onClose?: () => void;
 }
 
 interface IOrderLine {
@@ -35,7 +36,7 @@ interface IOrderPayload {
     lines: IOrderLine[];
 }
 
-const OrdenForm = ({ orden, isEdit, onSave }: OrdenFormProps) => {
+const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
     const { showToast } = useToast();
     const [client, setClient] = useState<number>(orden?.client ? Number(orden.client) : 0);
     const [deliveryTime, setDeliveryTime] = useState<string>(orden?.deliveryTime || "");
@@ -271,7 +272,16 @@ const OrdenForm = ({ orden, isEdit, onSave }: OrdenFormProps) => {
 
     return (
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <h2 className="text-2xl font-bold">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
+                <Button
+                    type="button"
+                    size="sm"
+                    className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                    onPress={onClose}>
+                    x
+                </Button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="md:col-span-3 flex flex-col space-y-4">

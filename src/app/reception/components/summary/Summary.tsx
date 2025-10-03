@@ -27,8 +27,8 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between mt-4">
                     <div className="inline-flex text-sm ">
-                        <Button onClick={ () => setModal(true)} className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-l-full">En curso</Button>
-                        <Button onClick={ () => setModal(false)} className="inline-flex items-center h-[30px] pl-4 pr-4 rounded-r-full">Histórico</Button>
+                        <Button onPress={ () => setModal(true)} className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-l-full">En curso</Button>
+                        <Button onPress={ () => setModal(false)} className="inline-flex items-center h-[30px] pl-4 pr-4 rounded-r-full">Histórico</Button>
                     </div>
                     <div className="inline-flex justify-center items-center rounded-full pl-3 pr-3">
                         <input
@@ -41,9 +41,9 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                         <img className="w-5 h-5 opacity-25" src="./lupa.png" alt="" />
                     </div>
                     <div className="inline-flex text-sm ml-4">
-                        <Button onClick={() => setPage(Math.max(1, page - 1))} className="h-[30px] px-3 rounded-l-full">Prev</Button>
+                        <Button onPress={() => setPage(Math.max(1, page - 1))} className="h-[30px] px-3 rounded-l-full">Prev</Button>
                         <span className="h-[30px] px-3 flex items-center bg-gray-200">{page}</span>
-                        <Button onClick={() => setPage(page + 1)} className="h-[30px] px-3 rounded-r-full">Next</Button>
+                        <Button onPress={() => setPage(page + 1)} className="h-[30px] px-3 rounded-r-full">Next</Button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">

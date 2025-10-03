@@ -89,10 +89,10 @@ const ProductGrid = ({
                                 </div>
                                 <div>
                                     {lines.some(line => String(line.product) === String(product.id))
-                                        ? <Button size="sm" className="px-1 py-0" onClick={() => upsertOrderProduct(product)}>
+                                        ? <Button size="sm" className="px-1 py-0" onPress={() => upsertOrderProduct(product)}>
                                             Editar
                                         </Button>
-                                        : <Button size="sm" className="px-1 py-0" color="primary" onClick={() => upsertOrderProduct(product)}>
+                                        : <Button size="sm" className="px-1 py-0" color="primary" onPress={() => upsertOrderProduct(product)}>
                                             Agregar
                                         </Button>
                                     }
