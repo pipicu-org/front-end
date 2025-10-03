@@ -1,17 +1,51 @@
 "use client";
 
 import OrderCard from "../OrderCard";
-import { Dispatch, SetStateAction } from "react";
+import { useDrop } from "react-dnd";
+import { updateOrderState } from "../../services/order.service";
+import { useToast } from "@/utils/toast";
 
 interface CardKanbanProps {
     estado: string,
     ordenes: IOrder[];
     cambiarOrden?: (nuevaOrden: IOrder) => void;
+    onOrderStateChange?: () => void; // Para re-fetch
 }
 
-const CardKanban = ( {cambiarOrden ,estado, ordenes = []} : CardKanbanProps) => {
+const stateMapping: { [key: string]: number } = {
+    "Creados": 1,
+    "Pendientes": 2,
+    "Preparados": 3,
+    "En Camino": 4,
+    "Entregados": 5,
+    "Cancelados": 6,
+};
+
+const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : CardKanbanProps) => {
+    const { showToast } = useToast();
+
+    const [{ isOver }, drop] = useDrop(() => ({
+        accept: 'order',
+        drop: async (item: { id: number; currentState: string }) => {
+            const targetStateId = stateMapping[estado];
+            if (item.currentState !== estado) {
+                try {
+                    await updateOrderState(item.id, targetStateId);
+                    showToast(`Orden ${item.id} movida a ${estado}`, "success");
+                    onOrderStateChange?.(); // Re-fetch
+                } catch (error) {
+                    showToast("Error al cambiar estado de la orden", "error");
+                    console.error(error);
+                }
+            }
+        },
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+        }),
+    }));
     return (
-        <div className="rounded-xl p-3 bg-[#290D1B0D]">
+        // @ts-expect-error React DnD ref type issue
+        <div ref={drop} className={`rounded-xl p-3 bg-[#290D1B0D] ${isOver ? 'bg-[#290D1B1D]' : ''}`}>
             {/* ~~~ Header ~~~ */}
             <div className="flex items-center justify-between">
                 <div className="inline-flex items-center gap-2">
@@ -23,7 +57,7 @@ const CardKanban = ( {cambiarOrden ,estado, ordenes = []} : CardKanbanProps) => 
                 <span className="font-bold">{ordenes.length}</span>
             </div>
             {/* ~~~ Row ~~~ */}
-            <div className="mt-5 flex gap-5  overflow-hidden rounded-xl">
+            <div className="mt-1 flex gap-5  overflow-hidden rounded-xl">
                 {
                     ordenes.map((orden) => (
                         <OrderCard

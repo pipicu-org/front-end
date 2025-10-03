@@ -14,9 +14,10 @@ interface SummaryProps {
     setSearch: (search: string) => void;
     page: number;
     setPage: (page: number) => void;
+    onOrderStateChange?: () => void;
 }
 
-const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados, search, setSearch, page, setPage}: SummaryProps) => {
+const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados, search, setSearch, page, setPage, onOrderStateChange}: SummaryProps) => {
 
     const [modal, setModal] = useState(true);
 
@@ -48,15 +49,15 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                 <div className="flex flex-col gap-2">
                     {modal ? (
                         <>
-                            <CardKanban cambiarOrden={cambiarOrden} estado="Creados" ordenes={creados} />
-                            <CardKanban cambiarOrden={cambiarOrden} estado="Pendientes" ordenes={pendientes} />
-                            <CardKanban cambiarOrden={cambiarOrden} estado="Preparados" ordenes={preparados} />
-                            <CardKanban cambiarOrden={cambiarOrden} estado="En Camino" ordenes={enCamino} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Creados" ordenes={creados} onOrderStateChange={onOrderStateChange} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Pendientes" ordenes={pendientes} onOrderStateChange={onOrderStateChange} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Preparados" ordenes={preparados} onOrderStateChange={onOrderStateChange} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="En Camino" ordenes={enCamino} onOrderStateChange={onOrderStateChange} />
                         </>
                     ): (
                         <>
-                            <CardKanban cambiarOrden={cambiarOrden} estado="Entregados" ordenes={entregados} />
-                            <CardKanban cambiarOrden={cambiarOrden} estado="Cancelados" ordenes={cancelados} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Entregados" ordenes={entregados} onOrderStateChange={onOrderStateChange} />
+                            <CardKanban cambiarOrden={cambiarOrden} estado="Cancelados" ordenes={cancelados} onOrderStateChange={onOrderStateChange} />
                         </>
                     )}
                     
