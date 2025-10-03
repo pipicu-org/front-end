@@ -5,6 +5,7 @@ interface IOrder {
   id: string;
   state: ORDER_STATUS;
   client: string;
+  name: string;
   phone: string;
   address: string;
   deliveryTime: string;
