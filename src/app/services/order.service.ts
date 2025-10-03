@@ -1,4 +1,5 @@
 import api from "./api";
+import { IClient } from "../types/clients.type";
 
 // Interfaces para API
 interface IOrderLine {
@@ -103,5 +104,11 @@ export async function getOrdersByStateID(stateId: string, search: string = "", p
 // Eliminar cliente
 export async function deleteClient(id: number) {
   const { data } = await api.delete(`/client/${id}`);
+  return data;
+}
+
+// Actualizar estado de orden
+export async function updateOrderState(orderId: number, stateId: number) {
+  const { data } = await api.patch("/orders/state", { orderId, stateId });
   return data;
 }

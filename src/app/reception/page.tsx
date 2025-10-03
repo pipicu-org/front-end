@@ -33,6 +33,16 @@ const Reception = () => {
         }
     }, [search, page, limit]);
 
+    // Función para re-fetch todas las órdenes
+    const reloadAllOrders = useCallback(() => {
+        loadOrdersByState("1", setOrdenesCreados);
+        loadOrdersByState("2", setOrdenesPendientes);
+        loadOrdersByState("3", setOrdenesPreparados);
+        loadOrdersByState("4", setOrdenesEnCamino);
+        loadOrdersByState("5", setOrdenesEntregados);
+        loadOrdersByState("6", setOrdenesCancelados);
+    }, [loadOrdersByState]);
+
     useEffect(() => {
         // Cargar órdenes para todos los estados cuando cambie search o page
         loadOrdersByState("1", setOrdenesCreados); // Creados
@@ -47,13 +57,13 @@ const Reception = () => {
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
 
     const puedeCambiarEstado = (nuevoEstado: ORDER_UI_STATE): boolean => {
-        if (estadoOrden === "nueva" && (nuevoEstado === "ver" || nuevoEstado === "default")) {
-            return window.confirm("Hay cambios sin guardar");
-        }
+        // if (estadoOrden === "nueva" && (nuevoEstado === "ver" || nuevoEstado === "default")) {
+        //     return window.confirm("Hay cambios sin guardar");
+        // }
 
-        if (estadoOrden === "editar" && (nuevoEstado === "ver" || nuevoEstado === "nueva")) {
-            return window.confirm("Hay cambios sin guardar");
-        }
+        // if (estadoOrden === "editar" && (nuevoEstado === "ver" || nuevoEstado === "nueva")) {
+        //     return window.confirm("Hay cambios sin guardar");
+        // }
 
         return true;
     };
@@ -117,6 +127,7 @@ const Reception = () => {
                     setSearch={setSearch}
                     page={page}
                     setPage={setPage}
+                    onOrderStateChange={reloadAllOrders}
                 />
             </div>
             <div className="col-span-3 flex flex-col">

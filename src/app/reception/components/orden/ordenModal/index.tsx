@@ -7,6 +7,7 @@ import { searchClients } from "@/app/services/clients.service";
 import OrdenDefault from "../ordenDefault";
 import OrdenVer from "../ordenVer";
 import OrdenForm from "../ordenForm";
+import { IClient } from "@/app/types/clients.type";
 
 interface OrderModalProps {
     orden: IOrder | null;
@@ -19,8 +20,8 @@ const OrderModal = ({ orden, estado, setEstado, onSave }: OrderModalProps) => {
     const componentes: Record<ORDER_UI_STATE, ReactNode> = {
         default: <OrdenDefault />,
         ver: <OrdenVer orden={orden} estado={estado} />,
-        editar: <OrdenForm orden={orden} isEdit={true} onSave={onSave} />,
-        nueva: <OrdenForm orden={null} isEdit={false} onSave={onSave} />,
+        editar: <OrdenForm orden={orden} isEdit={true} onSave={onSave} onClose={() => setEstado('default')} />,
+        nueva: <OrdenForm orden={null} isEdit={false} onSave={onSave} onClose={() => setEstado('default')} />,
     };
 
     const [clients, setClients] = useState<IClient[]>([]);
@@ -39,7 +40,7 @@ const OrderModal = ({ orden, estado, setEstado, onSave }: OrderModalProps) => {
             <div className="flex flex-col h-full">
                 <div className="flex mt-4">
                     <div className="inline-flex  text-sm ml-auto">
-                        <Button onClick={() => setEstado("nueva")} className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-full">+ Nuevo</Button>
+                        <Button onPress={() => setEstado("nueva")} className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-full">+ Nuevo</Button>
                     </div>
                 </div>
                 <div

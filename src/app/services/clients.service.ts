@@ -1,7 +1,8 @@
 import api from "./api";
+import { IClient } from "../types/clients.type";
 
 // Crear cliente
-export async function createClient(client: IClient) {
+export async function createClient(client: Omit<IClient, 'id'>) {
   const { data } = await api.post("/client", client);
   return data;
 }
