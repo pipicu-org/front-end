@@ -57,13 +57,13 @@ const Reception = () => {
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
 
     const puedeCambiarEstado = (nuevoEstado: ORDER_UI_STATE): boolean => {
-        if (estadoOrden === "nueva" && (nuevoEstado === "ver" || nuevoEstado === "default")) {
-            return window.confirm("Hay cambios sin guardar");
-        }
+        // if (estadoOrden === "nueva" && (nuevoEstado === "ver" || nuevoEstado === "default")) {
+        //     return window.confirm("Hay cambios sin guardar");
+        // }
 
-        if (estadoOrden === "editar" && (nuevoEstado === "ver" || nuevoEstado === "nueva")) {
-            return window.confirm("Hay cambios sin guardar");
-        }
+        // if (estadoOrden === "editar" && (nuevoEstado === "ver" || nuevoEstado === "nueva")) {
+        //     return window.confirm("Hay cambios sin guardar");
+        // }
 
         return true;
     };

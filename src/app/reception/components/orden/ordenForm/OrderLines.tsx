@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Button, Divider } from "@heroui/react";
 
 interface IOrderLine {
     product: number;
@@ -13,30 +13,44 @@ interface OrderLinesProps {
 }
 
 const OrderLines = ({ lines, products, removeLine }: OrderLinesProps) => {
+    const getTotal = () => lines.reduce((sum, line) => {
+        const product = products.find(p => p.id === line.product);
+        return sum + ((product?.price || 0) * line.quantity);
+    }, 0);
+
     return (
         <div>
-            <h3 className="text-lg font-semibold mb-2">Productos en la Orden</h3>
+            <h3 className="text-lg font-semibold mb-2">Resumen</h3>
             <div className="p-2 max-h-64 overflow-y-auto">
                 {lines.length
                     ? lines.map((line, index) => {
-                        const product = products.find(p => p.id === line.product);
+                        const product = products.find(p => String(p.id) === String(line.product));
                         return (
-                            <div key={index} className="flex flex-col justify-between py-1 items-center border-b last:border-b-0">
-                                <div className="flex justify-between w-full items-center">
-                                    <span className="font-medium">{product?.name || `Producto ${line.product}`}</span>
-                                    <Button type="button" size="sm" onClick={() => removeLine(index)} color="danger" className="px-2 py-1">
-                                        🗑️
-                                    </Button>
-                                </div>
-                                <div className="flex justify-between w-full items-center">
+                            <div key={index} className="flex justify-between py-1 items-center last:border-b-0">
+                                <div className="flex items-center space-x-2">
                                     <span className="text-sm text-gray-600 ml-2">x{line.quantity}</span>
+                                    <span className="font-semibold text-left leading-4 w-24 max-w-24">{product?.name || `Producto ${line.product}`}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
                                     <span className="text-sm text-gray-600 ml-2">${((product?.price || 0) * line.quantity).toFixed(2)}</span>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full"
+                                        onPress={() => removeLine(index)}
+                                        color="danger">
+                                        x
+                                    </Button>
                                 </div>
                             </div>
                         );
                     })
                     : <p className="text-gray-500">No hay productos en la orden.</p>
                 }
+            </div>
+            <Divider className="my-2"/>
+            <div className="w-full flex justify-end font-semibold">
+                <span>{getTotal()}$</span>
             </div>
         </div>
     );
