@@ -4,7 +4,7 @@ import OrderCard from "../OrderCard";
 import { Dispatch, SetStateAction } from "react";
 
 interface CardKanbanProps {
-    estado: String,
+    estado: string,
     ordenes: IOrder[];
     cambiarOrden?: (nuevaOrden: IOrder) => void;
 }

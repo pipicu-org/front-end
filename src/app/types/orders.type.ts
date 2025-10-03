@@ -5,9 +5,9 @@ interface IOrder {
   id: string;
   state: ORDER_STATUS;
   client: string;
-  phone: String;
-  address: String;
+  phone: string;
+  address: string;
   deliveryTime: string;
-  paymentMethod: String;
+  paymentMethod: string;
   totalPrice: number;
 }

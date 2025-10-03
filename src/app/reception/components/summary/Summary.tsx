@@ -1,19 +1,22 @@
 import CardKanban from "@/app/components/cardKanban";
-import { Dispatch, SetStateAction } from "react";
 import { Button } from "@heroui/react";
 import { useState } from "react";
 
 interface SummaryProps {
-    cambiarOrden?: (nuevaOrden: IOrder) => void; 
+    cambiarOrden?: (nuevaOrden: IOrder) => void;
     creados: IOrder[];
     pendientes: IOrder[];
     preparados: IOrder[];
     enCamino: IOrder[];
     entregados: IOrder[];
     cancelados: IOrder[];
+    search: string;
+    setSearch: (search: string) => void;
+    page: number;
+    setPage: (page: number) => void;
 }
 
-const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados}: SummaryProps) => {
+const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entregados, cancelados, search, setSearch, page, setPage}: SummaryProps) => {
 
     const [modal, setModal] = useState(true);
 
@@ -27,8 +30,19 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                         <Button onClick={ () => setModal(false)} className="inline-flex items-center h-[30px] pl-4 pr-4 rounded-r-full">Histórico</Button>
                     </div>
                     <div className="inline-flex justify-center items-center rounded-full pl-3 pr-3">
-                        <input className="focus:outline-none focus:ring-0" type="text" placeholder="Buscar..." name="" id="" />
+                        <input
+                            className="focus:outline-none focus:ring-0"
+                            type="text"
+                            placeholder="Buscar..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
                         <img className="w-5 h-5 opacity-25" src="./lupa.png" alt="" />
+                    </div>
+                    <div className="inline-flex text-sm ml-4">
+                        <Button onClick={() => setPage(Math.max(1, page - 1))} className="h-[30px] px-3 rounded-l-full">Prev</Button>
+                        <span className="h-[30px] px-3 flex items-center bg-gray-200">{page}</span>
+                        <Button onClick={() => setPage(page + 1)} className="h-[30px] px-3 rounded-r-full">Next</Button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">

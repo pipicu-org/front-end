@@ -1,8 +1,61 @@
 import api from "./api";
 
-// Crear cliente
+// Interfaces para API
+interface IOrderLine {
+  product: number;
+  quantity: number;
+  personalizations: unknown[];
+}
+
+interface IOrderPayload {
+  client: number;
+  deliveryTime: string;
+  paymentMethod: string;
+  lines: IOrderLine[];
+}
+
+export interface IOrderDetailLine {
+  id: string;
+  product: string;
+  quantity: string;
+  totalPrice: number;
+  state: string;
+  personalization: unknown[];
+}
+
+export interface IOrderDetail {
+  id: string;
+  state: string;
+  client: string;
+  phone: string;
+  address: string;
+  deliveryTime: string;
+  paymentMethod: string;
+  totalPrice: string;
+  lines: IOrderDetailLine[];
+}
+
+// Crear orden
+export async function createOrder(order: IOrderPayload) {
+  const { data } = await api.post("/orders/reception", order);
+  return data;
+}
+
+// Actualizar orden
+export async function updateOrder(id: string, order: IOrderPayload) {
+  const { data } = await api.patch(`/orders/reception/${id}`, order);
+  return data;
+}
+
+// Obtener orden por ID
+export async function getOrderById(id: string): Promise<IOrderDetail> {
+  const { data } = await api.get(`/orders/reception/${id}`);
+  return data;
+}
+
+// Crear orden (legacy)
 export async function saveOrder(order: IOrder) {
-  const { data } = await api.post("/orders/reception", );
+  const { data } = await api.post("/orders/reception", order);
   return data;
 }
 
@@ -31,9 +84,9 @@ interface IGetOrders {
   data: IOrder[]
 }
 
-export async function getOrdersByStateID(id: string): Promise<IGetOrders> {
-  const { data }: { data: IGetOrders } = await api.get(`/orders/state?stateId=${id}`, {
-    params: { id },
+export async function getOrdersByStateID(stateId: string, search: string = "", page: number = 1, limit: number = 10): Promise<IGetOrders> {
+  const { data }: { data: IGetOrders } = await api.get(`/orders/state`, {
+    params: { stateId, search, page, limit },
   });
 
   return data;

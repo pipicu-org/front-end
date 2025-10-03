@@ -12,14 +12,15 @@ interface OrderModalProps {
     orden: IOrder | null;
     estado: ORDER_UI_STATE;
     setEstado: (nuevoEstado: ORDER_UI_STATE) => void;
+    onSave?: (order: IOrder) => void;
 }
 
-const OrderModal = ({ orden, estado, setEstado }: OrderModalProps) => {
+const OrderModal = ({ orden, estado, setEstado, onSave }: OrderModalProps) => {
     const componentes: Record<ORDER_UI_STATE, ReactNode> = {
         default: <OrdenDefault />,
         ver: <OrdenVer orden={orden} estado={estado} />,
-        editar: <OrdenForm />,
-        nueva: <OrdenForm />,
+        editar: <OrdenForm orden={orden} isEdit={true} onSave={onSave} />,
+        nueva: <OrdenForm orden={null} isEdit={false} onSave={onSave} />,
     };
 
     const [clients, setClients] = useState<IClient[]>([]);

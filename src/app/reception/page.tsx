@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // Componentes de Recepcion
 import Summary from "./components/summary/Summary";
@@ -10,32 +10,38 @@ import { getOrdersByStateID } from "../services/order.service";
 
 const Reception = () => {
 
-    interface IGetOrders {
-        search: string
-        total: number
-        page: number
-        limit: number
-        data: IOrder[]
-    }
-    const [orders, setOrders] = useState<IGetOrders>();
+    // Estados para órdenes por estado
+    const [ordenes_creados, setOrdenesCreados] = useState<IOrder[]>([]);
+    const [ordenes_pendientes, setOrdenesPendientes] = useState<IOrder[]>([]);
+    const [ordenes_preparados, setOrdenesPreparados] = useState<IOrder[]>([]);
+    const [ordenes_enCamino, setOrdenesEnCamino] = useState<IOrder[]>([]);
+    const [ordenes_entregados, setOrdenesEntregados] = useState<IOrder[]>([]);
+    const [ordenes_cancelados, setOrdenesCancelados] = useState<IOrder[]>([]);
+
+    // Estados para búsqueda y paginación
+    const [search, setSearch] = useState<string>("");
+    const [page, setPage] = useState<number>(1);
+    const [limit] = useState<number>(10);
+
+    // Función para cargar órdenes por estado
+    const loadOrdersByState = useCallback(async (stateId: string, setter: (orders: IOrder[]) => void) => {
+        try {
+            const response = await getOrdersByStateID(stateId, search, page, limit);
+            setter(response.data);
+        } catch (error) {
+            console.error(`Error loading orders for state ${stateId}:`, error);
+        }
+    }, [search, page, limit]);
+
     useEffect(() => {
-        getOrdersByStateID("1").then(orderResponse => {
-            setOrders(orderResponse);
-        }).catch(console.error)
-
-    }, []);
-
-
-    useEffect(() => {
-        console.log("ordenes: ", orders);
-
-    }, [orders])
-    const ordenes_creados: IOrder[] = [];
-    const ordenes_pendientes: IOrder[] = [];
-    const ordenes_preparados: IOrder[] = [];
-    const ordenes_enCamino: IOrder[] = [];
-    const ordenes_entregados: IOrder[] = [];
-    const ordenes_cancelados: IOrder[] = [];
+        // Cargar órdenes para todos los estados cuando cambie search o page
+        loadOrdersByState("1", setOrdenesCreados); // Creados
+        loadOrdersByState("2", setOrdenesPendientes); // Pendientes
+        loadOrdersByState("3", setOrdenesPreparados); // Preparados
+        loadOrdersByState("4", setOrdenesEnCamino); // En camino
+        loadOrdersByState("5", setOrdenesEntregados); // Entregado
+        loadOrdersByState("6", setOrdenesCancelados); // Cancelado
+    }, [loadOrdersByState]);
 
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
@@ -107,10 +113,22 @@ const Reception = () => {
                     enCamino={ordenes_enCamino}
                     entregados={ordenes_entregados}
                     cancelados={ordenes_cancelados}
+                    search={search}
+                    setSearch={setSearch}
+                    page={page}
+                    setPage={setPage}
                 />
             </div>
             <div className="col-span-3 flex flex-col">
-                <OrdenModal orden={ordenActiva} estado={estadoOrden} setEstado={cambiarEstado} />
+                <OrdenModal
+                    orden={ordenActiva}
+                    estado={estadoOrden}
+                    setEstado={cambiarEstado}
+                    onSave={(savedOrder) => {
+                        setOrdenActiva(savedOrder);
+                        cambiarEstado("ver");
+                    }}
+                />
             </div>
         </div>
     );
