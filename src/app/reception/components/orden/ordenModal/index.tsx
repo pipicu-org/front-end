@@ -8,6 +8,7 @@ import OrdenDefault from "../ordenDefault";
 import OrdenVer from "../ordenVer";
 import OrdenForm from "../ordenForm";
 import { IClient } from "@/app/types/clients.type";
+import { IOrder, ORDER_UI_STATE } from "@/app/types/orders.type";
 
 interface OrderModalProps {
     orden: IOrder | null;

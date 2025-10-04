@@ -8,6 +8,7 @@ import { createOrder, updateOrder } from "@/app/services/order.service";
 import { getProducts, createProduct, updateProduct, deleteProduct, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
+import { IOrder } from "@/app/types/orders.type";
 import { ICategory } from "@/app/types/categories.type";
 import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";

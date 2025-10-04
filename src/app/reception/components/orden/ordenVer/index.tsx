@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
 import { getOrderById, IOrderDetail, IOrderDetailLine } from "@/app/services/order.service";
+import { IOrder, ORDER_UI_STATE } from "@/app/types/orders.type";
 
 interface OrdenVerProps {
     orden: IOrder | null;

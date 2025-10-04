@@ -1,9 +1,9 @@
 "use client";
 import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import OrderStateCard from "../orderStateCard";
-import Order from "@/entities/order";
+import { IOrder } from "@/app/types/orders.type";
 
-const OrderStateColumn = ({ state, orders }: { state: string, orders: Order[] }) => {
+const OrderStateColumn = ({ state, orders }: { state: string, orders: IOrder[] }) => {
     return (
         <Card className="max-w-[400px]">
             <CardHeader className="flex gap-3">

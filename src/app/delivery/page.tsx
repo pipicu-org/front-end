@@ -1,11 +1,12 @@
 import CardKanban from "../components/cardKanban";
 import ordenesAleatorias from "../components/OrdenesAleatorias";
-import Order from "@/entities/order";
+import { IOrder } from "../types/orders.type";
+
 const Delivery = () => {
-	const ordenes_creados:Order[] = [];
-    const ordenes_pendientes:Order[] = [];
-    const ordenes_preparados:Order[] = [];
-    const ordenes_enCamino:Order[] = [];
+	const ordenes_creados:IOrder[] = [];
+    const ordenes_pendientes:IOrder[] = [];
+    const ordenes_preparados:IOrder[] = [];
+    const ordenes_enCamino:IOrder[] = [];
 
     ordenesAleatorias.map( (orden) => {
         if (orden.state == "Creados"){

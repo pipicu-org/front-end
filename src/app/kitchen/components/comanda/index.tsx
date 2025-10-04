@@ -22,10 +22,10 @@ const Comanda = () => {
                 {/* ~~~ Kanban ~~~ */}
 
                 <div className="flex flex-col mt-4">
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
+                    <CardKanban estado="Pendientes" ordenes={[]}></CardKanban>
+                    <CardKanban estado="Preparados" ordenes={[]}></CardKanban>
+                    <CardKanban estado="En camino" ordenes={[]}></CardKanban>
+                    <CardKanban estado="Entregado" ordenes={[]}></CardKanban>
                 </div>
             </div>
         </div>

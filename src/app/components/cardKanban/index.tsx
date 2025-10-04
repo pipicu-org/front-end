@@ -4,6 +4,7 @@ import OrderCard from "../OrderCard";
 import { useDrop } from "react-dnd";
 import { updateOrderState } from "../../services/order.service";
 import { useToast } from "@/utils/toast";
+import { IOrder } from "@/app/types/orders.type";
 
 interface CardKanbanProps {
     estado: string,

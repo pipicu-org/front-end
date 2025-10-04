@@ -1,6 +1,7 @@
 import CardKanban from "@/app/components/cardKanban";
 import { Button } from "@heroui/react";
 import { useState } from "react";
+import { IOrder } from "@/app/types/orders.type";
 
 interface SummaryProps {
     cambiarOrden?: (nuevaOrden: IOrder) => void;

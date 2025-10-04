@@ -7,6 +7,7 @@ import Summary from "./components/summary/Summary";
 import OrdenModal from "./components/orden/ordenModal";
 
 import { getOrdersByStateID } from "../services/order.service";
+import { IOrder, ORDER_UI_STATE } from "../types/orders.type";
 
 const Reception = () => {
 
