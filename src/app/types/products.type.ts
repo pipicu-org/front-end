@@ -7,7 +7,7 @@ export interface IProduct {
   id: number;
   name: string;
   price: number;
-  category: number;
+  category: string;
   ingredients: IIngredient[];
   image?: string;
 }
