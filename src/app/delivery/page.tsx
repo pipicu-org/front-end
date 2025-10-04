@@ -1,6 +1,6 @@
 import CardKanban from "../components/cardKanban";
 import ordenesAleatorias from "../components/OrdenesAleatorias";
-import Order from "@/entities/order";
+import { IOrder as Order } from '../types/orders.type';
 const Delivery = () => {
 	const ordenes_creados:Order[] = [];
     const ordenes_pendientes:Order[] = [];

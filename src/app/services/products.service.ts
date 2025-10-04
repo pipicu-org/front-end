@@ -1,4 +1,5 @@
 import api from "./api";
+import { IProduct, IIngredient } from "../types/products.type";
 
 // Interfaces
 interface IGetProducts {

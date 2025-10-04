@@ -1,13 +1,11 @@
 "use client";
 import { Button } from "@heroui/react";
-import { ReactNode, useEffect, useState } from "react";
-
-import { searchClients } from "@/app/services/clients.service";
+import { ReactNode } from "react";
 
 import OrdenDefault from "../ordenDefault";
 import OrdenVer from "../ordenVer";
 import OrdenForm from "../ordenForm";
-import { IClient } from "@/app/types/clients.type";
+import { IOrder, ORDER_UI_STATE } from "../../../../types/orders.type";
 
 interface OrderModalProps {
     orden: IOrder | null;
@@ -19,18 +17,10 @@ interface OrderModalProps {
 const OrderModal = ({ orden, estado, setEstado, onSave }: OrderModalProps) => {
     const componentes: Record<ORDER_UI_STATE, ReactNode> = {
         default: <OrdenDefault />,
-        ver: <OrdenVer orden={orden} estado={estado} />,
+        ver: <OrdenVer orden={orden} />,
         editar: <OrdenForm orden={orden} isEdit={true} onSave={onSave} onClose={() => setEstado('default')} />,
         nueva: <OrdenForm orden={null} isEdit={false} onSave={onSave} onClose={() => setEstado('default')} />,
     };
-
-    const [clients, setClients] = useState<IClient[]>([]);
-
-    useEffect(() => {
-        searchClients('', 1).then(clientsResponse => {
-            setClients(clientsResponse.data)
-        }).catch(console.error);
-    }, []);
 
     return (
         <div className="flex flex-col h-full">
