@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react";
 import OrderStateCard from "../orderStateCard";
-import Order from "@/entities/order";
+import { IOrder as Order } from "../../../types/orders.type";
 
 const OrderStateColumn = ({ state, orders }: { state: string, orders: Order[] }) => {
     return (

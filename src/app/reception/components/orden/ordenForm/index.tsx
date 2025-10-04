@@ -11,6 +11,8 @@ import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
 import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";
+import { IOrder } from "../../../../types/orders.type";
+import { IProduct } from "../../../../types/products.type";
 import ClientSelector from "./ClientSelector";
 import ProductGrid from "./ProductGrid";
 import OrderLines from "./OrderLines";
@@ -338,7 +340,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 productModalOpen={productModalOpen}
                 setProductModalOpen={setProductModalOpen}
                 productModalMode={productModalMode}
-                selectedProduct={selectedProduct}
+                
                 productForm={productForm}
                 setProductForm={setProductForm}
                 categories={categories}

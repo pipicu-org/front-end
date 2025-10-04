@@ -5,13 +5,13 @@ import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
 import { getOrderById, IOrderDetail, IOrderDetailLine } from "@/app/services/order.service";
+import { IOrder } from "@/app/types/orders.type";
 
 interface OrdenVerProps {
     orden: IOrder | null;
-    estado: ORDER_UI_STATE;
 }
 
-const OrdenVer = ({ orden, estado }: OrdenVerProps) => {
+const OrdenVer = ({ orden }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 

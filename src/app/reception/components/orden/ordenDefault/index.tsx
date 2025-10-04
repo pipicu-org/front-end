@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 const OrdenDefault = () => {
 
@@ -8,9 +9,9 @@ const OrdenDefault = () => {
             <div>
                 <div>
                     <h1 className="text-5xl font-black">20:02</h1>
-                    <img src="relog" alt="" />
+                    <Image src="relog" alt="" width={150} height={150} />
                 </div>
-                <span className="text-sm font-ligh">Nuevo pedido en 30'</span>
+                <span className="text-sm font-light">Nuevo pedido en 30&rsquo;</span>
             </div>
             <h1 className=" font-black text-[60px] opacity-40 pt-4">+ORDEN</h1>
         </div>

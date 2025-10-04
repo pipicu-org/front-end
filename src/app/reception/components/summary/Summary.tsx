@@ -1,6 +1,8 @@
 import CardKanban from "@/app/components/cardKanban";
 import { Button } from "@heroui/react";
 import { useState } from "react";
+import Image from "next/image";
+import { IOrder } from "../../../types/orders.type";
 
 interface SummaryProps {
     cambiarOrden?: (nuevaOrden: IOrder) => void;
@@ -38,7 +40,7 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <img className="w-5 h-5 opacity-25" src="./lupa.png" alt="" />
+                        <Image className="w-5 h-5 opacity-25" src="/lupa.png" alt="" width={20} height={20} />
                     </div>
                     <div className="inline-flex text-sm ml-4">
                         <Button onPress={() => setPage(Math.max(1, page - 1))} className="h-[30px] px-3 rounded-l-full">Prev</Button>
