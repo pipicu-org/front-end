@@ -205,7 +205,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
             setProductForm({
                 name: product.name,
                 price: product.price,
-                category: product.category,
+                category: categories.find(c => c.name === product.category)?.id || 1,
                 ingredients: product.ingredients
             });
         } else {

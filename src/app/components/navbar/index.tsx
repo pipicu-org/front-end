@@ -9,6 +9,7 @@ const Navbar = () => {
       <li><Link href="/reception">Recepción</Link></li>
       <li><Link href="/kitchen">Cocina</Link></li>
       <li><Link href="/delivery">Entrega</Link></li>
+      <li><Link href="/products">Productos</Link></li>
     </ul> 
     <span className="font-poppins text-brand font-black text-xl">19:32</span>
   </div>
