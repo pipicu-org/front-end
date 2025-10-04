@@ -1,19 +1,20 @@
+import React from "react";
 import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
-import { IClient } from "@/app/types/clients.type";
+
+type ClientFormType = {
+    name: string;
+    phoneNumber: string;
+    address: string;
+    facebookUsername: string;
+    instagramUsername: string;
+};
 
 interface ClientModalProps {
     clientModalOpen: boolean;
     setClientModalOpen: (open: boolean) => void;
     clientModalMode: 'create' | 'edit';
-    selectedClient: IClient | null;
-    clientForm: {
-        name: string;
-        phoneNumber: string;
-        address: string;
-        facebookUsername?: string;
-        instagramUsername?: string;
-    };
-    setClientForm: (form: any) => void;
+    clientForm: ClientFormType;
+    setClientForm: React.Dispatch<React.SetStateAction<ClientFormType>>;
     clientModalLoading: boolean;
     clientModalError: string | null;
     saveClient: () => void;
@@ -23,7 +24,6 @@ const ClientModal = ({
     clientModalOpen,
     setClientModalOpen,
     clientModalMode,
-    selectedClient,
     clientForm,
     setClientForm,
     clientModalLoading,
@@ -39,30 +39,30 @@ const ClientModal = ({
                     <Input
                         label="Nombre"
                         value={clientForm.name}
-                        onChange={(e) => setClientForm((prev: any) => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, name: e.target.value }))}
                         required
                     />
                     <Input
                         label="Teléfono"
                         value={clientForm.phoneNumber}
-                        onChange={(e) => setClientForm((prev: any) => ({ ...prev, phoneNumber: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, phoneNumber: e.target.value }))}
                         required
                     />
                     <Input
                         label="Dirección"
                         value={clientForm.address}
-                        onChange={(e) => setClientForm((prev: any) => ({ ...prev, address: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, address: e.target.value }))}
                         required
                     />
                     <Input
                         label="Usuario Facebook (opcional)"
                         value={clientForm.facebookUsername || ''}
-                        onChange={(e) => setClientForm((prev: any) => ({ ...prev, facebookUsername: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, facebookUsername: e.target.value }))}
                     />
                     <Input
                         label="Usuario Instagram (opcional)"
                         value={clientForm.instagramUsername || ''}
-                        onChange={(e) => setClientForm((prev: any) => ({ ...prev, instagramUsername: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, instagramUsername: e.target.value }))}
                     />
                 </ModalBody>
                 <ModalFooter>

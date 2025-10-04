@@ -1,4 +1,5 @@
 import CardKanban from "@/app/components/cardKanban";
+import Image from "next/image";
 
 const Comanda = () => {
     return (
@@ -14,7 +15,7 @@ const Comanda = () => {
                     <h1><span>5</span> Comandas en curso</h1>
                     <div className="inline-flex justify-center items-center rounded-full pl-3 pr-3">
                         <input className="" type="text" placeholder="Buscar..." name="" id="" />
-                        <img className="w-5 h-5 opacity-25" src="./lupa.png" alt="" />
+                        <Image className="w-5 h-5 opacity-25" src="/lupa.png" alt="" width={20} height={20} />
                     </div>
 
                 </div>
@@ -22,10 +23,10 @@ const Comanda = () => {
                 {/* ~~~ Kanban ~~~ */}
 
                 <div className="flex flex-col mt-4">
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
-                    <CardKanban></CardKanban>
+                    <CardKanban estado="Creados" ordenes={[]}></CardKanban>
+                    <CardKanban estado="Pendientes" ordenes={[]}></CardKanban>
+                    <CardKanban estado="Preparados" ordenes={[]}></CardKanban>
+                    <CardKanban estado="En Camino" ordenes={[]}></CardKanban>
                 </div>
             </div>
         </div>

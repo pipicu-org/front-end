@@ -1,5 +1,6 @@
 import api from "./api";
 import { IClient } from "../types/clients.type";
+import { IOrder } from "../types/orders.type";
 
 // Interfaces para API
 interface IOrderLine {

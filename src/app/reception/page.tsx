@@ -7,6 +7,7 @@ import Summary from "./components/summary/Summary";
 import OrdenModal from "./components/orden/ordenModal";
 
 import { getOrdersByStateID } from "../services/order.service";
+import { IOrder, ORDER_UI_STATE } from "../types/orders.type";
 
 const Reception = () => {
 
@@ -56,21 +57,13 @@ const Reception = () => {
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
 
-    const puedeCambiarEstado = (nuevoEstado: ORDER_UI_STATE): boolean => {
-        // if (estadoOrden === "nueva" && (nuevoEstado === "ver" || nuevoEstado === "default")) {
-        //     return window.confirm("Hay cambios sin guardar");
-        // }
-
-        // if (estadoOrden === "editar" && (nuevoEstado === "ver" || nuevoEstado === "nueva")) {
-        //     return window.confirm("Hay cambios sin guardar");
-        // }
-
+    const puedeCambiarEstado = (): boolean => {
         return true;
     };
 
 
     const cambiarEstado = (nuevoEstado: ORDER_UI_STATE) => {
-        if (puedeCambiarEstado(nuevoEstado)) setEstadoOrden(nuevoEstado);
+        if (puedeCambiarEstado()) setEstadoOrden(nuevoEstado);
     };
 
     const cambiarOrden = (nuevaOrden: IOrder) => {
@@ -78,7 +71,7 @@ const Reception = () => {
             setOrdenActiva(nuevaOrden);
             cambiarEstado("ver");
         } else {
-            if (puedeCambiarEstado("ver")) {
+            if (puedeCambiarEstado()) {
                 setOrdenActiva(nuevaOrden);
                 cambiarEstado("ver");
             }

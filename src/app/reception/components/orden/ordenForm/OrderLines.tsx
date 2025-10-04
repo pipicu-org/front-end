@@ -1,4 +1,5 @@
 import { Button, Divider } from "@heroui/react";
+import { IProduct } from "../../../../types/products.type";
 
 interface IOrderLine {
     product: number;

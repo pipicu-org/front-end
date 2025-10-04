@@ -178,7 +178,6 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
                 clientModalOpen={clientManagementModalOpen}
                 setClientModalOpen={setClientManagementModalOpen}
                 clientModalMode={clientManagementMode}
-                selectedClient={selectedClient}
                 clientForm={clientForm}
                 setClientForm={setClientForm}
                 clientModalLoading={clientManagementLoading}

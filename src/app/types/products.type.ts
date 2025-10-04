@@ -1,30 +1,30 @@
-interface IIngredient {
+export interface IIngredient {
   id: number;
   quantity: number;
 }
 
-interface IProduct {
+export interface IProduct {
   id: number;
   name: string;
   price: number;
-  category: number;
+  category: string;
   ingredients: IIngredient[];
   image?: string;
 }
 
-interface IProductCategory {
+export interface IProductCategory {
   id: number;
   name: string;
 }
 
-interface IGetProducts {
+export interface IGetProducts {
   data: IProduct[];
   total: number;
   page: number;
   limit: number;
 }
 
-interface IProductPayload {
+export interface IProductPayload {
   name: string;
   price: number;
   category: number;

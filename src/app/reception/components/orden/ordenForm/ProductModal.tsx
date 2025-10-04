@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { Button, Input, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 
@@ -7,18 +7,19 @@ interface IIngredient {
     quantity: number;
 }
 
+type ProductFormType = {
+    name: string;
+    price: number;
+    category: number;
+    ingredients: IIngredient[];
+};
+
 interface ProductModalProps {
     productModalOpen: boolean;
     setProductModalOpen: (open: boolean) => void;
     productModalMode: 'create' | 'edit';
-    selectedProduct: IProduct | null;
-    productForm: {
-        name: string;
-        price: number;
-        category: number;
-        ingredients: IIngredient[];
-    };
-    setProductForm: (form: any) => void;
+    productForm: ProductFormType;
+    setProductForm: React.Dispatch<React.SetStateAction<ProductFormType>>;
     categories: ICategory[];
     productModalLoading: boolean;
     productModalError: string | null;
@@ -30,7 +31,6 @@ const ProductModal = ({
     productModalOpen,
     setProductModalOpen,
     productModalMode,
-    selectedProduct,
     productForm,
     setProductForm,
     categories,
@@ -48,20 +48,20 @@ const ProductModal = ({
                     <Input
                         label="Nombre"
                         value={productForm.name}
-                        onChange={(e) => setProductForm((prev: any) => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) => setProductForm((prev: ProductFormType) => ({ ...prev, name: e.target.value }))}
                         required
                     />
                     <Input
                         label="Precio"
                         type="number"
                         value={productForm.price.toString()}
-                        onChange={(e) => setProductForm((prev: any) => ({ ...prev, price: Number(e.target.value) }))}
+                        onChange={(e) => setProductForm((prev: ProductFormType) => ({ ...prev, price: Number(e.target.value) }))}
                         required
                     />
                     <Select
                         label="Categoría"
                         selectedKeys={[productForm.category.toString()]}
-                        onSelectionChange={(keys) => setProductForm((prev: any) => ({ ...prev, category: Number(Array.from(keys)[0]) }))}
+                        onSelectionChange={(keys) => setProductForm((prev: ProductFormType) => ({ ...prev, category: Number(Array.from(keys)[0]) }))}
                     >
                         {categories.map((category) => (
                             <SelectItem key={category.id.toString()}>
@@ -80,7 +80,7 @@ const ProductModal = ({
                                     onChange={(e) => {
                                         const newIngs = [...productForm.ingredients];
                                         newIngs[index].id = Number(e.target.value);
-                                        setProductForm((prev: any) => ({ ...prev, ingredients: newIngs }));
+                                        setProductForm((prev: ProductFormType) => ({ ...prev, ingredients: newIngs }));
                                     }}
                                 />
                                 <Input
@@ -90,18 +90,18 @@ const ProductModal = ({
                                     onChange={(e) => {
                                         const newIngs = [...productForm.ingredients];
                                         newIngs[index].quantity = Number(e.target.value);
-                                        setProductForm((prev: any) => ({ ...prev, ingredients: newIngs }));
+                                        setProductForm((prev: ProductFormType) => ({ ...prev, ingredients: newIngs }));
                                     }}
                                 />
                                 <Button type="button" onPress={() => {
                                     const newIngs = productForm.ingredients.filter((_, i) => i !== index);
-                                    setProductForm((prev: any) => ({ ...prev, ingredients: newIngs }));
+                                    setProductForm((prev: ProductFormType) => ({ ...prev, ingredients: newIngs }));
                                 }} color="danger" size="sm">
                                     X
                                 </Button>
                             </div>
                         ))}
-                        <Button type="button" onPress={() => setProductForm((prev: any) => ({
+                        <Button type="button" onPress={() => setProductForm((prev: ProductFormType) => ({
                             ...prev,
                             ingredients: [...prev.ingredients, { id: 1, quantity: 1 }]
                         }))} size="sm">

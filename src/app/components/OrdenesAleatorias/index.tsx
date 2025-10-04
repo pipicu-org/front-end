@@ -1,4 +1,4 @@
-import Order from '@/entities/order'; // Ajusta la ruta según tu proyecto
+import { IOrder as Order } from '@/app/types/orders.type';
 
 const states: Order["state"][] = ["Creados", "Pendientes", "Preparados", "En camino", "Entregado", "Cancelado"];
 const paymentMethods: Order["paymentMethod"][] = ["Efectivo", "Tarjeta"];
@@ -13,6 +13,7 @@ const ordenesAleatorias: Order[] = Array.from({ length: 100 }, (_, i) => ({
   id: (i + 1).toString(),
   state: randomItem(states),
   client: `${randomItem(names)} ${randomItem(surnames)}`,
+  name: `Pedido ${i + 1}`,
   phone: (Math.floor(Math.random() * 9000000000) + 1000000000).toString(),
   address: `Calle ${String.fromCharCode(65 + (i % 26))} ${Math.floor(Math.random() * 100 + 1)}`,
   deliveryTime: randomHour(),

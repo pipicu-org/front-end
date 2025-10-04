@@ -1,7 +1,7 @@
-type ORDER_STATUS = "Creados" | "Pendientes" | "Preparados" | "En camino" | "Entregado" | "Cancelado";
-type ORDER_UI_STATE = "default" | "ver" | "editar" | "nueva";
+export type ORDER_STATUS = "Creados" | "Pendientes" | "Preparados" | "En camino" | "Entregado" | "Cancelado";
+export type ORDER_UI_STATE = "default" | "ver" | "editar" | "nueva";
 
-interface IOrder {
+export interface IOrder {
   id: string;
   state: ORDER_STATUS;
   client: string;

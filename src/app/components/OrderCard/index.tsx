@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@heroui/react";
 import { useDrag } from "react-dnd";
+import { IOrder } from "../../types/orders.type";
 
 interface OrdenProps {
     orden: IOrder;

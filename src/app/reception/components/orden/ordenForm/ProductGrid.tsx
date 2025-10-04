@@ -1,5 +1,6 @@
-import { Button, Select, SelectItem, Card, CardBody, Divider, Tabs, Tab } from "@heroui/react";
+import { Button, Card, CardBody, Divider, Tabs, Tab } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
+import { IProduct } from "../../../../types/products.type";
 
 interface IOrderLine {
     product: number;

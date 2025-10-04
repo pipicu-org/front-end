@@ -1,4 +1,5 @@
 import api from "./api";
+import { IProduct, IIngredient } from "../types/products.type";
 
 // Interfaces
 interface IGetProducts {
@@ -47,7 +48,8 @@ export async function getProductById(id: number): Promise<IProduct> {
 }
 
 // Obtener productos por categoría
-export async function getProductsByCategory(categoryId: number): Promise<IGetProducts> {
-  const { data }: { data: IGetProducts } = await api.get(`/products/category/${categoryId}`);
+export async function getProductsByCategory(categoryId: number, page: number = 1, limit: number = 10): Promise<IGetProducts> {
+  const params: Record<string, unknown> = { page, limit };
+  const { data }: { data: IGetProducts } = await api.get(`/products/category/${categoryId}`, { params });
   return data;
 }
