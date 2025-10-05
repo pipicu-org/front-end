@@ -70,10 +70,19 @@ body {
   min-height: 100vh;
   height: auto;
   margin: 0;
-  padding-left: 150px;
-  padding-right: 150px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding: 30px 20px;
   /* padding-bottom: 40px; */
   background: #f0e6d1, radial-gradient(135.4% 93.48% at 61.18% 32.64%, rgba(250, 245, 241, 0) 18.23%, #e7dadc 65.1%, #dbc7ca 71.88%);
+}
+
+@media (min-width: 768px) {
+  body {
+    padding: 30px 50px;
+  }
+}
+
+@media (min-width: 1200px) {
+  body {
+    padding: 30px 150px;
+  }
 }

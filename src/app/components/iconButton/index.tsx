@@ -20,7 +20,7 @@ const IconButton = ({nombre, icon, onPress, selected} : IconButtonProps) => {
 
     return (
         <Button style={style} className={`flex flex-col items-center justify-center w-[90px] h-[70px] rounded-2xl ${selected ? 'ring-2 ring-blue-500' : ''}`} onPress={onPress}>
-            <Image src={`/icons/${icon}.svg`} alt="" width={20} height={20} className="w-[20px] " />
+            <Image src={`/icons/${icon}.svg`} alt={nombre} width={20} height={20} className="w-[20px]" loading="lazy" />
             <span className="text-dark">{nombre}</span>
         </Button>
     )
