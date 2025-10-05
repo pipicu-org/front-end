@@ -17,7 +17,7 @@ const OrderLines = ({ lines, products, selectedProducts }: OrderLinesProps) => {
     return (
         <div>
             <h3 className="text-lg font-semibold mb-2">Resumen</h3>
-            <div className="p-2 max-h-64 overflow-y-auto">
+            <div className="p-2 md:max-h-64 overflow-y-auto">
                 {lines.length
                     ? lines.map((line, index) => {
                         const product = selectedProducts[line.product] || products.find(p => p.id === line.product);
