@@ -65,7 +65,6 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
     const [loading, setLoading] = useState(false);
     const [phone, setPhone] = useState<string>(orden?.phone || "");
     const [address, setAddress] = useState<string>(orden?.address || "");
-    const [currentTime, setCurrentTime] = useState('');
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: number]: IProduct }>({});
 
@@ -156,22 +155,6 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         loadProducts();
     }, [selectedCategory]);
 
-    useEffect(() => {
-        const updateTime = () => {
-            const formatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'America/Buenos_Aires',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            setCurrentTime(formatter.format(new Date()));
-        };
-
-        updateTime();
-        const interval = setInterval(updateTime, 60000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     useEffect(() => {
         const calculateTotal = () => {
@@ -265,18 +248,6 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         });
     };
 
-    // Función para agregar producto a la orden
-    const upsertOrderProduct = (product: IProduct) => {
-        const quantity = productQuantities[product.id] || 0;
-        if (quantity > 0) {
-            const existingIndex = lines.findIndex(line => String(line.product) === String(product.id));
-            if (existingIndex >= 0) {
-                updateLine(existingIndex, 'quantity', quantity);
-            } else {
-                setLines([...lines, { product: Number(product.id), quantity, personalizations: [] }]);
-            }
-        }
-    };
 
     // Función para abrir modal de producto
     const openProductModal = (mode: 'create' | 'edit', product?: IProduct) => {
@@ -419,10 +390,8 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                         categoriesError={categoriesError}
                         selectedCategory={selectedCategory}
                         setSelectedCategory={setSelectedCategory}
-                        lines={lines}
                         productQuantities={productQuantities}
                         changeProductQuantity={changeProductQuantity}
-                        upsertOrderProduct={upsertOrderProduct}
                         openProductModal={openProductModal}
                     />
                 </div>

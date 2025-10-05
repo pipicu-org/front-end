@@ -2,12 +2,6 @@ import { Button, Card, CardBody, Divider, Tabs, Tab } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 import { IProduct } from "../../../../types/products.type";
 
-interface IOrderLine {
-    product: number;
-    quantity: number;
-    personalizations: unknown[];
-}
-
 interface ProductGridProps {
     products: IProduct[];
     productLoading: boolean;
@@ -17,10 +11,8 @@ interface ProductGridProps {
     categoriesError: string | null;
     selectedCategory: number | undefined;
     setSelectedCategory: (category: number | undefined) => void;
-    lines: IOrderLine[];
     productQuantities: { [key: number]: number };
     changeProductQuantity: (productId: number, delta: number) => void;
-    upsertOrderProduct: (product: IProduct) => void;
     openProductModal: (mode: 'create' | 'edit', product?: IProduct) => void;
 }
 
@@ -33,10 +25,8 @@ const ProductGrid = ({
     categoriesError,
     selectedCategory,
     setSelectedCategory,
-    lines,
     productQuantities,
     changeProductQuantity,
-    upsertOrderProduct,
     openProductModal
 }: ProductGridProps) => {
 
