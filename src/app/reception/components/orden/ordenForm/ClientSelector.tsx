@@ -124,7 +124,6 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
             <div className="flex items-center space-x-2">
                 <Input
                     label="Cliente"
-                    placeholder="Buscar cliente"
                     value={clients.find(c => String(c.id) === String(client))?.name || ""}
                     readOnly
                 />

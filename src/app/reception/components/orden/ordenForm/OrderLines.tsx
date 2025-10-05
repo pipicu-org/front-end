@@ -14,7 +14,7 @@ interface OrderLinesProps {
     removeLine: (index: number) => void;
 }
 
-const OrderLines = ({ lines, products, selectedProducts, removeLine }: OrderLinesProps) => {
+const OrderLines = ({ lines, products, selectedProducts }: OrderLinesProps) => {
     return (
         <div>
             <h3 className="text-lg font-semibold mb-2">Resumen</h3>
@@ -30,14 +30,6 @@ const OrderLines = ({ lines, products, selectedProducts, removeLine }: OrderLine
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-sm text-gray-600 ml-2">${((product?.price || 0) * line.quantity).toFixed(2)}</span>
-                                    <Button
-                                        type="button"
-                                        size="sm"
-                                        className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full"
-                                        onPress={() => removeLine(index)}
-                                        color="danger">
-                                        x
-                                    </Button>
                                 </div>
                             </div>
                         );

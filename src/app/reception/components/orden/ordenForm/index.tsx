@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Input as HeroInput } from "@heroui/react";
+import { Button, Divider, Input as HeroInput } from "@heroui/react";
 import { createOrder, updateOrder } from "@/app/services/order.service";
 import { getProducts, createProduct, updateProduct, deleteProduct, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
@@ -430,8 +430,9 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 <div className="md:col-span-2 flex flex-col space-y-4">
                     <OrderLines lines={lines} products={products} selectedProducts={selectedProducts} removeLine={removeLine} />
 
-                    <div className="mb-4">
-                        <h3 className="font-black text-lg">Total: ${total.toFixed(2)}</h3>
+                    <Divider />
+                    <div className="flex justify-end mb-4">
+                        <h3 className="font-black text-lg">${total.toFixed(2)}</h3>
                     </div>
 
                     <div className="mt-100">
