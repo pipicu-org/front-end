@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Button } from "@heroui/react";
 
 // Componentes de Recepcion
 import Summary from "./components/summary/Summary";
@@ -56,6 +57,15 @@ const Reception = () => {
 
     const [ordenActiva, setOrdenActiva] = useState<IOrder | null>(null);
     const [estadoOrden, setEstadoOrden] = useState<ORDER_UI_STATE>("default");
+    const [isMobile, setIsMobile] = useState(false);
+    const [saveOrderCallback, setSaveOrderCallback] = useState<(() => void) | null>(null);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const puedeCambiarEstado = (): boolean => {
         return true;
@@ -105,37 +115,94 @@ const Reception = () => {
     // }
 
 
-    return (
-        <div className="grid grid-cols-7 gap-6 h-full">
-            <div className="col-span-4 h-full">
-                <Summary
-                    cambiarOrden={cambiarOrden}
-                    creados={ordenes_creados}
-                    pendientes={ordenes_pendientes}
-                    preparados={ordenes_preparados}
-                    enCamino={ordenes_enCamino}
-                    entregados={ordenes_entregados}
-                    cancelados={ordenes_cancelados}
-                    search={search}
-                    setSearch={setSearch}
-                    page={page}
-                    setPage={setPage}
-                    onOrderStateChange={reloadAllOrders}
-                />
+    if (isMobile) {
+        return (
+            <div className="min-h-screen relative">
+                {ordenActiva || estadoOrden === 'nueva' ? (
+                    <OrdenModal
+                        orden={ordenActiva}
+                        estado={estadoOrden}
+                        setEstado={cambiarEstado}
+                        setSaveOrderCallback={setSaveOrderCallback}
+                        isMobile={isMobile}
+                        onSave={(savedOrder) => {
+                            setOrdenActiva(savedOrder);
+                            cambiarEstado("ver");
+                            reloadAllOrders();
+                        }}
+                    />
+                ) : (
+                    <Summary
+                        cambiarOrden={cambiarOrden}
+                        creados={ordenes_creados}
+                        pendientes={ordenes_pendientes}
+                        preparados={ordenes_preparados}
+                        enCamino={ordenes_enCamino}
+                        entregados={ordenes_entregados}
+                        cancelados={ordenes_cancelados}
+                        search={search}
+                        setSearch={setSearch}
+                        page={page}
+                        setPage={setPage}
+                        onOrderStateChange={reloadAllOrders}
+                        isMobile={isMobile}
+                    />
+                )}
+                <div className="fixed bottom-4 right-4">
+                    <Button
+                        isIconOnly
+                        color="primary"
+                        size="lg"
+                        onPress={() => {
+                            if (estadoOrden === 'nueva' && saveOrderCallback) {
+                                saveOrderCallback();
+                            } else {
+                                setOrdenActiva(null);
+                                cambiarEstado("nueva");
+                            }
+                        }}
+                        className="rounded-full shadow-lg"
+                    >
+                        {estadoOrden === 'nueva' ? '✓' : '+'}
+                    </Button>
+                </div>
             </div>
-            <div className="col-span-3 flex flex-col">
-                <OrdenModal
-                    orden={ordenActiva}
-                    estado={estadoOrden}
-                    setEstado={cambiarEstado}
-                    onSave={(savedOrder) => {
-                        setOrdenActiva(savedOrder);
-                        cambiarEstado("ver");
-                    }}
-                />
+        );
+    } else {
+        return (
+            <div className="grid grid-cols-7 gap-6 min-h-screen">
+                <div className="col-span-4 h-full">
+                    <Summary
+                        cambiarOrden={cambiarOrden}
+                        creados={ordenes_creados}
+                        pendientes={ordenes_pendientes}
+                        preparados={ordenes_preparados}
+                        enCamino={ordenes_enCamino}
+                        entregados={ordenes_entregados}
+                        cancelados={ordenes_cancelados}
+                        search={search}
+                        setSearch={setSearch}
+                        page={page}
+                        setPage={setPage}
+                        onOrderStateChange={reloadAllOrders}
+                        isMobile={isMobile}
+                    />
+                </div>
+                <div className="col-span-3 flex flex-col">
+                    <OrdenModal
+                        orden={ordenActiva}
+                        estado={estadoOrden}
+                        setEstado={cambiarEstado}
+                        onSave={(savedOrder) => {
+                            setOrdenActiva(savedOrder);
+                            cambiarEstado("ver");
+                            reloadAllOrders();
+                        }}
+                    />
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 export default Reception;

@@ -53,7 +53,7 @@ const ProductGrid = ({
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col md:flex-row md:flex-wrap gap-2 mt-4 max-h-96">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-2 mt-4 md:max-h-96">
                 {products.map((product) => (
                     <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">

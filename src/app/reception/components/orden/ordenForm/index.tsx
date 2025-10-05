@@ -1,8 +1,8 @@
 
-
 "use client";
 
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Button, Divider, Input as HeroInput } from "@heroui/react";
 import { createOrder, updateOrder } from "@/app/services/order.service";
 import { getProducts, createProduct, updateProduct, deleteProduct, getProductsByCategory } from "@/app/services/products.service";
@@ -41,7 +41,7 @@ interface IOrderPayload {
     address: string;
 }
 
-const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
+const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps, ref) => {
     const { showToast } = useToast();
     const [client, setClient] = useState<number>(orden?.client ? Number(orden.client) : 0);
     const [deliveryTime, setDeliveryTime] = useState<string>(() => {
@@ -324,8 +324,12 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        submitForm: handleSubmit
+    }));
+
     return (
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-2 md:p-6 space-y-2 md:space-y-4">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
                 <Button
@@ -337,8 +341,8 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="md:col-span-3 flex flex-col space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4">
+                <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-4">
                     <ClientSelector
                         client={client}
                         setClient={setClient}
@@ -396,7 +400,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                     />
                 </div>
 
-                <div className="md:col-span-2 flex flex-col space-y-4">
+                <div className="md:col-span-2 flex flex-col space-y-2 md:space-y-4">
                     <OrderLines lines={lines} products={products} selectedProducts={selectedProducts} removeLine={removeLine} />
 
                     <Divider />
@@ -428,6 +432,8 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
             />
         </form>
     );
-};
+});
+
+OrdenForm.displayName = 'OrdenForm';
 
 export default OrdenForm;
