@@ -138,20 +138,32 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                 <ModalContent>
                     <ModalHeader>Buscar Cliente</ModalHeader>
                     <ModalBody>
-                        <Input
-                            placeholder="Buscar por nombre, teléfono o email"
-                            value={clientSearch}
-                            onChange={(e) => setClientSearch(e.target.value)}
-                        />
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Buscar por nombre, teléfono o email"
+                                value={clientSearch}
+                                onChange={(e) => setClientSearch(e.target.value)}
+                            />
+                            <Button
+                                className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                                onPress={() => openClientManagementModal('create')}>+</Button>
+                        </div>
                         {clientLoading && <p>Cargando...</p>}
                         {clientError && <p className="text-red-500">{clientError}</p>}
-                        <div className="grid grid-cols-1 gap-2 mt-4 max-h-96 overflow-y-auto">
+                        <div className="grid grid-cols-3 gap-2 mt-4 max-h-96 overflow-y-auto">
                             {clientResults.map((c) => (
-                                <Card key={c.id} isPressable onPress={() => setSelectedClientInModal(c)}>
+                                <Card
+                                    className={`h-[8rem] ${selectedClientInModal?.id === c.id
+                                        ? 'border border-2 border-blue-500'
+                                        : ''
+                                    }`}
+                                    key={c.id}
+                                    isPressable
+                                    onPress={() => setSelectedClientInModal(c)}>
                                     <CardBody>
                                         <p className="font-semibold">{c.name}</p>
-                                        <p className="text-sm text-gray-600">{c.phone} - {c.address}</p>
-                                        {selectedClientInModal?.id === c.id && <p className="text-blue-500">Seleccionado</p>}
+                                        <p className="text-sm text-gray-600">{c.phone}</p>
+                                        <p className="text-sm text-gray-600">{c.address}</p>
                                     </CardBody>
                                 </Card>
                             ))}
@@ -166,14 +178,17 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                         )}
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => openClientManagementModal('create')}>Crear Nuevo Cliente</Button>
-                        <Button onClick={() => selectedClientInModal && openClientManagementModal('edit', selectedClientInModal)} disabled={!selectedClientInModal}>
+                        <Button
+                            onPress={() => selectedClientInModal && openClientManagementModal('edit', selectedClientInModal)}
+                            disabled={!selectedClientInModal}>
                             Editar Cliente Seleccionado
                         </Button>
-                        <Button onClick={() => selectedClientInModal && selectClient(selectedClientInModal)} disabled={!selectedClientInModal} color="primary">
+                        <Button
+                            onPress={() => selectedClientInModal && selectClient(selectedClientInModal)}
+                            disabled={!selectedClientInModal}
+                            color="primary">
                             Seleccionar Cliente
                         </Button>
-                        <Button onClick={() => setClientModalOpen(false)}>Cerrar</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

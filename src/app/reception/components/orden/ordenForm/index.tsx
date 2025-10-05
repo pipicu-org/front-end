@@ -374,14 +374,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                         clients={clients}
                         onReloadClients={reloadClients}
                         setPhone={setPhone}
-                        setAddress={setAddress}/>
-
-                    <div className="flex justify-between">
-                        <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                        <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                        <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                        <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
-                    </div>
+                        setAddress={setAddress} />
 
                     <div className="flex flex-col gap-2">
                         <div className="flex gap-3">
@@ -397,6 +390,16 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
                     />
+
+                    <div className="flex flex-col gap-2">
+                        <span className="font-black">¿Donde?</span>
+                        <div className="flex justify-between">
+                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
+                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
+                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
+                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                        </div>
+                    </div>
 
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Cómo?</span>
@@ -444,7 +447,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 productModalOpen={productModalOpen}
                 setProductModalOpen={setProductModalOpen}
                 productModalMode={productModalMode}
-                
+
                 productForm={productForm}
                 setProductForm={setProductForm}
                 categories={categories}

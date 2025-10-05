@@ -45,7 +45,7 @@ const ClientModal = ({
                     <Input
                         label="Teléfono"
                         value={clientForm.phone}
-                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, phoneNumber: e.target.value }))}
+                        onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, phone: e.target.value }))}
                         required
                     />
                     <Input
@@ -66,8 +66,11 @@ const ClientModal = ({
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={() => setClientModalOpen(false)}>Cancelar</Button>
-                    <Button onClick={saveClient} color="primary" disabled={clientModalLoading}>
+                    <Button onPress={() => setClientModalOpen(false)}>Cancelar</Button>
+                    <Button
+                        onPress={saveClient}
+                        color="primary"
+                        disabled={clientModalLoading}>
                         {clientModalLoading ? 'Guardando...' : 'Guardar'}
                     </Button>
                 </ModalFooter>
