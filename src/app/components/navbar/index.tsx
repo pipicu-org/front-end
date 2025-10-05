@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
@@ -16,14 +17,14 @@ const Navbar = () => {
     };
 
     updateTime();
-    const interval = setInterval(updateTime, 30000);
+    const interval = setInterval(updateTime, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="flex items-center justify-between p-2">
-      <h1>Pipí Cucú</h1>
+      <Link href="/reception"><Image src={`/resources/Pipi_Cucu_Texto.webp`} alt="Pipí Cucú" width={20} height={20} className="w-[12rem] " /></Link>
       <div className="flex items-center gap-4">
         <ul className="flex gap-4 text-[12px] sm:text-sm">
           <li><Link href="/reception">Recepción</Link></li>
