@@ -88,16 +88,6 @@ const ProductGrid = ({
                                             onPress={() => {changeProductQuantity(product.id, 1)}}>+</Button>
                                     </div>
                                 </div>
-                                <div>
-                                    {lines.some(line => String(line.product) === String(product.id))
-                                        ? <Button size="sm" className="px-1 py-0" onPress={() => upsertOrderProduct(product)}>
-                                            Editar
-                                        </Button>
-                                        : <Button size="sm" className="px-1 py-0" color="primary" onPress={() => upsertOrderProduct(product)}>
-                                            Agregar
-                                        </Button>
-                                    }
-                                </div>
                             </div>
                         </CardBody>
                     </Card>

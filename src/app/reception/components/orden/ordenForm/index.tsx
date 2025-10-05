@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Input, Select, SelectItem } from "@heroui/react";
+import { Button, Input as HeroInput } from "@heroui/react";
 import { createOrder, updateOrder } from "@/app/services/order.service";
 import { getProducts, createProduct, updateProduct, deleteProduct, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
@@ -13,6 +13,7 @@ import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";
 import { IOrder } from "../../../../types/orders.type";
 import { IProduct } from "../../../../types/products.type";
+import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
 import ProductGrid from "./ProductGrid";
 import OrderLines from "./OrderLines";
@@ -36,16 +37,37 @@ interface IOrderPayload {
     deliveryTime: string;
     paymentMethod: string;
     lines: IOrderLine[];
+    phone: string;
+    address: string;
 }
 
 const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
     const { showToast } = useToast();
     const [client, setClient] = useState<number>(orden?.client ? Number(orden.client) : 0);
-    const [deliveryTime, setDeliveryTime] = useState<string>(orden?.deliveryTime || "");
+    const [deliveryTime, setDeliveryTime] = useState<string>(() => {
+        if (orden?.deliveryTime) {
+            const date = new Date(orden.deliveryTime);
+            return date.toTimeString().slice(0, 5);
+        }
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 30);
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Buenos_Aires',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        return formatter.format(now);
+    });
     const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
     const [loading, setLoading] = useState(false);
+    const [phone, setPhone] = useState<string>(orden?.phone || "");
+    const [address, setAddress] = useState<string>(orden?.address || "");
+    const [currentTime, setCurrentTime] = useState('');
+    const [total, setTotal] = useState(0);
+    const [selectedProducts, setSelectedProducts] = useState<{ [key: number]: IProduct }>({});
 
 
     // Estados para grilla de productos
@@ -134,15 +156,59 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         loadProducts();
     }, [selectedCategory]);
 
+    useEffect(() => {
+        const updateTime = () => {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Buenos_Aires',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            setCurrentTime(formatter.format(new Date()));
+        };
+
+        updateTime();
+        const interval = setInterval(updateTime, 60000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const calculateTotal = () => {
+            return lines.reduce((sum, line) => {
+                const prod = selectedProducts[line.product] || products.find(p => p.id === line.product);
+                return sum + (prod ? prod.price * line.quantity : 0);
+            }, 0);
+        };
+        setTotal(calculateTotal());
+    }, [lines, products, selectedProducts]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validations
+        if (!client || client === 0) {
+            showToast("Debe seleccionar un cliente", "error");
+            return;
+        }
+        if (lines.length === 0) {
+            showToast("Debe agregar al menos un producto", "error");
+            return;
+        }
+        if (!paymentMethod) {
+            showToast("Debe seleccionar un método de pago", "error");
+            return;
+        }
+
         setLoading(true);
 
         const payload: IOrderPayload = {
             client,
-            deliveryTime,
+            deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
             paymentMethod,
             lines,
+            phone,
+            address,
         };
 
         try {
@@ -176,12 +242,27 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
 
     // Función para cambiar cantidad de producto
     const changeProductQuantity = (productId: number, delta: number) => {
-        console.log("Changing quantity for product", productId, "by", delta);
-        console.log("Current quantities:", productQuantities);
-        setProductQuantities(prev => ({
+        setProductQuantities(prev => {
+            const newQuantity = Math.max(0, (prev[productId] || 0) + delta);
+            if (newQuantity > 0) {
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                    setSelectedProducts(prevSel => ({ ...prevSel, [productId]: product }));
+                    const existingIndex = lines.findIndex(line => line.product === productId);
+                    if (existingIndex >= 0) {
+                        updateLine(existingIndex, 'quantity', newQuantity);
+                    } else {
+                        setLines([...lines, { product: productId, quantity: newQuantity, personalizations: [] }]);
+                    }
+                }
+            } else {
+                setLines(lines.filter(line => line.product !== productId));
+            }
+            return {
                 ...prev,
-                [productId]: Math.max(0, (prev[productId] || 0) + delta)
-            }));
+                [productId]: newQuantity
+            };
+        });
     };
 
     // Función para agregar producto a la orden
@@ -287,25 +368,44 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="md:col-span-3 flex flex-col space-y-4">
-                    <ClientSelector client={client} setClient={setClient} clients={clients} onReloadClients={reloadClients} />
+                    <ClientSelector
+                        client={client}
+                        setClient={setClient}
+                        clients={clients}
+                        onReloadClients={reloadClients}
+                        setPhone={setPhone}
+                        setAddress={setAddress}/>
 
-                    <Input
+                    <div className="flex justify-between">
+                        <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
+                        <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
+                        <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
+                        <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <div className="flex gap-3">
+                            <HeroInput value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Teléfono" />
+                        </div>
+                        <HeroInput value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Dirección" />
+                    </div>
+
+                    <HeroInput
                         label="Hora de entrega"
-                        type="datetime-local"
+                        type="time"
                         value={deliveryTime}
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
                     />
 
-                    <Select
-                        label="Método de pago"
-                        selectedKeys={[paymentMethod]}
-                        onSelectionChange={(keys) => setPaymentMethod(Array.from(keys)[0] as string)}
-                    >
-                        <SelectItem key="cash">Efectivo</SelectItem>
-                        <SelectItem key="card">Tarjeta</SelectItem>
-                        <SelectItem key="transfer">Transferencia</SelectItem>
-                    </Select>
+                    <div className="flex flex-col gap-2">
+                        <span className="font-black">¿Cómo?</span>
+                        <div className="flex justify-between">
+                            <IconButton nombre="Efectivo" icon="efectivo-solid-dark" onPress={() => setPaymentMethod('cash')} selected={paymentMethod === 'cash'} />
+                            <IconButton nombre="Tarjeta" icon="creditCard-solid-dark" onPress={() => setPaymentMethod('card')} selected={paymentMethod === 'card'} />
+                            <IconButton nombre="Transferencia" icon="transference-outline-dark" onPress={() => setPaymentMethod('transfer')} selected={paymentMethod === 'transfer'} />
+                        </div>
+                    </div>
 
                     <ProductGrid
                         products={products}
@@ -325,7 +425,11 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 </div>
 
                 <div className="md:col-span-2 flex flex-col space-y-4">
-                    <OrderLines lines={lines} products={products} removeLine={removeLine} />
+                    <OrderLines lines={lines} products={products} selectedProducts={selectedProducts} removeLine={removeLine} />
+
+                    <div className="mb-4">
+                        <h3 className="font-black text-lg">Total: ${total.toFixed(2)}</h3>
+                    </div>
 
                     <div className="mt-100">
                         <Button type="submit" disabled={loading} className="w-full">

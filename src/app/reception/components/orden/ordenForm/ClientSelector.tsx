@@ -7,11 +7,13 @@ import ClientModal from "./ClientModal";
 interface ClientSelectorProps {
     client: number;
     setClient: (client: number) => void;
+    setPhone: (phone: string) => void;
+    setAddress: (address: string) => void;
     clients: IClient[];
     onReloadClients: () => void;
 }
 
-const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientSelectorProps) => {
+const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onReloadClients }: ClientSelectorProps) => {
     const [clientModalOpen, setClientModalOpen] = useState(false);
     const [clientSearch, setClientSearch] = useState("");
     const [clientPage, setClientPage] = useState(1);
@@ -26,7 +28,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
     const [selectedClient, setSelectedClient] = useState<IClient | null>(null);
     const [clientForm, setClientForm] = useState({
         name: '',
-        phoneNumber: '',
+        phone: '',
         address: '',
         facebookUsername: '',
         instagramUsername: ''
@@ -61,6 +63,8 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
     // Función para seleccionar cliente del modal
     const selectClient = (selectedClient: IClient) => {
         setClient(Number(selectedClient.id));
+        setPhone(selectedClient.phone);
+        setAddress(selectedClient.address);
         setClientModalOpen(false);
         setClientSearch("");
         setClientPage(1);
@@ -73,7 +77,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
             setSelectedClient(client);
             setClientForm({
                 name: client.name,
-                phoneNumber: client.phoneNumber,
+                phone: client.phone,
                 address: client.address,
                 facebookUsername: client.facebookUsername || '',
                 instagramUsername: client.instagramUsername || ''
@@ -82,7 +86,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
             setSelectedClient(null);
             setClientForm({
                 name: '',
-                phoneNumber: '',
+                phone: '',
                 address: '',
                 facebookUsername: '',
                 instagramUsername: ''
@@ -93,7 +97,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
 
     // Función para guardar cliente
     const saveClient = async () => {
-        if (!clientForm.name || !clientForm.phoneNumber || !clientForm.address) {
+        if (!clientForm.name || !clientForm.phone || !clientForm.address) {
             setClientManagementError("Nombre, teléfono y dirección son requeridos");
             return;
         }
@@ -117,14 +121,14 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
 
     return (
         <>
-            <div className="flex space-x-2">
+            <div className="flex items-center space-x-2">
                 <Input
                     label="Cliente"
                     placeholder="Buscar cliente"
-                    value={clients.find(c => c.id === client)?.name || ""}
+                    value={clients.find(c => String(c.id) === String(client))?.name || ""}
                     readOnly
                 />
-                <Button onClick={() => setClientModalOpen(true)} className="mt-6">
+                <Button onPress={() => setClientModalOpen(true)} className="h-full">
                     Buscar Cliente
                 </Button>
             </div>
@@ -146,7 +150,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
                                 <Card key={c.id} isPressable onPress={() => setSelectedClientInModal(c)}>
                                     <CardBody>
                                         <p className="font-semibold">{c.name}</p>
-                                        <p className="text-sm text-gray-600">{c.phoneNumber} - {c.address}</p>
+                                        <p className="text-sm text-gray-600">{c.phone} - {c.address}</p>
                                         {selectedClientInModal?.id === c.id && <p className="text-blue-500">Seleccionado</p>}
                                     </CardBody>
                                 </Card>

@@ -3,7 +3,7 @@ import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter
 
 type ClientFormType = {
     name: string;
-    phoneNumber: string;
+    phone: string;
     address: string;
     facebookUsername: string;
     instagramUsername: string;
@@ -44,7 +44,7 @@ const ClientModal = ({
                     />
                     <Input
                         label="Teléfono"
-                        value={clientForm.phoneNumber}
+                        value={clientForm.phone}
                         onChange={(e) => setClientForm((prev: ClientFormType) => ({ ...prev, phoneNumber: e.target.value }))}
                         required
                     />
