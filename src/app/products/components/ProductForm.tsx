@@ -3,6 +3,7 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem } from "@heroui/react";
 import { IProduct, IProductPayload } from "../../types/products.type";
 import { ICategory } from "../../types/categories.type";
@@ -33,12 +34,30 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
   const { control, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: editingProduct?.name || "",
-      price: editingProduct?.price || 0,
-      category: editingProduct ? categories.find(c => c.name === editingProduct.category)?.id || 0 : 0,
-      ingredients: editingProduct?.ingredients || []
+      name: "",
+      price: 0,
+      category: 0,
+      ingredients: []
     }
   });
+
+  useEffect(() => {
+    if (editingProduct) {
+      reset({
+        name: editingProduct.name,
+        price: editingProduct.price,
+        category: typeof editingProduct.category === 'number' ? editingProduct.category : categories.find(c => c.name === editingProduct.category)?.id || 0,
+        ingredients: editingProduct.ingredients || []
+      });
+    } else {
+      reset({
+        name: "",
+        price: 0,
+        category: 0,
+        ingredients: []
+      });
+    }
+  }, [editingProduct, categories, reset]);
 
   const selectedIngredients = watch("ingredients");
 

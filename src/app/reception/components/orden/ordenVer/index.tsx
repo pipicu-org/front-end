@@ -1,6 +1,6 @@
 
 "use client";
-
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
@@ -68,9 +68,35 @@ const OrdenVer = ({ orden }: OrdenVerProps) => {
                 </div>
 
                 <div className="pt-5 flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                        <span className="font-black">¿Quién?</span>
+                    <span className="font-black">¿Quién?</span>
+                    <div className="flex flex-col gap-3">
                         <Input value={orderDetails.client} icon={"user-solid-primary"} />
+                        <div className="flex items-center gap-2">
+                            <div className="w-full">
+                                <Input
+                                value={orderDetails.phone}
+                                icon={"phone-outline-primary"}/>
+                            </div>
+                            <Link
+                                href={`https://wa.me/${orderDetails.phone}`}
+                                target="_blank">
+                                <div className="flex gap-1 items-center underline hover:text-violet-900">
+                                    <span className="leading-4">
+                                        ir a whatsapp
+                                    </span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="size-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                </div>
+                            </Link>
+                        </div>
+                        <Input value={orderDetails.address} icon={"www-outline-primary"} />
                     </div>
 
                     {/* Métodos de contacto */}
@@ -81,21 +107,14 @@ const OrdenVer = ({ orden }: OrdenVerProps) => {
                         <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <div className="flex gap-3">
-                            <Input value={orderDetails.phone} icon={"phone-outline-primary"} />
-                        </div>
-                        <Input value={orderDetails.address} icon={"www-outline-primary"} />
-                    </div>
-
                     {/* Método de pago */}
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Cómo?</span>
                         <div className="flex justify-between">
                             <IconButton
                                 nombre={orderDetails.paymentMethod === 'cash' ? "Efectivo" :
-                                       orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
-                                       orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
+                                    orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
+                                        orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
                                 icon={getPaymentIcon(orderDetails.paymentMethod)}
                             />
                         </div>
