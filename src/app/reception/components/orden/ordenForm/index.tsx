@@ -42,11 +42,11 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
     const { showToast } = useToast();
     const [client, setClient] = useState<number>(orden?.client ? Number(orden.client) : 0);
     const [deliveryTime, setDeliveryTime] = useState<string>(orden?.deliveryTime || "");
+
     const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
     const [loading, setLoading] = useState(false);
-
 
     // Estados para grilla de productos
     const [products, setProducts] = useState<IProduct[]>([]);
@@ -72,6 +72,12 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
+
+
+    const now = new Date();
+    const formattedDateTime = now.toISOString().slice(0, 16); // formato: "YYYY-MM-DDTHH:MM"
+
+    const [actualTime, setActualTime] = useState(formattedDateTime);
 
     // Seleccionar primera categoría por defecto
     useEffect(() => {
@@ -179,9 +185,9 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         console.log("Changing quantity for product", productId, "by", delta);
         console.log("Current quantities:", productQuantities);
         setProductQuantities(prev => ({
-                ...prev,
-                [productId]: Math.max(0, (prev[productId] || 0) + delta)
-            }));
+            ...prev,
+            [productId]: Math.max(0, (prev[productId] || 0) + delta)
+        }));
     };
 
     // Función para agregar producto a la orden
@@ -272,10 +278,12 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
         }
     };
 
+
+
     return (
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-2 space-y-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
+                <h2 className="text-2xl text-primary font-black">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
                 <Button
                     type="button"
                     size="sm"
@@ -289,15 +297,34 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 <div className="md:col-span-3 flex flex-col space-y-4">
                     <ClientSelector client={client} setClient={setClient} clients={clients} onReloadClients={reloadClients} />
 
-                    <Input
+                    {/* <Input
                         label="Hora de entrega"
                         type="datetime-local"
-                        value={deliveryTime}
+                        value={deliveryTime || actualTime}
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
-                    />
+                        className="rounded-full pl-2 pr-2 bg-primary/20"
+                    /> */}
 
-                    <Select
+                    <div className="flex flex-col space-y-1">
+                        <label
+                            htmlFor="deliveryTime"
+                            className="text-sm font-medium text-black/50"
+                        >
+                            Hora de entrega
+                        </label>
+
+                        <input
+                            id="deliveryTime"
+                            type="datetime-local"
+                            value={deliveryTime || ""}
+                            onChange={(e) => setDeliveryTime(e.target.value)}
+                            required
+                            className="w-full rounded-md border border-none bg-primary/20 px-3 py-2 text-sm text-primary shadow-sm placeholder:text-primary focus:outline-none transition"
+                        />
+                    </div>
+
+                    {/* <Select
                         label="Método de pago"
                         selectedKeys={[paymentMethod]}
                         onSelectionChange={(keys) => setPaymentMethod(Array.from(keys)[0] as string)}
@@ -305,7 +332,25 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                         <SelectItem key="cash">Efectivo</SelectItem>
                         <SelectItem key="card">Tarjeta</SelectItem>
                         <SelectItem key="transfer">Transferencia</SelectItem>
-                    </Select>
+                    </Select> */}
+                    <div className="flex flex-col space-y-1 w-full">
+                        <label htmlFor="paymentMethod" className="text-sm font-medium text-black/50">
+                            Método de pago
+                        </label>
+
+                        <select
+                            id="paymentMethod"
+                            value={paymentMethod}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="w-full rounded-md border border-none bg-primary/20 px-3 py-2 text-sm text-primary shadow-sm focus:outline-none transition"
+                        >
+                            <option value="">Seleccionar método</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="card">Tarjeta</option>
+                            <option value="transfer">Transferencia</option>
+                        </select>
+                    </div>
+
 
                     <ProductGrid
                         products={products}
@@ -325,9 +370,11 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 </div>
 
                 <div className="md:col-span-2 flex flex-col space-y-4">
-                    <OrderLines lines={lines} products={products} removeLine={removeLine} />
+                    <div className="flex-1   pr-2">
+                        <OrderLines lines={lines} products={products} removeLine={removeLine} />
+                    </div>
 
-                    <div className="mt-100">
+                    <div className="pt-2">
                         <Button type="submit" disabled={loading} className="w-full">
                             {loading ? "Guardando..." : (isEdit ? "Actualizar" : "Crear")}
                         </Button>
@@ -340,7 +387,7 @@ const OrdenForm = ({ orden, isEdit, onSave, onClose }: OrdenFormProps) => {
                 productModalOpen={productModalOpen}
                 setProductModalOpen={setProductModalOpen}
                 productModalMode={productModalMode}
-                
+
                 productForm={productForm}
                 setProductForm={setProductForm}
                 categories={categories}

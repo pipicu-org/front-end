@@ -62,7 +62,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
     const selectClient = (selectedClient: IClient) => {
         setClient(Number(selectedClient.id));
         setClientModalOpen(false);
-        setClientSearch("");
+        setClientSearch(selectedClient.name);
         setClientPage(1);
     };
 
@@ -115,19 +115,41 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
         }
     };
 
+    const style = {
+        background: `linear-gradient(
+                      135deg,
+                      rgba(161, 161, 161, 0.5) 0%,
+                      rgba(161, 161, 161, 0.05) 66%,
+                      rgba(161, 161, 161, 0.6) 100%
+                    ), #ffffff`
+    }
+
     return (
         <>
-            <div className="flex space-x-2">
-                <Input
-                    label="Cliente"
-                    placeholder="Buscar cliente"
-                    value={clients.find(c => c.id === client)?.name || ""}
-                    readOnly
-                />
-                <Button onClick={() => setClientModalOpen(true)} className="mt-6">
-                    Buscar Cliente
-                </Button>
+            <div className="flex flex-col w-full space-y-1">
+                <label htmlFor="deliveryTime" className="text-sm font-medium text-black/50">
+                    Cliente
+                </label>
+
+                <div className="flex space-x-2 w-full">
+                    <input
+                        id="deliveryTime"
+                        type="text"
+                        value={clientSearch || ""}
+                        onChange={(e) => setClientSearch(e.target.value)}
+                        placeholder="Buscar cliente"
+                        className="flex-1 rounded-md border border-none bg-primary/20 px-3 py-2 text-sm text-primary shadow-sm placeholder:text-primary/60 focus:outline-none transition"
+                        readOnly
+                    />
+
+                    <Button onClick={() => setClientModalOpen(true)} style={style} className="flex flex-col items-center justify-center rounded-2xl text-primary">
+                        Buscar Cliente
+                    </Button>
+                </div>
             </div>
+
+
+
 
             {/* Modal de búsqueda de clientes */}
             <Modal isOpen={clientModalOpen} onOpenChange={setClientModalOpen} size="2xl">

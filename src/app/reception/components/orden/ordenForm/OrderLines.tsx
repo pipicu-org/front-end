@@ -22,7 +22,7 @@ const OrderLines = ({ lines, products, removeLine }: OrderLinesProps) => {
     return (
         <div>
             <h3 className="text-lg font-semibold mb-2">Resumen</h3>
-            <div className="p-2 max-h-64 overflow-y-auto">
+            <div className="p-2 overflow-y-auto h-[470px]">
                 {lines.length
                     ? lines.map((line, index) => {
                         const product = products.find(p => String(p.id) === String(line.product));
