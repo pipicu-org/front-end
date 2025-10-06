@@ -7,11 +7,13 @@ import ClientModal from "./ClientModal";
 interface ClientSelectorProps {
     client: number;
     setClient: (client: number) => void;
+    setPhone: (phone: string) => void;
+    setAddress: (address: string) => void;
     clients: IClient[];
     onReloadClients: () => void;
 }
 
-const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientSelectorProps) => {
+const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onReloadClients }: ClientSelectorProps) => {
     const [clientModalOpen, setClientModalOpen] = useState(false);
     const [clientSearch, setClientSearch] = useState("");
     const [clientPage, setClientPage] = useState(1);
@@ -26,7 +28,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
     const [selectedClient, setSelectedClient] = useState<IClient | null>(null);
     const [clientForm, setClientForm] = useState({
         name: '',
-        phoneNumber: '',
+        phone: '',
         address: '',
         facebookUsername: '',
         instagramUsername: ''
@@ -61,6 +63,8 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
     // Función para seleccionar cliente del modal
     const selectClient = (selectedClient: IClient) => {
         setClient(Number(selectedClient.id));
+        setPhone(selectedClient.phone);
+        setAddress(selectedClient.address);
         setClientModalOpen(false);
         setClientSearch(selectedClient.name);
         setClientPage(1);
@@ -73,7 +77,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
             setSelectedClient(client);
             setClientForm({
                 name: client.name,
-                phoneNumber: client.phoneNumber,
+                phone: client.phone,
                 address: client.address,
                 facebookUsername: client.facebookUsername || '',
                 instagramUsername: client.instagramUsername || ''
@@ -82,7 +86,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
             setSelectedClient(null);
             setClientForm({
                 name: '',
-                phoneNumber: '',
+                phone: '',
                 address: '',
                 facebookUsername: '',
                 instagramUsername: ''
@@ -93,7 +97,7 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
 
     // Función para guardar cliente
     const saveClient = async () => {
-        if (!clientForm.name || !clientForm.phoneNumber || !clientForm.address) {
+        if (!clientForm.name || !clientForm.phone || !clientForm.address) {
             setClientManagementError("Nombre, teléfono y dirección son requeridos");
             return;
         }
@@ -126,26 +130,15 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
 
     return (
         <>
-            <div className="flex flex-col w-full space-y-1">
-                <label htmlFor="deliveryTime" className="text-sm font-medium text-black/50">
-                    Cliente
-                </label>
-
-                <div className="flex space-x-2 w-full">
-                    <input
-                        id="deliveryTime"
-                        type="text"
-                        value={clientSearch || ""}
-                        onChange={(e) => setClientSearch(e.target.value)}
-                        placeholder="Buscar cliente"
-                        className="flex-1 rounded-md border border-none bg-primary/20 px-3 py-2 text-sm text-primary shadow-sm placeholder:text-primary/60 focus:outline-none transition"
-                        readOnly
-                    />
-
-                    <Button onClick={() => setClientModalOpen(true)} style={style} className="flex flex-col items-center justify-center rounded-2xl text-primary">
-                        Buscar Cliente
-                    </Button>
-                </div>
+            <div className="flex items-center space-x-2">
+                <Input
+                    label="Cliente"
+                    value={clients.find(c => String(c.id) === String(client))?.name || ""}
+                    readOnly
+                />
+                <Button onPress={() => setClientModalOpen(true)} className="h-full">
+                    Buscar Cliente
+                </Button>
             </div>
 
 
@@ -156,20 +149,32 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
                 <ModalContent>
                     <ModalHeader>Buscar Cliente</ModalHeader>
                     <ModalBody>
-                        <Input
-                            placeholder="Buscar por nombre, teléfono o email"
-                            value={clientSearch}
-                            onChange={(e) => setClientSearch(e.target.value)}
-                        />
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Buscar por nombre, teléfono o email"
+                                value={clientSearch}
+                                onChange={(e) => setClientSearch(e.target.value)}
+                            />
+                            <Button
+                                className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                                onPress={() => openClientManagementModal('create')}>+</Button>
+                        </div>
                         {clientLoading && <p>Cargando...</p>}
                         {clientError && <p className="text-red-500">{clientError}</p>}
-                        <div className="grid grid-cols-1 gap-2 mt-4 max-h-96 overflow-y-auto">
+                        <div className="grid grid-cols-3 gap-2 mt-4 max-h-96 overflow-y-auto">
                             {clientResults.map((c) => (
-                                <Card key={c.id} isPressable onPress={() => setSelectedClientInModal(c)}>
+                                <Card
+                                    className={`h-[8rem] ${selectedClientInModal?.id === c.id
+                                        ? 'border border-2 border-blue-500'
+                                        : ''
+                                    }`}
+                                    key={c.id}
+                                    isPressable
+                                    onPress={() => setSelectedClientInModal(c)}>
                                     <CardBody>
                                         <p className="font-semibold">{c.name}</p>
-                                        <p className="text-sm text-gray-600">{c.phoneNumber} - {c.address}</p>
-                                        {selectedClientInModal?.id === c.id && <p className="text-blue-500">Seleccionado</p>}
+                                        <p className="text-sm text-gray-600">{c.phone}</p>
+                                        <p className="text-sm text-gray-600">{c.address}</p>
                                     </CardBody>
                                 </Card>
                             ))}
@@ -184,14 +189,17 @@ const ClientSelector = ({ client, setClient, clients, onReloadClients }: ClientS
                         )}
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => openClientManagementModal('create')}>Crear Nuevo Cliente</Button>
-                        <Button onClick={() => selectedClientInModal && openClientManagementModal('edit', selectedClientInModal)} disabled={!selectedClientInModal}>
+                        <Button
+                            onPress={() => selectedClientInModal && openClientManagementModal('edit', selectedClientInModal)}
+                            disabled={!selectedClientInModal}>
                             Editar Cliente Seleccionado
                         </Button>
-                        <Button onClick={() => selectedClientInModal && selectClient(selectedClientInModal)} disabled={!selectedClientInModal} color="primary">
+                        <Button
+                            onPress={() => selectedClientInModal && selectClient(selectedClientInModal)}
+                            disabled={!selectedClientInModal}
+                            color="primary">
                             Seleccionar Cliente
                         </Button>
-                        <Button onClick={() => setClientModalOpen(false)}>Cerrar</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

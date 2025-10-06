@@ -1,17 +1,19 @@
 
 "use client";
-
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
 import { getOrderById, IOrderDetail, IOrderDetailLine } from "@/app/services/order.service";
 import { IOrder } from "@/app/types/orders.type";
+import { Button } from "@heroui/react";
 
 interface OrdenVerProps {
     orden: IOrder | null;
+    onClose?: () => void;
 }
 
-const OrdenVer = ({ orden }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -58,95 +60,110 @@ const OrdenVer = ({ orden }: OrdenVerProps) => {
     };
 
     return (
-        <>
-            <div className="relative">
-                <p className="absolute inset-0 top-7 left-75 z-0 text-9xl text-black/20 font-black">#{orderDetails.id}</p>
+        <div className="h-full">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto">
+                <div className="md:col-span-3 text-primary font-poppins p-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex flex-col">
+                            <span className="flex text-3xl font-black">{formatTime(orderDetails.deliveryTime)}</span>
+                            <span className="text-sm">Hora de entrega</span>
+                        </div>
+                        <Button
+                            type="button"
+                            size="sm"
+                            className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                            onPress={onClose}>
+                            x
+                        </Button>
+                    </div>
 
-                <div className="relative z-10">
-
-                    <div className="grid grid-cols-5 gap-3 h-full">
-
-                        <div className="col-span-3 text-primary font-poppins p-4">
-                            <div>
-                                <div className="flex flex-col">
-                                    <span className="flex text-3xl font-black">{formatTime(orderDetails.deliveryTime)}</span>
-                                    <span className="text-sm">Hora de entrega</span>
+                    <div className="pt-5 flex flex-col gap-4">
+                        <span className="font-black">¿Quién?</span>
+                        <div className="flex flex-col gap-3">
+                            <Input value={orderDetails.client} icon={"user-solid-primary"} />
+                            <div className="flex items-center gap-2">
+                                <div className="w-full">
+                                    <Input
+                                        value={orderDetails.phone}
+                                        icon={"phone-outline-primary"} />
                                 </div>
-                            </div>
-
-                            <div className="pt-5 flex flex-col gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <span className="font-black">¿Quién?</span>
-                                    <Input value={orderDetails.client} icon={"user-solid-primary"} />
-                                </div>
-
-                                {/* Métodos de contacto */}
-                                <div className="flex justify-between">
-                                    <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                                    <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                                    <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                                    <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex gap-3">
-                                        <Input value={orderDetails.phone} icon={"phone-outline-primary"} />
+                                <Link
+                                    href={`https://wa.me/${orderDetails.phone}`}
+                                    target="_blank">
+                                    <div className="flex gap-1 items-center underline hover:text-violet-900">
+                                        <span className="leading-4">
+                                            ir a whatsapp
+                                        </span>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                        </svg>
                                     </div>
-                                    <Input value={orderDetails.address} icon={"www-outline-primary"} />
-                                </div>
-
-                                {/* Método de pago */}
-                                <div className="flex flex-col gap-2">
-                                    <span className="font-black">¿Cómo?</span>
-                                    <div className="flex justify-between">
-                                        <IconButton
-                                            nombre={orderDetails.paymentMethod === 'cash' ? "Efectivo" :
-                                                orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
-                                                    orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
-                                            icon={getPaymentIcon(orderDetails.paymentMethod)}
-                                        />
-                                    </div>
-                                </div>
+                                </Link>
                             </div>
+                            <Input value={orderDetails.address} icon={"www-outline-primary"} />
                         </div>
 
-                        <div className="col-span-2 p-4 text-primary">
-                            <div className="flex justify-end items-center">
-                                <div className="inline-flex items-center gap-2  pr-2 pl-2  mt-2 bg-primary/30 rounded-full">
-                                    {/* ~~~ Pelotita ~~~ */}
-                                    <div className="w-[5px] h-[5px] bg-white rounded-full shadow-[0_0_10px_5px_rgba(255,255,255,1)]"></div>
-                                    <h2 className="ml-1 font-bold text-white font-normal text-poppins">{orderDetails.state}</h2>
-                                </div>
-                            </div>
+                        {/* Métodos de contacto */}
+                        <div className="flex justify-between">
+                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
+                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
+                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
+                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                        </div>
 
-                            <div>
-                                <h3 className="font-black text-lg"> RESUMEN</h3>
-                                <h4 className="font-black mb-2 ">Productos</h4>
-                                <div className="space-y-2">
-                                    {orderDetails.lines.map((line: IOrderDetailLine) => (
-                                        <div key={line.id} className="rounded-lg pl-2 pr-2 bg-primary/20 hover:bg-primary/30 duration-150">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">{line.product}</span>
-                                                <span>${line.totalPrice.toFixed(2)}</span>
-                                            </div>
-                                            <div className="text-sm text-black/80">
-                                                Cantidad: {parseInt(line.quantity)} | Estado: {line.state}
-                                            </div>
-                                            {line.personalization.length > 0 && (
-                                                <div className="text-sm">
-                                                    Personalizaciones: {JSON.stringify(line.personalization)}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
+                        {/* Método de pago */}
+                        <div className="flex flex-col gap-2">
+                            <span className="font-black">¿Cómo?</span>
+                            <div className="flex justify-between">
+                                <IconButton
+                                    nombre={orderDetails.paymentMethod === 'cash' ? "Efectivo" :
+                                        orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
+                                            orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
+                                    icon={getPaymentIcon(orderDetails.paymentMethod)}
+                                />
                             </div>
-                            <p className="pt-2 text-lg"><span className="font-black">Total:</span> ${orderDetails.totalPrice}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="md:col-span-2 p-4">
+                    <div className="mb-4">
+                        <h3 className="font-black text-lg">RESUMEN</h3>
+                        <p>ID: {orderDetails.id}</p>
+                        <p>Estado: {orderDetails.state}</p>
+                        <p>Total: ${orderDetails.totalPrice}</p>
+                    </div>
+
+                    <div>
+                        <h4 className="font-black mb-2">Productos</h4>
+                        <div className="space-y-2">
+                            {orderDetails.lines.map((line: IOrderDetailLine) => (
+                                <div key={line.id} className="border rounded p-2">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">{line.product}</span>
+                                        <span>${line.totalPrice.toFixed(2)}</span>
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                        Cantidad: {line.quantity} | Estado: {line.state}
+                                    </div>
+                                    {line.personalization.length > 0 && (
+                                        <div className="text-sm">
+                                            Personalizaciones: {JSON.stringify(line.personalization)}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
