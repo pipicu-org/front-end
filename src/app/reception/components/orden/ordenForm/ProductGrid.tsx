@@ -41,12 +41,6 @@ const ProductGrid = ({
 
     return (
         <div className="bg-black/10 p-2 rounded-lg">
-            <div className="flex justify-between items-center mb-2 ">
-                <h3 className="text-xl text-primary font-black">Menú de Productos</h3>
-                <Button onPress={() => openProductModal('create')} style={style} className="flex flex-col items-center justify-center rounded-2xl text-primary">
-                    Gestionar Productos
-                </Button>
-            </div>
             <Tabs
                 aria-label="Categorías"
                 selectedKey={selectedCategory}

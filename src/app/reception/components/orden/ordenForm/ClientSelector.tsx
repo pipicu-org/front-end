@@ -119,15 +119,6 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
         }
     };
 
-    const style = {
-        background: `linear-gradient(
-                      135deg,
-                      rgba(161, 161, 161, 0.5) 0%,
-                      rgba(161, 161, 161, 0.05) 66%,
-                      rgba(161, 161, 161, 0.6) 100%
-                    ), #ffffff`
-    }
-
     return (
         <>
             <div className="flex items-center space-x-2">

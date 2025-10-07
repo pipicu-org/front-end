@@ -93,12 +93,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
-
-    const now = new Date();
-    const formattedDateTime = now.toISOString().slice(0, 16); // formato: "YYYY-MM-DDTHH:MM"
-
-    const [actualTime, setActualTime] = useState(formattedDateTime);
-
     // Seleccionar primera categoría por defecto
     useEffect(() => {
         if (categories.length > 0 && selectedCategory === undefined) {
@@ -369,7 +363,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         value={deliveryTime}
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
-                        className="rounded-full pl-2 pr-2 bg-primary/20"
                     />
 
                     <div className="flex flex-col gap-2">
@@ -414,7 +407,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         <h3 className="font-black text-lg">${total.toFixed(2)}</h3>
                     </div>
 
-                    <div className="pt-2">
+                    <div className="mt-100">
                         <Button type="submit" disabled={loading} className="w-full">
                             {loading ? "Guardando..." : (isEdit ? "Actualizar" : "Crear")}
                         </Button>
