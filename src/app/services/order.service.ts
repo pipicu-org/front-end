@@ -4,7 +4,7 @@ import { IOrder } from "../types/orders.type";
 
 // Interfaces para API
 interface IOrderLine {
-  product: number;
+  product: string;
   quantity: number;
 }
 

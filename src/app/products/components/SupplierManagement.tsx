@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Spinner, Alert } from "@heroui/react";
 import { ISupplier, ISupplierPayload } from "../../types/suppliers.type";
 import { getSuppliers, createSupplier, updateSupplier, deleteSupplier } from "../../services/suppliers.service";
@@ -22,23 +22,23 @@ const SupplierManagement = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
-    const fetchSuppliers = async () => {
+    const fetchSuppliers = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await getSuppliers(page, limit, search, sort);
             setSuppliers(response.data);
             setTotal(response.total);
-        } catch (err) {
+        } catch {
             setError("Error al cargar proveedores");
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, limit, search, sort]);
 
     useEffect(() => {
         fetchSuppliers();
-    }, [page, search, sort]);
+    }, [fetchSuppliers]);
 
     const handleSearch = (value: string) => {
         setSearch(value);
@@ -82,7 +82,7 @@ const SupplierManagement = () => {
                 onDeleteClose();
                 setSupplierToDelete(null);
                 setDeleteConfirmationText("");
-            } catch (err) {
+            } catch {
                 setError("Error al eliminar proveedor");
             }
         }
@@ -106,7 +106,7 @@ const SupplierManagement = () => {
             }
             onClose();
             fetchSuppliers();
-        } catch (err) {
+        } catch {
             setError("Error al guardar proveedor");
         }
     };

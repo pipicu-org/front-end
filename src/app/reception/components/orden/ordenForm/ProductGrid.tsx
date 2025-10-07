@@ -11,8 +11,8 @@ interface ProductGridProps {
     categoriesError: string | null;
     selectedCategory: number | undefined;
     setSelectedCategory: (category: number | undefined) => void;
-    productQuantities: { [key: number]: number };
-    changeProductQuantity: (productId: number, delta: number) => void;
+    productQuantities: { [key: string]: number };
+    changeProductQuantity: (productId: string, delta: number) => void;
 }
 
 const ProductGrid = ({

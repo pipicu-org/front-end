@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Autocomplete, AutocompleteItem } from "@heroui/react";
 import { IPurchase, IPurchasePayload, IPurchaseItemPayload } from "../../types/purchases.type";
 import { createPurchase, updatePurchase } from "../../services/purchase.service";
@@ -24,6 +24,11 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
     const [units, setUnits] = useState<IUnit[]>([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ providerId?: string; purchaseItems?: string }>({});
+
+    const calculateUnitQuantity = useCallback((quantity: number, unitId: number): number => {
+        const unit = units.find(u => u.id === unitId);
+        return unit ? quantity * parseFloat(unit.factor) : 0;
+    }, [units]);
 
     useEffect(() => {
         if (isOpen) {
@@ -59,13 +64,13 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
                 })),
             }));
         }
-    }, [units]);
+    }, [units, calculateUnitQuantity, formData.purchaseItems.length]);
 
     const fetchSuppliers = async () => {
         try {
             const data = await getSuppliers();
             setSuppliers(data.data.map(s => ({ id: s.id, name: s.name })));
-        } catch (err) {
+        } catch {
             console.error("Error fetching suppliers");
         }
     };
@@ -74,7 +79,7 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
         try {
             const data = await getIngredients();
             setIngredients(data.data);
-        } catch (err) {
+        } catch {
             console.error("Error fetching ingredients");
         }
     };
@@ -83,14 +88,9 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
         try {
             const data = await getUnits();
             setUnits(data);
-        } catch (err) {
+        } catch {
             console.error("Error fetching units");
         }
-    };
-
-    const calculateUnitQuantity = (quantity: number, unitId: number): number => {
-        const unit = units.find(u => u.id === unitId);
-        return unit ? quantity * parseFloat(unit.factor) : 0;
     };
 
     const addItem = () => {
@@ -143,7 +143,7 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
             }
             onSuccess();
             onClose();
-        } catch (err) {
+        } catch {
             console.error("Error saving purchase");
         } finally {
             setLoading(false);

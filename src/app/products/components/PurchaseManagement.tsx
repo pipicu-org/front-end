@@ -25,7 +25,7 @@ const PurchaseManagement = () => {
         try {
             const data = await getPurchases();
             setPurchases(data);
-        } catch (err) {
+        } catch {
             setError("Error al cargar compras");
         } finally {
             setLoading(false);
@@ -65,7 +65,7 @@ const PurchaseManagement = () => {
                 onDeleteClose();
                 setPurchaseToDelete(null);
                 setDeleteConfirmationText("");
-            } catch (err) {
+            } catch {
                 setError("Error al eliminar compra");
             }
         }
@@ -82,7 +82,7 @@ const PurchaseManagement = () => {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-        } catch (err) {
+        } catch {
             setError("Error al descargar template");
         }
     };
@@ -93,7 +93,7 @@ const PurchaseManagement = () => {
             try {
                 await uploadPurchaseExcel(file);
                 fetchPurchases();
-            } catch (err) {
+            } catch {
                 setError("Error al subir Excel");
             }
         }

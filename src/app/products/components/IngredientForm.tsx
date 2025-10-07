@@ -32,7 +32,7 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
       try {
         const data = await getUnits();
         setUnits(data);
-      } catch (err) {
+      } catch {
         console.error("Error fetching units");
       }
     };

@@ -26,7 +26,7 @@ interface OrdenFormProps {
 }
 
 interface IOrderLine {
-    product: number;
+    product: string;
     quantity: number;
 }
 
@@ -66,11 +66,11 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [phone, setPhone] = useState<string>(orden?.phone || "");
     const [address, setAddress] = useState<string>(orden?.address || "");
     const [total, setTotal] = useState(0);
-    const [selectedProducts, setSelectedProducts] = useState<{ [key: number]: IProduct }>({});
+    const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: IProduct }>({});
 
     // Estados para grilla de productos
     const [products, setProducts] = useState<IProduct[]>([]);
-    const [productQuantities, setProductQuantities] = useState<{ [key: number]: number }>({});
+    const [productQuantities, setProductQuantities] = useState<{ [key: string]: number }>({});
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>(undefined);
     const [productLoading, setProductLoading] = useState(false);
     const [productError, setProductError] = useState<string | null>(null);
@@ -145,7 +145,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     useEffect(() => {
         const calculateTotal = () => {
             return lines.reduce((sum, line) => {
-                const prod = selectedProducts[line.product] || products.find(p => p.id === line.product.toString());
+                const prod = selectedProducts[line.product] || products.find(p => p.id === line.product);
                 return sum + (prod ? parseFloat(prod.price) * line.quantity : 0);
             }, 0);
         };
@@ -199,9 +199,9 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
     // Función addLine removida ya que ahora se agregan productos desde la grilla
 
-    const updateLine = (index: number, field: keyof IOrderLine, value: number | unknown[]) => {
+    const updateLine = (index: number, field: keyof IOrderLine, value: number | string | unknown[]) => {
         const newLines = [...lines];
-        (newLines[index] as Record<keyof IOrderLine, number | unknown[]>)[field] = value;
+        (newLines[index] as Record<keyof IOrderLine, number | string | unknown[]>)[field] = value;
         setLines(newLines);
     };
 
@@ -211,11 +211,11 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
 
     // Función para cambiar cantidad de producto
-    const changeProductQuantity = (productId: number, delta: number) => {
+    const changeProductQuantity = (productId: string, delta: number) => {
         setProductQuantities(prev => {
             const newQuantity = Math.max(0, (prev[productId] || 0) + delta);
             if (newQuantity > 0) {
-                const product = products.find(p => p.id === productId.toString());
+                const product = products.find(p => p.id === productId);
                 if (product) {
                     setSelectedProducts(prevSel => ({ ...prevSel, [productId]: product }));
                     const existingIndex = lines.findIndex(line => line.product === productId);

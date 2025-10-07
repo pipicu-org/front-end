@@ -1,14 +1,14 @@
 import { IProduct } from "../../../../types/products.type";
 
 interface IOrderLine {
-    product: number;
+    product: string;
     quantity: number;
 }
 
 interface OrderLinesProps {
     lines: IOrderLine[];
     products: IProduct[];
-    selectedProducts: { [key: number]: IProduct };
+    selectedProducts: { [key: string]: IProduct };
     removeLine: (index: number) => void;
 }
 
