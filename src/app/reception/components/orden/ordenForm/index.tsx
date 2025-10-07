@@ -3,7 +3,7 @@
 
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Button, Divider, Input as HeroInput } from "@heroui/react";
+import { Button, Divider} from "@heroui/react";
 import { createOrder, updateOrder } from "@/app/services/order.service";
 import { getProducts, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
