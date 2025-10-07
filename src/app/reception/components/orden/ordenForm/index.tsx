@@ -5,7 +5,7 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Button, Divider, Input as HeroInput } from "@heroui/react";
 import { createOrder, updateOrder } from "@/app/services/order.service";
-import { getProducts, createProduct, updateProduct, deleteProduct, getProductsByCategory } from "@/app/services/products.service";
+import { getProducts, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
@@ -17,7 +17,6 @@ import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
 import ProductGrid from "./ProductGrid";
 import OrderLines from "./OrderLines";
-import ProductModal from "./ProductModal";
 
 interface OrdenFormProps {
     orden: IOrder | null;
@@ -74,19 +73,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>(undefined);
     const [productLoading, setProductLoading] = useState(false);
     const [productError, setProductError] = useState<string | null>(null);
-
-    // Estados para modal de gestión de productos
-    const [productModalOpen, setProductModalOpen] = useState(false);
-    const [productModalMode, setProductModalMode] = useState<'create' | 'edit'>('create');
-    const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
-    const [productForm, setProductForm] = useState({
-        name: '',
-        price: 0,
-        category: 1,
-        ingredients: [{ id: 1, quantity: 1 }]
-    });
-    const [productModalLoading, setProductModalLoading] = useState(false);
-    const [productModalError, setProductModalError] = useState<string | null>(null);
 
     // Estados para categorías
     const [categories, setCategories] = useState<ICategory[]>([]);
@@ -247,82 +233,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         });
     };
 
-
-    // Función para abrir modal de producto
-    const openProductModal = (mode: 'create' | 'edit', product?: IProduct) => {
-        setProductModalMode(mode);
-        if (mode === 'edit' && product) {
-            setSelectedProduct(product);
-            setProductForm({
-                name: product.name,
-                price: product.price,
-                category: categories.find(c => c.name === product.category)?.id || 1,
-                ingredients: product.ingredients
-            });
-        } else {
-            setSelectedProduct(null);
-            setProductForm({
-                name: '',
-                price: 0,
-                category: categories[0]?.id || 1,
-                ingredients: [{ id: 1, quantity: 1 }]
-            });
-        }
-        setProductModalOpen(true);
-    };
-
-    // Función para guardar producto
-    const saveProduct = async () => {
-        if (!productForm.name || productForm.price <= 0) {
-            setProductModalError("Nombre requerido y precio positivo");
-            return;
-        }
-        setProductModalLoading(true);
-        setProductModalError(null);
-        try {
-            if (productModalMode === 'create') {
-                await createProduct(productForm);
-            } else if (selectedProduct) {
-                await updateProduct(selectedProduct.id, productForm);
-            }
-            // Recargar productos
-            let data: IProduct[];
-            if (selectedCategory) {
-                const response = await getProductsByCategory(selectedCategory);
-                data = response.data;
-            } else {
-                const response = await getProducts(1, 50);
-                data = response.data;
-            }
-            setProducts(data);
-            setProductModalOpen(false);
-        } catch (error) {
-            setProductModalError("Error al guardar producto");
-            console.error(error);
-        } finally {
-            setProductModalLoading(false);
-        }
-    };
-
-    // Función para eliminar producto
-    const deleteProductHandler = async () => {
-        if (!selectedProduct) return;
-        if (!confirm("¿Estás seguro de eliminar este producto?")) return;
-        setProductModalLoading(true);
-        try {
-            await deleteProduct(selectedProduct.id);
-            // Recargar productos
-            const response = await getProducts(1, 50, selectedCategory);
-            setProducts(response.data);
-            setProductModalOpen(false);
-        } catch (error) {
-            setProductModalError("Error al eliminar producto");
-            console.error(error);
-        } finally {
-            setProductModalLoading(false);
-        }
-    };
-
     useImperativeHandle(ref, () => ({
         submitForm: handleSubmit
     }));
@@ -395,7 +305,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         setSelectedCategory={setSelectedCategory}
                         productQuantities={productQuantities}
                         changeProductQuantity={changeProductQuantity}
-                        openProductModal={openProductModal}
                     />
                 </div>
 
@@ -415,20 +324,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
                 </div>
             </div>
-
-            <ProductModal
-                productModalOpen={productModalOpen}
-                setProductModalOpen={setProductModalOpen}
-                productModalMode={productModalMode}
-
-                productForm={productForm}
-                setProductForm={setProductForm}
-                categories={categories}
-                productModalLoading={productModalLoading}
-                productModalError={productModalError}
-                saveProduct={saveProduct}
-                deleteProductHandler={deleteProductHandler}
-            />
         </form>
     );
 });

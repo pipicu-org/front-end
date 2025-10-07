@@ -13,7 +13,6 @@ interface ProductGridProps {
     setSelectedCategory: (category: number | undefined) => void;
     productQuantities: { [key: number]: number };
     changeProductQuantity: (productId: number, delta: number) => void;
-    openProductModal: (mode: 'create' | 'edit', product?: IProduct) => void;
 }
 
 const ProductGrid = ({
@@ -27,17 +26,7 @@ const ProductGrid = ({
     setSelectedCategory,
     productQuantities,
     changeProductQuantity,
-    openProductModal
 }: ProductGridProps) => {
-
-    const style = {
-        background: `linear-gradient(
-                      135deg,
-                      rgba(161, 161, 161, 0.5) 0%,
-                      rgba(161, 161, 161, 0.05) 66%,
-                      rgba(161, 161, 161, 0.6) 100%
-                    ), #ffffff`
-    }
 
     return (
         <div className="bg-black/10 p-2 rounded-lg">
@@ -56,7 +45,7 @@ const ProductGrid = ({
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col md:flex-row md:flex-wrap gap-2 mt-4 md:max-h-96">
+            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
                 {products.map((product) => (
                     <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
