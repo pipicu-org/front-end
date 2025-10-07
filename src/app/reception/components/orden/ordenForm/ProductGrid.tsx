@@ -28,9 +28,20 @@ const ProductGrid = ({
     changeProductQuantity,
 }: ProductGridProps) => {
 
+    //    interface Categoria {
+    //   id: number;
+    //   name: string;
+    // }
+
+    // const categorias: Categoria[] = [
+    //   { id: 1, name: "Productos" },
+    //   { id: 2, name: "Ingredientes" },
+    //   { id: 3, name: "Comanda" },
+    //   { id: 4, name: "Hamburguesa" },
+    // ];
     return (
         <div className="bg-black/10 p-2 rounded-lg">
-            <Tabs
+            {/* <Tabs
                 aria-label="Categorías"
                 selectedKey={selectedCategory}
                 onSelectionChange={(key) => setSelectedCategory(key ? Number(key) : undefined)}
@@ -40,24 +51,52 @@ const ProductGrid = ({
                         {category.name}
                     </Tab>
                 ))}
-            </Tabs>
+            </Tabs> */}
+
+
+            <div className="flex space-x-2 bg-black/10 p-1 rounded-lg w-max">
+                    {categories.map((category) => (
+                        <button
+                            key={category.id}
+                            type="button"
+                            onClick={() => setSelectedCategory(category.id)}
+                            className={`px-4 py-1 rounded-lg font-normal transition-colors duration-400
+                        
+                                ${selectedCategory === category.id
+                                    ? "bg-[#D4D4D8] text-black "
+                                    : "text-black hover:text-black/30"
+                                }`}
+                        >
+                            {category.name}
+                        </button>
+                    ))}
+                </div>
+
+
+
+
+
+
+
+
+
             {categoriesLoading && <p>Cargando categorías...</p>}
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
             <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
                 {products.map((product) => (
-                    <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
+                    <Card className="w-full rounded-full bg-black/20 px-1" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
                             <div className="flex justify-between items-center w-full px-2 gap-1">
                                 {/* Información del producto */}
-                                <div className="flex items-center py-2 w-fit h-full max-w-[70%] justify-between space-x-2">
-                                    <h4 className="font-semibold text-left leading-4 w-24 max-w-24">{product.name}</h4>
+                                <div className="flex items-center w-fit h-full max-w-[70%] justify-between space-x-2">
+                                    <h4 className="font-medium text-left leading-4 w-24 max-w-24">{product.name}</h4>
                                     <Divider orientation="vertical" />
                                     <p className="text-gray-600">${product.price}</p>
                                 </div>
-                                <div className="flex flex-col items-center space-x-1 mt-2">
-                                    <div className="flex items-center space-x-2 mb-2">
+                                <div className="flex flex-col items-center space-x-1 mt-1">
+                                    <div className="flex items-center space-x-2 mb-1">
                                         {productQuantities[product.id]
                                             ? <Button
                                                 size="sm"

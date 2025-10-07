@@ -122,19 +122,37 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     return (
         <>
             <div className="flex items-center space-x-2">
-                <Input
-                    label="Cliente"
+                <input
+                    id="cliente"
+                    type="text"
                     value={clients.find(c => String(c.id) === String(client))?.name || ""}
                     readOnly
+                    placeholder="Cliente"
+                    className="flex-1 w-full border border-none rounded-lg px-3 py-2 text-sm bg-black/10 focus:outline-none"
                 />
+
                 <Button
                     onPress={() => setClientModalOpen(true)}
-                    className="px-2 py-2 min-w-0 min-w-0 min-h-0 aspect-square rounded-full bg-black/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    className="px-1 py-1 min-w-0 min-h-0 aspect-square rounded-full bg-black/20 text-white flex items-center justify-center"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-4"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
                     </svg>
                 </Button>
             </div>
+
+
 
 
 

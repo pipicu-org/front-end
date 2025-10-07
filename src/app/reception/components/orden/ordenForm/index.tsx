@@ -253,7 +253,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4">
-                <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-4">
+                <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-2">
                     <ClientSelector
                         client={client}
                         setClient={setClient}
@@ -264,18 +264,51 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
                     <div className="flex flex-col gap-2">
                         <div className="flex gap-3">
-                            <HeroInput value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Teléfono" />
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="Teléfono"
+                                className="flex-1 rounded-md px-3 py-2 text-xs bg-black/10 focus:outline-none"
+                            />
                         </div>
-                        <HeroInput value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Dirección" />
+
+                        <input
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Dirección"
+                            className="flex-1 rounded-md px-3 py-2 text-xs bg-black/10 focus:outline-none"
+                        />
                     </div>
 
-                    <HeroInput
+
+                    {/* <HeroInput
                         label="Hora de entrega"
                         type="time"
                         value={deliveryTime}
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
-                    />
+                    /> */}
+
+                    <div className="flex flex-col bg-black/10 rounded-lg px-2 py-1">
+                        <label htmlFor="horaEntrega" className="text-xs font-light text-black/60 ">
+                            Hora de entrega
+                        </label>
+                        <input
+                            id="horaEntrega"
+                            type="time"
+                            value={deliveryTime}
+                            onChange={(e) => setDeliveryTime(e.target.value)}
+                            required
+                            className="rounded-md px-2 py-1 text-xs focus:outline-none"
+                        />
+                    </div>
+
+
+
+
+
 
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Donde?</span>
@@ -283,7 +316,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                             <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
                             <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
                             <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"}  onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
+                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
                         </div>
                     </div>
 
