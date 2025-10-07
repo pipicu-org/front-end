@@ -143,7 +143,7 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                     <div>
                         <h4 className="font-black mb-2">Productos</h4>
                         <div className="space-y-2">
-                            {orderDetails.lines.map((line: IOrderDetailLine) => (
+                            {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
                                 <div key={line.id} className="border rounded p-2">
                                     <div className="flex justify-between">
                                         <span className="font-medium">{line.product}</span>
@@ -152,7 +152,7 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                                     <div className="text-sm text-gray-600">
                                         Cantidad: {line.quantity} | Estado: {line.state}
                                     </div>
-                                    {line.personalization.length > 0 && (
+                                    {line.personalization && line.personalization.length > 0 && (
                                         <div className="text-sm">
                                             Personalizaciones: {JSON.stringify(line.personalization)}
                                         </div>

@@ -1,5 +1,5 @@
 import api from "./api";
-import { IProduct, IIngredient } from "../types/products.type";
+import { IProduct, IProductPayload } from "../types/products.type";
 
 // Interfaces
 interface IGetProducts {
@@ -7,13 +7,6 @@ interface IGetProducts {
   total: number;
   page: number;
   limit: number;
-}
-
-interface IProductPayload {
-  name: string;
-  price: number;
-  category: number;
-  ingredients: IIngredient[];
 }
 
 // Obtener productos con paginación y filtros
@@ -31,18 +24,18 @@ export async function createProduct(product: IProductPayload): Promise<IProduct>
 }
 
 // Actualizar producto
-export async function updateProduct(id: number, product: Partial<IProductPayload>): Promise<IProduct> {
+export async function updateProduct(id: string, product: Partial<IProductPayload>): Promise<IProduct> {
   const { data } = await api.patch(`/products/${id}`, product);
   return data;
 }
 
 // Eliminar producto
-export async function deleteProduct(id: number): Promise<void> {
+export async function deleteProduct(id: string): Promise<void> {
   await api.delete(`/products/${id}`);
 }
 
 // Obtener producto por ID
-export async function getProductById(id: number): Promise<IProduct> {
+export async function getProductById(id: string): Promise<IProduct> {
   const { data } = await api.get(`/products/${id}`);
   return data;
 }

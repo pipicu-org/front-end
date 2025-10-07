@@ -5,6 +5,7 @@ import { Tabs, Tab } from "@heroui/react";
 import ProductManagement from "./components/ProductManagement";
 import IngredientManagement from "./components/IngredientManagement";
 import SupplierManagement from "./components/SupplierManagement";
+import PurchaseManagement from "./components/PurchaseManagement";
 
 const Products = () => {
     const [activeTab, setActiveTab] = useState("products");
@@ -26,6 +27,9 @@ const Products = () => {
                 </Tab>
                 <Tab key="suppliers" title="Proveedores">
                     <SupplierManagement />
+                </Tab>
+                <Tab key="purchases" title="Compras">
+                    <PurchaseManagement />
                 </Tab>
             </Tabs>
         </div>
