@@ -1,10 +1,12 @@
 export interface ISupplier {
   id: number;
   name: string;
-  contact: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ISupplierPayload {
   name: string;
-  contact: string;
+  description: string;
 }
