@@ -66,7 +66,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
         setPhone(selectedClient.phone);
         setAddress(selectedClient.address);
         setClientModalOpen(false);
-        setClientSearch("");
+        setClientSearch(selectedClient.name);
         setClientPage(1);
     };
 
@@ -131,6 +131,9 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                     Buscar Cliente
                 </Button>
             </div>
+
+
+
 
             {/* Modal de búsqueda de clientes */}
             <Modal isOpen={clientModalOpen} onOpenChange={setClientModalOpen} size="2xl">

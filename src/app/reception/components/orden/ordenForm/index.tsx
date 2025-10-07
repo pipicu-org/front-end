@@ -68,7 +68,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: number]: IProduct }>({});
 
-
     // Estados para grilla de productos
     const [products, setProducts] = useState<IProduct[]>([]);
     const [productQuantities, setProductQuantities] = useState<{ [key: number]: number }>({});
@@ -331,7 +330,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     return (
         <form onSubmit={handleSubmit} className="p-2 md:p-6 space-y-2 md:space-y-4">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
+                <h2 className="text-2xl text-primary font-black">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
                 <Button
                     type="button"
                     size="sm"

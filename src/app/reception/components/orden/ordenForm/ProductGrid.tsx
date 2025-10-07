@@ -30,14 +30,17 @@ const ProductGrid = ({
     openProductModal
 }: ProductGridProps) => {
 
+    const style = {
+        background: `linear-gradient(
+                      135deg,
+                      rgba(161, 161, 161, 0.5) 0%,
+                      rgba(161, 161, 161, 0.05) 66%,
+                      rgba(161, 161, 161, 0.6) 100%
+                    ), #ffffff`
+    }
+
     return (
-        <div>
-            <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold">Menú de Productos</h3>
-                <Button onPress={() => openProductModal('create')} className="bg-black/10 hover:bg-black/20">
-                    Gestionar Productos
-                </Button>
-            </div>
+        <div className="bg-black/10 p-2 rounded-lg">
             <Tabs
                 aria-label="Categorías"
                 selectedKey={selectedCategory}
@@ -58,6 +61,7 @@ const ProductGrid = ({
                     <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
                             <div className="flex justify-between items-center w-full px-2 gap-1">
+                                {/* Información del producto */}
                                 <div className="flex items-center py-2 w-fit h-full max-w-[70%] justify-between space-x-2">
                                     <h4 className="font-semibold text-left leading-4 w-24 max-w-24">{product.name}</h4>
                                     <Divider orientation="vertical" />
@@ -93,6 +97,7 @@ const ProductGrid = ({
                                     </div>
                                 </div>
                             </div>
+
                         </CardBody>
                     </Card>
                 ))}
