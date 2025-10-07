@@ -6,12 +6,12 @@ import { IOrder } from "../types/orders.type";
 interface IOrderLine {
   product: number;
   quantity: number;
-  personalizations: unknown[];
 }
 
 interface IOrderPayload {
   client: number;
   deliveryTime: string;
+  contactMethod: string;
   paymentMethod: string;
   lines: IOrderLine[];
 }

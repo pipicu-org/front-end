@@ -28,12 +28,12 @@ interface OrdenFormProps {
 interface IOrderLine {
     product: number;
     quantity: number;
-    personalizations: unknown[];
 }
 
 interface IOrderPayload {
     client: number;
     deliveryTime: string;
+    contactMethod: string;
     paymentMethod: string;
     lines: IOrderLine[];
     phone: string;
@@ -58,6 +58,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         });
         return formatter.format(now);
     });
+    const [contactMethod, setContactMethod] = useState<string>("phone");
     const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
@@ -144,8 +145,8 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     useEffect(() => {
         const calculateTotal = () => {
             return lines.reduce((sum, line) => {
-                const prod = selectedProducts[line.product] || products.find(p => p.id === line.product);
-                return sum + (prod ? prod.price * line.quantity : 0);
+                const prod = selectedProducts[line.product] || products.find(p => p.id === line.product.toString());
+                return sum + (prod ? parseFloat(prod.price) * line.quantity : 0);
             }, 0);
         };
         setTotal(calculateTotal());
@@ -173,6 +174,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         const payload: IOrderPayload = {
             client,
             deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
+            contactMethod,
             paymentMethod,
             lines,
             phone,
@@ -213,14 +215,14 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         setProductQuantities(prev => {
             const newQuantity = Math.max(0, (prev[productId] || 0) + delta);
             if (newQuantity > 0) {
-                const product = products.find(p => p.id === productId);
+                const product = products.find(p => p.id === productId.toString());
                 if (product) {
                     setSelectedProducts(prevSel => ({ ...prevSel, [productId]: product }));
                     const existingIndex = lines.findIndex(line => line.product === productId);
                     if (existingIndex >= 0) {
                         updateLine(existingIndex, 'quantity', newQuantity);
                     } else {
-                        setLines([...lines, { product: productId, quantity: newQuantity, personalizations: [] }]);
+                        setLines([...lines, { product: productId, quantity: newQuantity }]);
                     }
                 }
             } else {
@@ -278,10 +280,10 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Donde?</span>
                         <div className="flex justify-between">
-                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
+                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
+                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
+                            <IconButton nombre={"Otro"} icon={"share-solid-dark"}  onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
                         </div>
                     </div>
 
@@ -331,3 +333,4 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 OrdenForm.displayName = 'OrdenForm';
 
 export default OrdenForm;
+
