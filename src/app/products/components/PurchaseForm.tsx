@@ -34,7 +34,7 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
                 setFormData({
                     providerId: purchase.providerId,
                     purchaseItems: purchase.purchaseItems.map(item => ({
-                        ingredientId: item.ingredientId.toString(),
+                        ingredientId: item.ingredientId,
                         cost: parseFloat(item.cost),
                         quantity: parseFloat(item.quantity),
                         unitId: item.unitId,
@@ -96,7 +96,7 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
     const addItem = () => {
         setFormData({
             ...formData,
-            purchaseItems: [...formData.purchaseItems, { ingredientId: "", cost: 0, quantity: 0, unitId: 1, unitQuantity: 1 }],
+            purchaseItems: [...formData.purchaseItems, { ingredientId: 0, cost: 0, quantity: 0, unitId: 1, unitQuantity: 1 }],
         });
     };
 

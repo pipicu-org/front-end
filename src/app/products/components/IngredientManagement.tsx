@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
-import { motion } from "framer-motion";
 import { getIngredients, createIngredient, updateIngredient, deleteIngredient } from "../../services/ingredients.service";
 import { IIngredient, IIngredientPayload } from "../../types/ingredients.type";
 import IngredientForm from "./IngredientForm";

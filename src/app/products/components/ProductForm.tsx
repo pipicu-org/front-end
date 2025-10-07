@@ -11,6 +11,7 @@ import { IIngredient } from "../../types/ingredients.type";
 
 const productSchema = z.object({
   name: z.string().min(1, "Nombre requerido"),
+  preTaxPrice: z.number().min(0, "Precio sin impuestos debe ser positivo"),
   price: z.number().min(0, "Precio debe ser positivo"),
   category: z.number().min(1, "Categoría requerida"),
   ingredients: z.array(z.object({
@@ -35,6 +36,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
+      preTaxPrice: 0,
       price: 0,
       category: 0,
       ingredients: []
@@ -45,13 +47,15 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
     if (editingProduct) {
       reset({
         name: editingProduct.name,
-        price: editingProduct.price,
+        preTaxPrice: parseFloat(editingProduct.preTaxPrice),
+        price: parseFloat(editingProduct.price),
         category: typeof editingProduct.category === 'number' ? editingProduct.category : categories.find(c => c.name === editingProduct.category)?.id || 0,
         ingredients: editingProduct.ingredients || []
       });
     } else {
       reset({
         name: "",
+        preTaxPrice: 0,
         price: 0,
         category: 0,
         ingredients: []
@@ -105,6 +109,22 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
             />
 
             <Controller
+              name="preTaxPrice"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="number"
+                  label="Precio sin Impuestos"
+                  value={field.value.toString()}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                  errorMessage={errors.preTaxPrice?.message}
+                  isInvalid={!!errors.preTaxPrice}
+                />
+              )}
+            />
+
+            <Controller
               name="price"
               control={control}
               render={({ field }) => (
@@ -144,7 +164,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
               <label className="block text-sm font-medium mb-2">Ingredientes</label>
               <div className="space-y-2">
                 {selectedIngredients.map((ing) => {
-                  const ingredient = ingredients.find(i => i.id === ing.id);
+                  const ingredient = ingredients.find(i => String(i.id) === String(ing.id));
                   return (
                     <div key={ing.id} className="flex items-center space-x-2">
                       <span className="flex-1">{ingredient?.name}</span>
@@ -171,7 +191,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
                 className="mt-2"
               >
                 {ingredients
-                  .filter(ing => !selectedIngredients.some(sel => sel.id === ing.id))
+                  .filter(ing => !selectedIngredients.some(sel => String(sel.id) === String(ing.id)))
                   .map((ingredient) => (
                     <SelectItem key={ingredient.id.toString()}>
                       {ingredient.name}

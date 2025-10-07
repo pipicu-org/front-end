@@ -19,7 +19,7 @@ export interface IPurchase {
 }
 
 export interface IPurchaseItemPayload {
-  ingredientId: string;
+  ingredientId: number;
   cost: number;
   quantity: number;
   unitId: number;

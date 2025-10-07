@@ -1,14 +1,15 @@
-export interface IIngredient {
+export interface IProductIngredient {
   id: number;
   quantity: number;
 }
 
 export interface IProduct {
-  id: number;
+  id: string;
   name: string;
-  price: number;
+  price: string;
+  preTaxPrice: string;
   category: string;
-  ingredients: IIngredient[];
+  ingredients?: IProductIngredient[];
   image?: string;
 }
 
@@ -26,7 +27,8 @@ export interface IGetProducts {
 
 export interface IProductPayload {
   name: string;
+  preTaxPrice: number;
   price: number;
   category: number;
-  ingredients: IIngredient[];
+  ingredients: IProductIngredient[];
 }

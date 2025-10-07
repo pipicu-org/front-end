@@ -38,7 +38,7 @@ const ProductManagement = () => {
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: number; data: Partial<IProductPayload> }) => updateProduct(id, data),
+        mutationFn: ({ id, data }: { id: string; data: Partial<IProductPayload> }) => updateProduct(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["products"] });
             onClose();
@@ -62,7 +62,7 @@ const ProductManagement = () => {
         onOpen();
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (id: string) => {
         if (confirm("¿Estás seguro de eliminar este producto?")) {
             deleteMutation.mutate(id);
         }
@@ -106,7 +106,7 @@ const ProductManagement = () => {
     );
 };
 
-const CategorySection = ({ category, onEdit, onDelete }: { category: ICategory; onEdit: (product: IProduct) => void; onDelete: (id: number) => void }) => {
+const CategorySection = ({ category, onEdit, onDelete }: { category: ICategory; onEdit: (product: IProduct) => void; onDelete: (id: string) => void }) => {
     const {
         data,
         fetchNextPage,
