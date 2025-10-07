@@ -13,7 +13,6 @@ interface ProductGridProps {
     setSelectedCategory: (category: number | undefined) => void;
     productQuantities: { [key: number]: number };
     changeProductQuantity: (productId: number, delta: number) => void;
-    openProductModal: (mode: 'create' | 'edit', product?: IProduct) => void;
 }
 
 const ProductGrid = ({
@@ -27,17 +26,10 @@ const ProductGrid = ({
     setSelectedCategory,
     productQuantities,
     changeProductQuantity,
-    openProductModal
 }: ProductGridProps) => {
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold">Menú de Productos</h3>
-                <Button onPress={() => openProductModal('create')} className="bg-black/10 hover:bg-black/20">
-                    Gestionar Productos
-                </Button>
-            </div>
+        <div className="bg-black/10 p-2 rounded-lg">
             <Tabs
                 aria-label="Categorías"
                 selectedKey={selectedCategory}
@@ -53,11 +45,12 @@ const ProductGrid = ({
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col md:flex-row md:flex-wrap gap-2 mt-4 md:max-h-96">
+            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
                 {products.map((product) => (
                     <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
                             <div className="flex justify-between items-center w-full px-2 gap-1">
+                                {/* Información del producto */}
                                 <div className="flex items-center py-2 w-fit h-full max-w-[70%] justify-between space-x-2">
                                     <h4 className="font-semibold text-left leading-4 w-24 max-w-24">{product.name}</h4>
                                     <Divider orientation="vertical" />
@@ -93,6 +86,7 @@ const ProductGrid = ({
                                     </div>
                                 </div>
                             </div>
+
                         </CardBody>
                     </Card>
                 ))}

@@ -66,7 +66,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
         setPhone(selectedClient.phone);
         setAddress(selectedClient.address);
         setClientModalOpen(false);
-        setClientSearch("");
+        setClientSearch(selectedClient.name);
         setClientPage(1);
     };
 
@@ -127,10 +127,17 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                     value={clients.find(c => String(c.id) === String(client))?.name || ""}
                     readOnly
                 />
-                <Button onPress={() => setClientModalOpen(true)} className="h-full">
-                    Buscar Cliente
+                <Button
+                    onPress={() => setClientModalOpen(true)}
+                    className="px-2 py-2 min-w-0 min-w-0 min-h-0 aspect-square rounded-full bg-black/20 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
                 </Button>
             </div>
+
+
+
 
             {/* Modal de búsqueda de clientes */}
             <Modal isOpen={clientModalOpen} onOpenChange={setClientModalOpen} size="2xl">
@@ -155,7 +162,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                                     className={`h-[8rem] ${selectedClientInModal?.id === c.id
                                         ? 'border border-2 border-blue-500'
                                         : ''
-                                    }`}
+                                        }`}
                                     key={c.id}
                                     isPressable
                                     onPress={() => setSelectedClientInModal(c)}>
