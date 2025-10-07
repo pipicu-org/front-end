@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Card, CardBody, CardHeader, Input, useDisclosure } from "@heroui/react";
-import { motion } from "framer-motion";
+import { Button, Input, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import { getIngredients, createIngredient, updateIngredient, deleteIngredient } from "../../services/ingredients.service";
 import { IIngredient, IIngredientPayload } from "../../types/ingredients.type";
 import IngredientForm from "./IngredientForm";
@@ -11,7 +10,10 @@ import IngredientForm from "./IngredientForm";
 const IngredientManagement = () => {
     const [search, setSearch] = useState("");
     const [editingIngredient, setEditingIngredient] = useState<IIngredient | null>(null);
+    const [ingredientToDelete, setIngredientToDelete] = useState<IIngredient | null>(null);
+    const [deleteConfirmationText, setDeleteConfirmationText] = useState<string>("");
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     const queryClient = useQueryClient();
 
@@ -31,7 +33,7 @@ const IngredientManagement = () => {
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: number; data: Partial<IIngredientPayload> }) => updateIngredient(id, data),
+        mutationFn: ({ id, data }: { id: string; data: Partial<IIngredientPayload> }) => updateIngredient(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["ingredients"] });
             onClose();
@@ -55,9 +57,18 @@ const IngredientManagement = () => {
         onOpen();
     };
 
-    const handleDelete = (id: number) => {
-        if (confirm("¿Estás seguro de eliminar este ingrediente?")) {
-            deleteMutation.mutate(id);
+    const handleDelete = (ingredient: IIngredient) => {
+        setIngredientToDelete(ingredient);
+        setDeleteConfirmationText("");
+        onDeleteOpen();
+    };
+
+    const handleConfirmDelete = () => {
+        if (ingredientToDelete && deleteConfirmationText === "eliminar") {
+            deleteMutation.mutate(ingredientToDelete.id);
+            onDeleteClose();
+            setIngredientToDelete(null);
+            setDeleteConfirmationText("");
         }
     };
 
@@ -78,32 +89,40 @@ const IngredientManagement = () => {
                 className="max-w-md"
             />
 
-            {/* Ingredients Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {ingredientsData?.data.map((ingredient) => (
-                    <motion.div
-                        key={ingredient.id}
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <Card>
-                            <CardHeader>
-                                <h4 className="font-semibold">{ingredient.name}</h4>
-                            </CardHeader>
-                            <CardBody>
-                                <p>Precio: ${ingredient.price}</p>
-                                <div className="flex space-x-2 mt-4">
+            {/* Ingredients Table */}
+            <Table aria-label="Tabla de Ingredientes">
+                <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Nombre</TableColumn>
+                    <TableColumn>Unidad ID</TableColumn>
+                    <TableColumn>Factor de Pérdida</TableColumn>
+                    <TableColumn>Creado</TableColumn>
+                    <TableColumn>Actualizado</TableColumn>
+                    <TableColumn>Acciones</TableColumn>
+                </TableHeader>
+                <TableBody emptyContent={"No hay ingredientes"}>
+                    {(ingredientsData?.data || []).map((ingredient) => (
+                        <TableRow key={ingredient.id}>
+                            <TableCell>{ingredient.id}</TableCell>
+                            <TableCell>{ingredient.name}</TableCell>
+                            <TableCell>{ingredient.unitId}</TableCell>
+                            <TableCell>{ingredient.lossFactor}</TableCell>
+                            <TableCell>{new Date(ingredient.createdAt).toLocaleDateString()}</TableCell>
+                            <TableCell>{new Date(ingredient.updatedAt).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                                <div className="flex space-x-2">
                                     <Button size="sm" onPress={() => handleEdit(ingredient)}>
                                         Editar
                                     </Button>
-                                    <Button size="sm" color="danger" onPress={() => handleDelete(ingredient.id)}>
+                                    <Button size="sm" color="danger" onPress={() => handleDelete(ingredient)}>
                                         Eliminar
                                     </Button>
                                 </div>
-                            </CardBody>
-                        </Card>
-                    </motion.div>
-                ))}
-            </div>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
 
             {/* Ingredient Modal */}
             <IngredientForm
@@ -118,6 +137,33 @@ const IngredientManagement = () => {
                     }
                 }}
             />
+
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+                <ModalContent>
+                    <ModalHeader>
+                        Confirmar Eliminación
+                    </ModalHeader>
+                    <ModalBody>
+                        <p>¿Estás seguro de que deseas eliminar el ingrediente <strong>{ingredientToDelete?.name}</strong>?</p>
+                        <p>Esta acción no se puede deshacer.</p>
+                        <input
+                            type="text"
+                            placeholder="Escribe 'eliminar' para confirmar"
+                            value={deleteConfirmationText}
+                            onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-md"
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="light" onPress={onDeleteClose}>
+                            Cancelar
+                        </Button>
+                        <Button color="danger" onPress={handleConfirmDelete} isDisabled={deleteConfirmationText !== "eliminar"}>
+                            Eliminar
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

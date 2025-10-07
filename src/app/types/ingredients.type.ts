@@ -1,7 +1,10 @@
 export interface IIngredient {
-  id: number;
+  id: string;
   name: string;
-  price: number;
+  unitId: number;
+  lossFactor: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IGetIngredients {
@@ -14,5 +17,6 @@ export interface IGetIngredients {
 
 export interface IIngredientPayload {
   name: string;
-  price: number;
+  unitId: number;
+  lossFactor: number;
 }

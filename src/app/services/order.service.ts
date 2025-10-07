@@ -4,14 +4,14 @@ import { IOrder } from "../types/orders.type";
 
 // Interfaces para API
 interface IOrderLine {
-  product: number;
+  product: string;
   quantity: number;
-  personalizations: unknown[];
 }
 
 interface IOrderPayload {
   client: number;
   deliveryTime: string;
+  contactMethod: string;
   paymentMethod: string;
   lines: IOrderLine[];
 }

@@ -1,15 +1,14 @@
 import { IProduct } from "../../../../types/products.type";
 
 interface IOrderLine {
-    product: number;
+    product: string;
     quantity: number;
-    personalizations: unknown[];
 }
 
 interface OrderLinesProps {
     lines: IOrderLine[];
     products: IProduct[];
-    selectedProducts: { [key: number]: IProduct };
+    selectedProducts: { [key: string]: IProduct };
     removeLine: (index: number) => void;
 }
 
@@ -20,7 +19,7 @@ const OrderLines = ({ lines, products, selectedProducts }: OrderLinesProps) => {
             <div className="p-2 md:max-h-64 overflow-y-auto">
                 {lines.length
                     ? lines.map((line, index) => {
-                        const product = selectedProducts[line.product] || products.find(p => p.id === line.product);
+                        const product = selectedProducts[line.product] || products.find(p => p.id === line.product.toString());
                         return (
                             <div key={index} className="flex justify-between py-1 items-center last:border-b-0">
                                 <div className="flex items-center space-x-2">
@@ -28,7 +27,7 @@ const OrderLines = ({ lines, products, selectedProducts }: OrderLinesProps) => {
                                     <span className="font-semibold text-left leading-4 w-24 max-w-24">{product?.name || `Producto ${line.product}`}</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <span className="text-sm text-gray-600 ml-2">${((product?.price || 0) * line.quantity).toFixed(2)}</span>
+                                    <span className="text-sm text-gray-600 ml-2">${(parseFloat(product?.price || '0') * line.quantity).toFixed(2)}</span>
                                 </div>
                             </div>
                         );

@@ -16,12 +16,12 @@ export async function createIngredient(ingredient: IIngredientPayload): Promise<
 }
 
 // Actualizar ingrediente
-export async function updateIngredient(id: number, ingredient: Partial<IIngredientPayload>): Promise<IIngredient> {
+export async function updateIngredient(id: string, ingredient: Partial<IIngredientPayload>): Promise<IIngredient> {
   const { data } = await api.patch(`/ingredient/${id}`, ingredient);
   return data;
 }
 
 // Eliminar ingrediente
-export async function deleteIngredient(id: number): Promise<void> {
+export async function deleteIngredient(id: string): Promise<void> {
   await api.delete(`/ingredient/${id}`);
 }
