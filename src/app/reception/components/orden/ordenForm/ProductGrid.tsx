@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Divider } from "@heroui/react";
+import { Button, Card, CardBody, Divider, Tab, Tabs, cn } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 import { IProduct } from "../../../../types/products.type";
 
@@ -28,51 +28,26 @@ const ProductGrid = ({
     changeProductQuantity,
 }: ProductGridProps) => {
 
-    //    interface Categoria {
-    //   id: number;
-    //   name: string;
-    // }
-
-    // const categorias: Categoria[] = [
-    //   { id: 1, name: "Productos" },
-    //   { id: 2, name: "Ingredientes" },
-    //   { id: 3, name: "Comanda" },
-    //   { id: 4, name: "Hamburguesa" },
-    // ];
     return (
         <div className="bg-black/10 p-2 rounded-lg">
-            {/* <Tabs
+            <Tabs
                 aria-label="Categorías"
-                selectedKey={selectedCategory}
+                defaultSelectedKey={selectedCategory}
                 onSelectionChange={(key) => setSelectedCategory(key ? Number(key) : undefined)}
+                classNames={{
+                    base: "bg-transparent",
+                    tabList: "bg-black/10",
+                    cursor: "bg-white",
+                    tabContent: "text-black group-data-[selected=true]:text-black",
+                    
+                }}
             >
                 {categories.map((category) => (
-                    <Tab key={category.id.toString()} title={category.name}>
-                        {category.name}
+                    <Tab
+                        key={category.id} title={category.name}>
                     </Tab>
                 ))}
-            </Tabs> */}
-
-
-            <div className="flex space-x-2 bg-black/10 p-1 rounded-lg w-max">
-                    {categories.map((category) => (
-                        <button
-                            key={category.id}
-                            type="button"
-                            onClick={() => setSelectedCategory(category.id)}
-                            className={`px-4 py-1 rounded-lg font-normal transition-colors duration-400
-                        
-                                ${selectedCategory === category.id
-                                    ? "bg-[#D4D4D8] text-black "
-                                    : "text-black hover:text-black/30"
-                                }`}
-                        >
-                            {category.name}
-                        </button>
-                    ))}
-                </div>
-
-
+            </Tabs>
 
 
 
@@ -86,12 +61,12 @@ const ProductGrid = ({
             {productError && <p className="text-red-500">{productError}</p>}
             <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
                 {products.map((product) => (
-                    <Card className="w-full rounded-full bg-black/20 px-1" key={product.id}>
+                    <Card className="w-full rounded-2xl bg-black/20 px-1" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
-                            <div className="flex justify-between items-center w-full px-2 gap-1">
+                            <div className="flex justify-between items-center w-full pl-2 gap-1">
                                 {/* Información del producto */}
-                                <div className="flex items-center w-fit h-full max-w-[70%] justify-between space-x-2">
-                                    <h4 className="font-medium text-left leading-4 w-24 max-w-24">{product.name}</h4>
+                                <div className="flex items-center w-fit max-w-[70%] justify-between space-x-2">
+                                    <h4 className="font-medium text-left w-30 max-w-30 break-words whitespace-normal">{product.name}</h4>
                                     <Divider orientation="vertical" />
                                     <p className="text-gray-600">${product.price}</p>
                                 </div>
@@ -101,7 +76,7 @@ const ProductGrid = ({
                                             ? <Button
                                                 size="sm"
                                                 color="primary"
-                                                className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/80"
+                                                className="px-1 py-0 min-w-0 w-fit aspect-square  rounded-full bg-black/80"
                                                 onPress={() => { changeProductQuantity(product.id, -1) }}>
                                                 {productQuantities[product.id] === 1
                                                     ? <svg

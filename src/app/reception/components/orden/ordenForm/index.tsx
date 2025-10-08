@@ -58,7 +58,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         });
         return formatter.format(now);
     });
-    const [contactMethod, setContactMethod] = useState<string>("phone");
+    const [contactMethod, setContactMethod] = useState<string>("whatsapp");
     const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
