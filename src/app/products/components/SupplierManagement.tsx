@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Spinner, Alert } from "@heroui/react";
+import { Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Card, CardBody, CardHeader } from "@heroui/react";
+import { motion } from "framer-motion";
 import { ISupplier, ISupplierPayload } from "../../types/suppliers.type";
 import { getSuppliers, createSupplier, updateSupplier, deleteSupplier } from "../../services/suppliers.service";
+import ToggleView from "./ToggleView";
+import Loader from "./Loader";
+import EmptyState from "./EmptyState";
 
 const SupplierManagement = () => {
     const [suppliers, setSuppliers] = useState<ISupplier[]>([]);
@@ -14,6 +18,7 @@ const SupplierManagement = () => {
     const [page, setPage] = useState<number>(1);
     const [limit] = useState<number>(10);
     const [sort, setSort] = useState<string>("name");
+    const [view, setView] = useState<"table" | "cards">("table");
     const [editingSupplier, setEditingSupplier] = useState<ISupplier | null>(null);
     const [formData, setFormData] = useState<ISupplierPayload>({ name: "", description: "" });
     const [formErrors, setFormErrors] = useState<{ name?: string; description?: string }>({});
@@ -21,6 +26,20 @@ const SupplierManagement = () => {
     const [deleteConfirmationText, setDeleteConfirmationText] = useState<string>("");
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+
+    // Detect mobile
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Force cards on mobile
+    useEffect(() => {
+        if (isMobile) setView("cards");
+    }, [isMobile]);
 
     const fetchSuppliers = useCallback(async () => {
         setLoading(true);
@@ -112,12 +131,15 @@ const SupplierManagement = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col h-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 className="text-xl font-semibold">Proveedores</h2>
-                <Button color="primary" onPress={handleCreate}>
-                    Nuevo Proveedor
-                </Button>
+                <div className="flex items-center gap-2">
+                    {!isMobile && <ToggleView view={view} onToggle={() => setView(view === "table" ? "cards" : "table")} />}
+                    <Button color="primary" onPress={handleCreate}>
+                        Nuevo Proveedor
+                    </Button>
+                </div>
             </div>
 
             {/* Search and Sort */}
@@ -140,58 +162,98 @@ const SupplierManagement = () => {
 
             {/* Error Alert */}
             {error && (
-                <Alert color="danger" title="Error" description={error} />
+                <EmptyState message={error} />
             )}
 
-            {/* Suppliers Table */}
-            {loading ? (
-                <div className="flex justify-center">
-                    <Spinner size="lg" />
-                </div>
-            ) : (
-                <Table aria-label="Tabla de Proveedores">
-                    <TableHeader>
-                        <TableColumn>ID</TableColumn>
-                        <TableColumn>Nombre</TableColumn>
-                        <TableColumn>Descripción</TableColumn>
-                        <TableColumn>Creado</TableColumn>
-                        <TableColumn>Actualizado</TableColumn>
-                        <TableColumn>Acciones</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {suppliers.map((supplier) => (
-                            <TableRow key={supplier.id}>
-                                <TableCell>{supplier.id}</TableCell>
-                                <TableCell>{supplier.name}</TableCell>
-                                <TableCell>{supplier.description}</TableCell>
-                                <TableCell>{new Date(supplier.createdAt).toLocaleDateString()}</TableCell>
-                                <TableCell>{new Date(supplier.updatedAt).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <div className="flex space-x-2">
-                                        <Button size="sm" onPress={() => handleEdit(supplier)}>
-                                            Editar
-                                        </Button>
-                                        <Button size="sm" color="danger" onPress={() => handleDelete(supplier)}>
-                                            Eliminar
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            )}
-
-            {/* Pagination */}
-            {total > limit && (
-                <div className="flex justify-center">
-                    <Pagination
-                        total={Math.ceil(total / limit)}
-                        page={page}
-                        onChange={handlePageChange}
-                    />
-                </div>
-            )}
+            {/* Content */}
+            <div className="flex-1 overflow-hidden">
+                {loading ? (
+                    <Loader />
+                ) : suppliers.length === 0 ? (
+                    <EmptyState message="No hay proveedores disponibles" />
+                ) : view === "table" ? (
+                    <div className="h-full flex flex-col">
+                        <Table aria-label="Tabla de Proveedores" className="flex-1" isStriped>
+                            <TableHeader>
+                                <TableColumn>ID</TableColumn>
+                                <TableColumn>Nombre</TableColumn>
+                                <TableColumn>Descripción</TableColumn>
+                                <TableColumn>Creado</TableColumn>
+                                <TableColumn>Actualizado</TableColumn>
+                                <TableColumn>Acciones</TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {suppliers.map((supplier) => (
+                                    <TableRow key={supplier.id}>
+                                        <TableCell>{supplier.id}</TableCell>
+                                        <TableCell>{supplier.name}</TableCell>
+                                        <TableCell>{supplier.description}</TableCell>
+                                        <TableCell>{new Date(supplier.createdAt).toLocaleDateString()}</TableCell>
+                                        <TableCell>{new Date(supplier.updatedAt).toLocaleDateString()}</TableCell>
+                                        <TableCell>
+                                            <div className="flex space-x-2">
+                                                <Button size="sm" onPress={() => handleEdit(supplier)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 0 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/>
+                                                    </svg>
+                                                </Button>
+                                                <Button size="sm" color="danger" onPress={() => handleDelete(supplier)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                                                    </svg>
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        {total > limit && (
+                            <div className="flex justify-center mt-4">
+                                <Pagination
+                                    total={Math.ceil(total / limit)}
+                                    page={page}
+                                    onChange={handlePageChange}
+                                />
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="h-full overflow-y-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {suppliers.map((supplier) => (
+                                <motion.div
+                                    key={supplier.id}
+                                    whileHover={{ scale: 1.05 }}
+                                >
+                                    <Card>
+                                        <CardHeader>
+                                            <h4 className="font-semibold">{supplier.name}</h4>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <p>{supplier.description}</p>
+                                            <p>Creado: {new Date(supplier.createdAt).toLocaleDateString()}</p>
+                                            <p>Actualizado: {new Date(supplier.updatedAt).toLocaleDateString()}</p>
+                                            <div className="flex space-x-2 mt-4">
+                                                <Button size="sm" onPress={() => handleEdit(supplier)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 0 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/>
+                                                    </svg>
+                                                </Button>
+                                                <Button size="sm" color="danger" onPress={() => handleDelete(supplier)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                                                    </svg>
+                                                </Button>
+                                            </div>
+                                        </CardBody>
+                                    </Card>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Supplier Modal */}
             <Modal isOpen={isOpen} onClose={onClose}>
