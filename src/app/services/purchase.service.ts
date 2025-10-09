@@ -1,8 +1,8 @@
 import api from "./api";
-import { IPurchase, IPurchasePayload } from "../types/purchases.type";
+import { IGetPurchases, IPurchase, IPurchasePayload } from "../types/purchases.type";
 
 // Obtener lista de compras
-export async function getPurchases(): Promise<IPurchase[]> {
+export async function getPurchases(): Promise<IGetPurchases> {
   const { data } = await api.get("/purchase");
   return data;
 }
