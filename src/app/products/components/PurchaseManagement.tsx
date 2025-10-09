@@ -45,7 +45,7 @@ const PurchaseManagement = () => {
         setError(null);
         try {
             const data = await getPurchases();
-            setPurchases(data);
+            setPurchases(data.purchases);
         } catch {
             setError("Error al cargar compras");
         } finally {

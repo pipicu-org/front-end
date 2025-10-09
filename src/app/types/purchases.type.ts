@@ -18,6 +18,16 @@ export interface IPurchase {
   purchaseItems: IPurchaseItem[];
 }
 
+export interface IGetPurchases {
+  totalElements: number,
+  totalPages: number,
+  currentPage: number,
+  pageSize: number,
+  hasPrevious: boolean,
+  hasNext: boolean,
+  purchases: IPurchase[];
+}
+
 export interface IPurchaseItemPayload {
   ingredientId: number;
   cost: number;
