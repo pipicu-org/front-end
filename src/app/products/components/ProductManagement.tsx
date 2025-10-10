@@ -118,6 +118,8 @@ const ProductManagement = () => {
         [page, total, limit]
     );
 
+    const getMargin = (cost: string, price: string) => ((parseFloat(price)/parseFloat(cost))-1).toFixed(2)
+
     return (
         <div className="space-y-6 flex flex-col h-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -166,8 +168,11 @@ const ProductManagement = () => {
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
+                                <TableColumn>Costo</TableColumn>
                                 <TableColumn>Precio</TableColumn>
+                                <TableColumn>Margen</TableColumn>
                                 <TableColumn>Categoría</TableColumn>
+                                <TableColumn>Preparables</TableColumn>
                                 <TableColumn>Acciones</TableColumn>
                             </TableHeader>
                             <TableBody>
@@ -175,8 +180,11 @@ const ProductManagement = () => {
                                     <TableRow key={product.id}>
                                         <TableCell>{product.id}</TableCell>
                                         <TableCell>{product.name}</TableCell>
+                                        <TableCell>${product.cost}</TableCell>
                                         <TableCell>${product.price}</TableCell>
-                                        <TableCell>{categories.find(c => c.id === parseInt(product.category))?.name || "N/A"}</TableCell>
+                                        <TableCell>{getMargin(product.cost, product.price)}%</TableCell>
+                                        <TableCell>{product.category || "N/A"}</TableCell>
+                                        <TableCell>{product.maxPrepareable}</TableCell>
                                         <TableCell>
                                             <div className="flex space-x-2">
                                                 <Button size="sm" onPress={() => handleEdit(product)}>
@@ -257,6 +265,7 @@ const ProductManagement = () => {
                 onSave={(data) => {
                     if (editingProduct) {
                         updateMutation.mutate({ id: editingProduct.id, data });
+                        setEditingProduct(null)
                     } else {
                         createMutation.mutate(data);
                     }
