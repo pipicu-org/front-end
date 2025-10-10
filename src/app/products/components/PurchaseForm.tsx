@@ -27,7 +27,7 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
 
     const calculateUnitQuantity = useCallback((quantity: number, unitId: number): number => {
         const unit = units.find(u => u.id === unitId);
-        return unit ? quantity * parseFloat(unit.factor) : 0;
+        return unit ? quantity * parseFloat(String(unit.factor)) : 0;
     }, [units]);
 
     useEffect(() => {

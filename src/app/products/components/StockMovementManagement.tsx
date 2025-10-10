@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Card, CardBody, CardHeader } from "@heroui/react";
 import { motion } from "framer-motion";
 import { getStockMovements } from "../../services/stockMovements.service";
-import { IStockMovement } from "../../types/stockMovements.type";
 import ToggleView from "./ToggleView";
 import Loader from "./Loader";
 import EmptyState from "./EmptyState";
