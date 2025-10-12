@@ -36,15 +36,28 @@ const OrderModal = ({ orden, estado, setEstado, setSaveOrderCallback, isMobile, 
 
     return (
         <div className="flex flex-col h-full relative">
-            <div>
+            <div className="shrink-0">
                 <h1 className="font-poppins font-black text-4xl text-primary ">ORDEN</h1>
             </div>
-            <div className="flex flex-col h-full">
-                <div
+            {/* <div className="flex flex-col h-full"> */}
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                {/* <div
                     style={{ background: `linear-gradient(135deg,rgba(41, 13, 27, 0.32) 0%,rgba(41, 13, 27, 0.32) 66%,rgba(41, 13, 27, 0.32) 100%)` }}
                     className="flex flex-col flex-1 w-full md:mt-5 rounded-2xl opacity-80">
 
                     {componentes[estado]}
+                </div> */}
+                <div
+                    style={{
+                        background:
+                            "linear-gradient(135deg,rgba(41,13,27,0.32) 0%,rgba(41,13,27,0.32) 66%,rgba(41,13,27,0.32) 100%)",
+                    }}
+                    className="flex-1 w-full md:mt-5 rounded-2xl opacity-80 overflow-auto min-h-0"
+                >
+                    {/* {componentes[estado]} */}
+                    <div className="h-full min-h-0">
+                        {componentes[estado]}
+                    </div>
                 </div>
             </div>
             {!isMobile && (

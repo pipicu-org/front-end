@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Divider, Tab, Tabs, cn } from "@heroui/react";
+import { Button, Card, CardBody, Divider, Tab, Tabs } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 import { IProduct } from "../../../../types/products.type";
 
@@ -59,7 +59,7 @@ const ProductGrid = ({
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
+            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96">
                 {products.map((product) => (
                     <Card className="w-full rounded-2xl bg-black/20 px-1" key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">

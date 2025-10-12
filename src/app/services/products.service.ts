@@ -13,6 +13,7 @@ interface IGetProducts {
 export async function getProducts(page: number = 1, limit: number = 10, category?: number): Promise<IGetProducts> {
   const params: Record<string, unknown> = { page, limit };
   if (category) params.category = category;
+    console.log("📦 Params enviados:", params); 
   const { data }: { data: IGetProducts } = await api.get("/products", { params });
   return data;
 }

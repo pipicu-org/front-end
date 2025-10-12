@@ -145,8 +145,9 @@ const Reception = () => {
         );
     } else {
         return (
-            <div className="grid grid-cols-7 gap-6 min-h-screen">
-                <div className="col-span-4 h-full">
+            // <div className="grid grid-cols-7 gap-6 border">
+            <div className="grid grid-cols-7 gap-6 border items-stretch">
+                <div className="col-span-4">
                     <Summary
                         cambiarOrden={cambiarOrden}
                         creados={ordenes_creados}
@@ -163,17 +164,20 @@ const Reception = () => {
                         isMobile={isMobile}
                     />
                 </div>
-                <div className="col-span-3 flex flex-col">
-                    <OrdenModal
-                        orden={ordenActiva}
-                        estado={estadoOrden}
-                        setEstado={cambiarEstado}
-                        onSave={(savedOrder) => {
-                            setOrdenActiva(savedOrder);
-                            cambiarEstado("ver");
-                            reloadAllOrders();
-                        }}
-                    />
+                {/* <div className="col-span-3 flex flex-col"> */}
+                 <div className="col-span-3 flex flex-col h-full overflow-hidden">
+                    <div className="flex-1 overflow-auto">
+                        <OrdenModal
+                            orden={ordenActiva}
+                            estado={estadoOrden}
+                            setEstado={cambiarEstado}
+                            onSave={(savedOrder) => {
+                                setOrdenActiva(savedOrder);
+                                cambiarEstado("ver");
+                                reloadAllOrders();
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
         );
