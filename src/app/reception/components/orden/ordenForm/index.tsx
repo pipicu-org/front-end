@@ -69,7 +69,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [address, setAddress] = useState<string>(orden?.address || "");
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: IProduct }>({});
-    const [orderDetails, setOrderDetails] = useState<any>(null);
+    const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
 
     // Estados para grilla de productos
     const [products, setProducts] = useState<IProduct[]>([]);
@@ -174,6 +174,9 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         loadCategories();
     }, []);
 
+    useEffect( () => {
+
+    }, [loading, orderDetails])
     // Cargar productos
     useEffect(() => {
         const loadProducts = async () => {

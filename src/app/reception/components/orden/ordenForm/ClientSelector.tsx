@@ -103,6 +103,10 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
         setClientManagementModalOpen(true);
     };
 
+    useEffect(() => {
+        
+    },[setSelectedClientInModal])
+
     // Función para guardar cliente
     const saveClient = async () => {
         if (!clientForm.name || !clientForm.phone || !clientForm.address) {
