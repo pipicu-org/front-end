@@ -146,7 +146,7 @@ const Reception = () => {
     } else {
         return (
             // <div className="grid grid-cols-7 gap-6 border">
-            <div className="grid grid-cols-7 gap-6 border items-stretch">
+            <div className="grid grid-cols-7 gap-6 items-stretch">
                 <div className="col-span-4">
                     <Summary
                         cambiarOrden={cambiarOrden}

@@ -58,7 +58,7 @@ const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : 
                 <span className="font-bold">{ordenes.length}</span>
             </div>
             {/* ~~~ Row ~~~ */}
-            <div className="mt-1 flex gap-5  overflow-hidden rounded-xl">
+            <div className="mt-1 flex gap-5 h-[7rem] overflow-hidden rounded-xl">
                 {
                     ordenes.map((orden) => (
                         <OrderCard

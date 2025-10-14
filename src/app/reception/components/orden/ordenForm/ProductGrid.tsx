@@ -29,7 +29,7 @@ const ProductGrid = ({
 }: ProductGridProps) => {
 
     return (
-        <div className="bg-black/10 p-2 rounded-lg">
+        <div className="bg-black/10 p-2 rounded-lg max-h-70">
             <Tabs
                 aria-label="Categorías"
                 defaultSelectedKey={selectedCategory}
@@ -39,7 +39,7 @@ const ProductGrid = ({
                     tabList: "bg-black/10",
                     cursor: "bg-white",
                     tabContent: "text-black group-data-[selected=true]:text-black",
-                    
+
                 }}
             >
                 {categories.map((category) => (
@@ -59,9 +59,14 @@ const ProductGrid = ({
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96">
+            <div className="flex flex-col overflow-y-auto  gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-54" style={{
+                // overflowY: "scroll",
+                scrollbarWidth: "thin", // solo Firefox
+                scrollbarColor: "#3d3d3d #00000000", // solo Firefox
+                height: "300px",
+            }}>
                 {products.map((product) => (
-                    <Card className="w-full rounded-2xl bg-black/20 px-1" key={product.id}>
+                    <Card className="w-full rounded-2xl bg-black/20 px-1 " key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
                             <div className="flex justify-between items-center w-full pl-2 gap-1">
                                 {/* Información del producto */}

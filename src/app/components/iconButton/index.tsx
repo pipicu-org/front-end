@@ -2,8 +2,8 @@ import { Button } from "@heroui/react";
 import Image from "next/image";
 
 interface IconButtonProps{
-    nombre: string;
-    icon: string;
+    nombre?: string;
+    icon?: string;
     onPress?: () => void;
     selected?: boolean;
 }
@@ -19,9 +19,9 @@ const IconButton = ({nombre, icon, onPress, selected} : IconButtonProps) => {
     }
 
     return (
-        <Button style={style} className={`flex flex-col items-center justify-center w-[90px] h-[70px] rounded-2xl ${selected ? 'ring-2 ring-blue-500' : ''}`} onPress={onPress}>
-            <Image src={`/icons/${icon}.svg`} alt={nombre} width={20} height={20} className="w-[20px]" loading="lazy" />
-            <span className="text-dark">{nombre}</span>
+        <Button style={style} className={`flex flex-col items-center justify-center w-[90px] rounded-2xl  py-7 ${selected ? 'ring-2 ring-blue-500' : ''}`} onPress={onPress}>
+            {icon && <Image src={`/icons/${icon}.svg`} alt={nombre || icon} width={20} height={20} className="w-[20px]" loading="lazy" />}
+            {nombre && <span className="text-dark">{nombre}</span>}
         </Button>
     )
 }

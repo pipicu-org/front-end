@@ -11,9 +11,10 @@ import { Button } from "@heroui/react";
 interface OrdenVerProps {
     orden: IOrder | null;
     onClose?: () => void;
+    onEdit?: () => void;
 }
 
-const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -61,7 +62,7 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
 
     return (
         <div className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto max-h-full">
                 <div className="md:col-span-3 text-primary font-poppins p-4">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex flex-col">
@@ -138,6 +139,13 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
                         <p>Total: ${orderDetails.totalPrice}</p>
+                        <Button
+                            type="button"
+                            size="sm"
+                            className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
+                            onPress={onEdit}>
+                            Editar Orden
+                        </Button>
                     </div>
 
                     <div>
