@@ -2,6 +2,7 @@ export interface IIngredient {
   id: string;
   name: string;
   unitId: number;
+  stock: number;
   lossFactor: string;
   createdAt: string;
   updatedAt: string;

@@ -6,6 +6,8 @@ import ProductManagement from "./components/ProductManagement";
 import IngredientManagement from "./components/IngredientManagement";
 import SupplierManagement from "./components/SupplierManagement";
 import PurchaseManagement from "./components/PurchaseManagement";
+import UnitManagement from "./components/UnitManagement";
+import StockMovementManagement from "./components/StockMovementManagement";
 
 const Products = () => {
     const [activeTab, setActiveTab] = useState("products");
@@ -30,6 +32,12 @@ const Products = () => {
                 </Tab>
                 <Tab key="purchases" title="Compras">
                     <PurchaseManagement />
+                </Tab>
+                <Tab key="units" title="Unidades">
+                    <UnitManagement />
+                </Tab>
+                <Tab key="stockMovements" title="Movimientos de Stock">
+                    <StockMovementManagement />
                 </Tab>
             </Tabs>
         </div>
