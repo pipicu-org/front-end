@@ -146,7 +146,9 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                             price: (line.totalPrice / parseInt(line.quantity)).toString(),
                             preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
                             category: '',
-                            ingredients: []
+                            ingredients: [],
+                            cost: "0", // Default or fetch actual cost if available
+                            maxPrepareable: "0" // Default or fetch actual value if available
                         };
                     });
                     setProductQuantities(quantities);
