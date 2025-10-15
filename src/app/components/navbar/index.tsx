@@ -31,7 +31,7 @@ const Navbar = () => {
           alt="Pipí Cucú"
           width={20}
           height={20}
-          className="w-[8rem] sm:w-[12rem]"
+          className="w-[8rem] sm:w-[10rem]"
           loading="lazy"
         />
       </Link>

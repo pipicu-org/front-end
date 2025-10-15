@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Divider, Tabs, Tab } from "@heroui/react";
+import { Button, Card, CardBody, Divider, Tab, Tabs } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 import { IProduct } from "../../../../types/products.type";
 
@@ -29,40 +29,59 @@ const ProductGrid = ({
 }: ProductGridProps) => {
 
     return (
-        <div className="bg-black/10 p-2 rounded-lg">
+        <div className="bg-black/10 p-2 rounded-lg max-h-70">
             <Tabs
                 aria-label="Categorías"
-                selectedKey={selectedCategory}
+                defaultSelectedKey={selectedCategory}
                 onSelectionChange={(key) => setSelectedCategory(key ? Number(key) : undefined)}
+                classNames={{
+                    base: "bg-transparent",
+                    tabList: "bg-black/10",
+                    cursor: "bg-white",
+                    tabContent: "text-black group-data-[selected=true]:text-black",
+
+                }}
             >
                 {categories.map((category) => (
-                    <Tab key={category.id.toString()} title={category.name}>
-                        {category.name}
+                    <Tab
+                        key={category.id} title={category.name}>
                     </Tab>
                 ))}
             </Tabs>
+
+
+
+
+
+
+
             {categoriesLoading && <p>Cargando categorías...</p>}
             {categoriesError && <p className="text-red-500">{categoriesError}</p>}
             {productLoading && <p>Cargando productos...</p>}
             {productError && <p className="text-red-500">{productError}</p>}
-            <div className="flex flex-col overflow-y-auto gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-96 scrollbar-hide">
+            <div className="flex flex-col overflow-y-auto  gap-2 mt-2 md:flex-row md:flex-wrap md:max-h-54" style={{
+                // overflowY: "scroll",
+                scrollbarWidth: "thin", // solo Firefox
+                scrollbarColor: "#3d3d3d #00000000", // solo Firefox
+                height: "300px",
+            }}>
                 {products.map((product) => (
-                    <Card className="w-full rounded-full p-0 bg-black/10" key={product.id}>
+                    <Card className="w-full rounded-2xl bg-black/20 px-1 " key={product.id}>
                         <CardBody className="flex flex-col items-center text-center p-0">
-                            <div className="flex justify-between items-center w-full px-2 gap-1">
+                            <div className="flex justify-between items-center w-full pl-2 gap-1">
                                 {/* Información del producto */}
-                                <div className="flex items-center py-2 w-fit h-full max-w-[70%] justify-between space-x-2">
-                                    <h4 className="font-semibold text-left leading-4 w-24 max-w-24">{product.name}</h4>
+                                <div className="flex items-center w-fit max-w-[70%] justify-between space-x-2">
+                                    <h4 className="font-medium text-left w-30 max-w-30 break-words whitespace-normal">{product.name}</h4>
                                     <Divider orientation="vertical" />
                                     <p className="text-gray-600">${product.price}</p>
                                 </div>
-                                <div className="flex flex-col items-center space-x-1 mt-2">
-                                    <div className="flex items-center space-x-2 mb-2">
+                                <div className="flex flex-col items-center space-x-1 mt-1">
+                                    <div className="flex items-center space-x-2 mb-1">
                                         {productQuantities[product.id]
                                             ? <Button
                                                 size="sm"
                                                 color="primary"
-                                                className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/80"
+                                                className="px-1 py-0 min-w-0 w-fit aspect-square  rounded-full bg-black/80"
                                                 onPress={() => { changeProductQuantity(product.id, -1) }}>
                                                 {productQuantities[product.id] === 1
                                                     ? <svg
