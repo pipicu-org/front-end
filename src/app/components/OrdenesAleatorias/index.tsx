@@ -14,7 +14,7 @@ const ordenesAleatorias: Order[] = Array.from({ length: 100 }, (_, i) => ({
   state: randomItem(states),
   client: `${randomItem(names)} ${randomItem(surnames)}`,
   name: `Pedido ${i + 1}`,
-  phone: (Math.floor(Math.random() * 9000000000) + 1000000000).toString(),
+  phoneNumber: (Math.floor(Math.random() * 9000000000) + 1000000000).toString(),
   address: `Calle ${String.fromCharCode(65 + (i % 26))} ${Math.floor(Math.random() * 100 + 1)}`,
   deliveryTime: randomHour(),
   paymentMethod: randomItem(paymentMethods),

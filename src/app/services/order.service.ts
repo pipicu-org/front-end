@@ -29,7 +29,7 @@ export interface IOrderDetail {
   id: string;
   state: string;
   client: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
   deliveryTime: string;
   paymentMethod: string;

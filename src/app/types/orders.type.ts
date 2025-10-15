@@ -6,7 +6,7 @@ export interface IOrder {
   state: ORDER_STATUS;
   client: string;
   name: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
   deliveryTime: string;
   paymentMethod: string;

@@ -35,7 +35,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     const [selectedClient, setSelectedClient] = useState<IClient | null>(null);
     const [clientForm, setClientForm] = useState({
         name: '',
-        phone: '',
+        phoneNumber: '',
         address: '',
         facebookUsername: '',
         instagramUsername: ''
@@ -68,56 +68,58 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     }, [clientSearch, clientPage, clientModalOpen]);
 
     // Función para seleccionar cliente del modal
-    const selectClient = (selectedClient: IClient) => {
-        setClient(Number(selectedClient.id));
-        setPhone(selectedClient.phone);
-        setAddress(selectedClient.address);
-        setClientName?.(selectedClient.name);
-        setClientModalOpen(false);
-        setClientSearch(selectedClient.name);
-        setClientPage(1);
-    };
+        const selectClient = (selectedClient: IClient) => {
+            setClient(Number(selectedClient.id));
+            setPhone(selectedClient.phoneNumber);
+            setAddress(selectedClient.address);
+            setClientName?.(selectedClient.name);
+            setClientModalOpen(false);
+            setClientSearch(selectedClient.name);
+            setClientPage(1);
+        };
 
     // Función para abrir modal de gestión de cliente
-    const openClientManagementModal = (mode: 'create' | 'edit', client?: IClient) => {
-        setClientManagementMode(mode);
-        if (mode === 'edit' && client) {
-            setSelectedClient(client);
-            setClientForm({
-                name: client.name,
-                phone: client.phone,
-                address: client.address,
-                facebookUsername: client.facebookUsername || '',
-                instagramUsername: client.instagramUsername || ''
-            });
-        } else {
-            setSelectedClient(null);
-            setClientForm({
-                name: '',
-                phone: '',
-                address: '',
-                facebookUsername: '',
-                instagramUsername: ''
-            });
-        }
-        setClientManagementModalOpen(true);
-    };
+        const openClientManagementModal = (mode: 'create' | 'edit', client?: IClient) => {
+            setClientManagementMode(mode);
+            if (mode === 'edit' && client) {
+                setSelectedClient(client);
+                setClientForm({
+                    name: client.name,
+                    phoneNumber: client.phoneNumber,
+                    address: client.address,
+                    facebookUsername: client.facebookUsername || '',
+                    instagramUsername: client.instagramUsername || ''
+                });
+            } else {
+                setSelectedClient(null);
+                setClientForm({
+                    name: '',
+                    phoneNumber: '',
+                    address: '',
+                    facebookUsername: '',
+                    instagramUsername: ''
+                });
+            }
+            setClientManagementModalOpen(true);
+        };
 
     useEffect(() => {
         
     },[setSelectedClientInModal])
 
     // Función para guardar cliente
-    const saveClient = async () => {
-        if (!clientForm.name || !clientForm.phone || !clientForm.address) {
-            setClientManagementError("Nombre, teléfono y dirección son requeridos");
-            return;
-        }
+        const saveClient = async () => {
+            if (!clientForm.name || !clientForm.phoneNumber || !clientForm.address) {
+                setClientManagementError("Nombre, teléfono y dirección son requeridos");
+                return;
+            }
         setClientManagementLoading(true);
         setClientManagementError(null);
         try {
+            let createdClient: IClient;
             if (clientManagementMode === 'create') {
-                await createClient(clientForm);
+                createdClient = await createClient(clientForm);
+                selectClient(createdClient)
             } else if (selectedClient) {
                 await updateClient(selectedClient.id, clientForm);
             }
@@ -217,7 +219,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                                     onPress={() => selectClient(c)}>
                                     <CardBody>
                                         <p className="font-semibold">{c.name}</p>
-                                        <p className="text-sm text-gray-600">{c.phone}</p>
+                                        <p className="text-sm text-gray-600">{c.phoneNumber}</p>
                                         <p className="text-sm text-gray-600">{c.address}</p>
                                     </CardBody>
                                 </Card>

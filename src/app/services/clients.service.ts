@@ -19,10 +19,7 @@ export async function getClientById(id: number): Promise<IGetClient> {
 
 // Actualizar cliente
 export async function updateClient(id: number, client: Partial<IClient>) {
-  const { data } = await api.patch(`/client/${id}`, {
-    ...client,
-    phoneNumber: client.phone // TODO: Esto esta mal, hay que normalizar el campo
-  });
+  const { data } = await api.patch(`/client/${id}`, client);
   return data;
 }
 

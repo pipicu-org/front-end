@@ -36,7 +36,7 @@ interface IOrderPayload {
     contactMethod: string;
     paymentMethod: string;
     lines: IOrderLine[];
-    phone: string;
+    phoneNumber: string;
     address: string;
 }
 
@@ -65,7 +65,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
     const [loading, setLoading] = useState(false);
-    const [phone, setPhone] = useState<string>(orden?.phone || "");
+    const [phone, setPhone] = useState<string>(orden?.phoneNumber || "");
     const [address, setAddress] = useState<string>(orden?.address || "");
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: IProduct }>({});
@@ -101,15 +101,15 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     }, []);
 
     // Load order details when editing
-    useEffect(() => {
-        if (isEdit && orden?.id) {
-            getOrderById(orden.id)
-                .then((details: IOrderDetail) => {
-                    setOrderDetails(details);
-                    // Populate form with existing data
-                    setClient(Number(details.client));
-                    setPhone(details.phone);
-                    setAddress(details.address);
+        useEffect(() => {
+            if (isEdit && orden?.id) {
+                getOrderById(orden.id)
+                    .then((details: IOrderDetail) => {
+                        setOrderDetails(details);
+                        // Populate form with existing data
+                        setClient(Number(details.client));
+                        setPhone(details.phoneNumber);
+                        setAddress(details.address);
                     setPaymentMethod(details.paymentMethod);
                     setContactMethod("whatsapp"); // Default, could be enhanced
                     setClientName(details.client); // Set client name from order details
@@ -248,7 +248,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
             contactMethod,
             paymentMethod,
             lines,
-            phone,
+            phoneNumber: phone,
             address,
         };
 

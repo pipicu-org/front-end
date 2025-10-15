@@ -85,11 +85,11 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                             <div className="flex items-center gap-2">
                                 <div className="w-full">
                                     <Input
-                                        value={orderDetails.phone}
+                                        value={orderDetails.phoneNumber}
                                         icon={"phone-outline-primary"} />
                                 </div>
                                 <Link
-                                    href={`https://wa.me/${orderDetails.phone}`}
+                                    href={`https://wa.me/${orderDetails.phoneNumber}`}
                                     target="_blank">
                                     <div className="flex gap-1 items-center underline hover:text-violet-900">
                                         <span className="leading-4">

@@ -39,7 +39,7 @@ const OrderModal = ({ orden, estado, setEstado, setSaveOrderCallback, isMobile, 
         <div className="flex flex-col h-full relative">
             <div className="absolute bottom-4 left-4 pointer-events-none z-0">
                 <Image
-                    src="/resources/pipi_cucu_1_tinta.webp"
+                    src="/resources/Pipi_Cucu_1_tinta.webp"
                     alt="Pipi Cucu Watermark"
                     width={300}
                     height={300}
