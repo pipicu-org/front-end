@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
-import { getOrderById, IOrderDetail, IOrderDetailLine } from "@/app/services/order.service";
-import { IOrder } from "@/app/types/orders.type";
+import { getOrderById } from "@/app/services/order.service";
+import { IOrder, IOrderDetail, IOrderDetailLine } from "@/app/types/orders.type";
 import { Button } from "@heroui/react";
 
 interface OrdenVerProps {
@@ -138,7 +138,7 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                         <h3 className="font-black text-lg">RESUMEN</h3>
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
-                        <p>Total: ${orderDetails.totalPrice}</p>
+                        <p>Total: ${orderDetails.total}</p>
                         <Button
                             type="button"
                             size="sm"
@@ -154,17 +154,12 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                             {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
                                 <div key={line.id} className="border rounded p-2">
                                     <div className="flex justify-between">
-                                        <span className="font-medium">{line.product}</span>
+                                        <span className="font-medium">{line.product.name}</span>
                                         <span>${line.totalPrice.toFixed(2)}</span>
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                        Cantidad: {line.quantity} | Estado: {line.state}
+                                        Cantidad: {line.quantity}
                                     </div>
-                                    {line.personalization && line.personalization.length > 0 && (
-                                        <div className="text-sm">
-                                            Personalizaciones: {JSON.stringify(line.personalization)}
-                                        </div>
-                                    )}
                                 </div>
                             ))}
                         </div>

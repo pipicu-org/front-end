@@ -3,15 +3,15 @@
 
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Button, Divider} from "@heroui/react";
-import { createOrder, updateOrder, getOrderById, IOrderDetail, getClientById } from "@/app/services/order.service";
+import { Button, Divider } from "@heroui/react";
+import { createOrder, updateOrder, getOrderById, getClientById } from "@/app/services/order.service";
 import { getProducts, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
 import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";
-import { IOrder } from "../../../../types/orders.type";
+import { IOrder, IOrderPayload, IOrderUpdatePayload, IOrderLinePayload, IOrderUpdateLinePayload } from "../../../../types/orders.type";
 import { IProduct } from "../../../../types/products.type";
 import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
@@ -28,16 +28,6 @@ interface OrdenFormProps {
 interface IOrderLine {
     product: string;
     quantity: number;
-}
-
-interface IOrderPayload {
-    client: number;
-    deliveryTime: string;
-    contactMethod: string;
-    paymentMethod: string;
-    lines: IOrderLine[];
-    phoneNumber: string;
-    address: string;
 }
 
 const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps, ref) => {
@@ -61,15 +51,13 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         return formatter.format(now);
     });
     const [contactMethod, setContactMethod] = useState<string>("whatsapp");
-    const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
+    const [paymentMethod, setPaymentMethod] = useState<string>("cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [phone, setPhone] = useState<string>(orden?.phoneNumber || "");
-    const [address, setAddress] = useState<string>(orden?.address || "");
+    const [phone, setPhone] = useState<string>("");
+    const [address, setAddress] = useState<string>("");
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: IProduct }>({});
-    const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
 
     // Estados para grilla de productos
     const [products, setProducts] = useState<IProduct[]>([]);
@@ -101,15 +89,14 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     }, []);
 
     // Load order details when editing
-        useEffect(() => {
-            if (isEdit && orden?.id) {
-                getOrderById(orden.id)
-                    .then((details: IOrderDetail) => {
-                        setOrderDetails(details);
-                        // Populate form with existing data
-                        setClient(Number(details.client));
-                        setPhone(details.phoneNumber);
-                        setAddress(details.address);
+    useEffect(() => {
+        if (isEdit && orden?.id) {
+            getOrderById(orden.id)
+                .then((details) => {
+                    // Populate form with existing data
+                    setClient(Number(details.client));
+                    setPhone(details.phoneNumber);
+                    setAddress(details.address);
                     setPaymentMethod(details.paymentMethod);
                     setContactMethod("whatsapp"); // Default, could be enhanced
                     setClientName(details.client); // Set client name from order details
@@ -129,7 +116,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
                     // Convert order lines to form lines
                     const formLines: IOrderLine[] = details.lines.map(line => ({
-                        product: line.product,
+                        product: line.product.id,
                         quantity: parseInt(line.quantity)
                     }));
                     setLines(formLines);
@@ -138,11 +125,11 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     const quantities: { [key: string]: number } = {};
                     const selectedProds: { [key: string]: IProduct } = {};
                     details.lines.forEach(line => {
-                        quantities[line.product] = parseInt(line.quantity);
+                        quantities[line.product.id] = parseInt(line.quantity);
                         // Create a minimal product object for display
-                        selectedProds[line.product] = {
-                            id: line.product,
-                            name: line.product, // Use the product name from the line
+                        selectedProds[line.product.id] = {
+                            id: line.product.id,
+                            name: line.product.name,
                             price: (line.totalPrice / parseInt(line.quantity)).toString(),
                             preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
                             category: '',
@@ -176,9 +163,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         loadCategories();
     }, []);
 
-    useEffect( () => {
-
-    }, [loading, orderDetails])
     // Cargar productos
     useEffect(() => {
         const loadProducts = async () => {
@@ -240,22 +224,45 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
             }
         }
 
-        setLoading(true);
+        // setLoading(true);
+
+        const orderLines: IOrderLinePayload[] = lines.map(line => ({
+            product: {
+                id: parseInt(line.product),
+                name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+            },
+            quantity: line.quantity
+        }));
 
         const payload: IOrderPayload = {
             client,
             deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
             contactMethod,
             paymentMethod,
-            lines,
-            phoneNumber: phone,
-            address,
+            lines: orderLines,
         };
 
         try {
             let result;
             if (isEdit && orden) {
-                result = await updateOrder(orden.id, payload);
+                const updateLines: IOrderUpdateLinePayload[] = lines.map(line => ({
+                    id: parseInt(line.product), // This might need adjustment based on actual line IDs
+                    product: {
+                        id: parseInt(line.product),
+                        name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+                    },
+                    quantity: line.quantity
+                }));
+
+                const updatePayload: IOrderUpdatePayload = {
+                    client,
+                    deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
+                    contactMethod,
+                    paymentMethod,
+                    lines: updateLines,
+                };
+
+                result = await updateOrder(orden.id, updatePayload);
                 showToast("Orden actualizada exitosamente", "success");
             } else {
                 result = await createOrder(payload);
@@ -265,7 +272,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         } catch (error) {
             console.error("Error saving order:", error);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -386,18 +393,13 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         />
                     </div>
 
-
-
-
-
-
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Donde?</span>
                         <div className="flex justify-between px-1">
-                            <IconButton  icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
-                            <IconButton  icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
-                            <IconButton  icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
-                            <IconButton  icon={"share-solid-dark"} onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
+                            <IconButton icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
+                            <IconButton icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
+                            <IconButton icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
+                            <IconButton icon={"share-solid-dark"} onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
                         </div>
                     </div>
 
@@ -431,12 +433,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     <div className="flex justify-end mb-4">
                         <h3 className="font-black text-lg">${total.toFixed(2)}</h3>
                     </div>
-
-                    {/* <div className="mt-100">
-                        <Button type="submit" disabled={loading} className="w-full">
-                            {loading ? "Guardando..." : (isEdit ? "Actualizar" : "Crear")}
-                        </Button>
-                    </div> */}
 
                 </div>
             </div>
