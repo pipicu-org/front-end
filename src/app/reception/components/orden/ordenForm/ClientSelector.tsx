@@ -11,10 +11,17 @@ interface ClientSelectorProps {
     setAddress: (address: string) => void;
     clients: IClient[];
     onReloadClients: () => void;
+    clientModalOpen?: boolean;
+    setClientModalOpen?: (open: boolean) => void;
+    clientName?: string;
+    setClientName?: (name: string) => void;
 }
 
-const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onReloadClients }: ClientSelectorProps) => {
-    const [clientModalOpen, setClientModalOpen] = useState(false);
+const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onReloadClients, clientModalOpen: externalClientModalOpen, setClientModalOpen: externalSetClientModalOpen, clientName, setClientName }: ClientSelectorProps) => {
+    const [internalClientModalOpen, setInternalClientModalOpen] = useState(false);
+
+    const clientModalOpen = externalClientModalOpen !== undefined ? externalClientModalOpen : internalClientModalOpen;
+    const setClientModalOpen = externalSetClientModalOpen || setInternalClientModalOpen;
     const [clientSearch, setClientSearch] = useState("");
     const [clientPage, setClientPage] = useState(1);
     const [clientResults, setClientResults] = useState<IClient[]>([]);
@@ -28,7 +35,7 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     const [selectedClient, setSelectedClient] = useState<IClient | null>(null);
     const [clientForm, setClientForm] = useState({
         name: '',
-        phone: '',
+        phoneNumber: '',
         address: '',
         facebookUsername: '',
         instagramUsername: ''
@@ -61,51 +68,58 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     }, [clientSearch, clientPage, clientModalOpen]);
 
     // Función para seleccionar cliente del modal
-    const selectClient = (selectedClient: IClient) => {
-        setClient(Number(selectedClient.id));
-        setPhone(selectedClient.phone);
-        setAddress(selectedClient.address);
-        setClientModalOpen(false);
-        setClientSearch(selectedClient.name);
-        setClientPage(1);
-    };
+        const selectClient = (selectedClient: IClient) => {
+            setClient(Number(selectedClient.id));
+            setPhone(selectedClient.phoneNumber);
+            setAddress(selectedClient.address);
+            setClientName?.(selectedClient.name);
+            setClientModalOpen(false);
+            setClientSearch(selectedClient.name);
+            setClientPage(1);
+        };
 
     // Función para abrir modal de gestión de cliente
-    const openClientManagementModal = (mode: 'create' | 'edit', client?: IClient) => {
-        setClientManagementMode(mode);
-        if (mode === 'edit' && client) {
-            setSelectedClient(client);
-            setClientForm({
-                name: client.name,
-                phone: client.phone,
-                address: client.address,
-                facebookUsername: client.facebookUsername || '',
-                instagramUsername: client.instagramUsername || ''
-            });
-        } else {
-            setSelectedClient(null);
-            setClientForm({
-                name: '',
-                phone: '',
-                address: '',
-                facebookUsername: '',
-                instagramUsername: ''
-            });
-        }
-        setClientManagementModalOpen(true);
-    };
+        const openClientManagementModal = (mode: 'create' | 'edit', client?: IClient) => {
+            setClientManagementMode(mode);
+            if (mode === 'edit' && client) {
+                setSelectedClient(client);
+                setClientForm({
+                    name: client.name,
+                    phoneNumber: client.phoneNumber,
+                    address: client.address,
+                    facebookUsername: client.facebookUsername || '',
+                    instagramUsername: client.instagramUsername || ''
+                });
+            } else {
+                setSelectedClient(null);
+                setClientForm({
+                    name: '',
+                    phoneNumber: '',
+                    address: '',
+                    facebookUsername: '',
+                    instagramUsername: ''
+                });
+            }
+            setClientManagementModalOpen(true);
+        };
+
+    useEffect(() => {
+        
+    },[setSelectedClientInModal])
 
     // Función para guardar cliente
-    const saveClient = async () => {
-        if (!clientForm.name || !clientForm.phone || !clientForm.address) {
-            setClientManagementError("Nombre, teléfono y dirección son requeridos");
-            return;
-        }
+        const saveClient = async () => {
+            if (!clientForm.name || !clientForm.phoneNumber || !clientForm.address) {
+                setClientManagementError("Nombre, teléfono y dirección son requeridos");
+                return;
+            }
         setClientManagementLoading(true);
         setClientManagementError(null);
         try {
+            let createdClient: IClient;
             if (clientManagementMode === 'create') {
-                await createClient(clientForm);
+                createdClient = await createClient(clientForm);
+                selectClient(createdClient)
             } else if (selectedClient) {
                 await updateClient(selectedClient.id, clientForm);
             }
@@ -122,19 +136,37 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
     return (
         <>
             <div className="flex items-center space-x-2">
-                <Input
-                    label="Cliente"
-                    value={clients.find(c => String(c.id) === String(client))?.name || ""}
+                <input
+                    id="cliente"
+                    type="text"
+                    value={clientName || clients.find(c => String(c.id) === String(client))?.name || ""}
                     readOnly
+                    placeholder="Cliente"
+                    className="flex-1 w-full border border-none rounded-lg px-3 py-2 text-sm bg-black/10 focus:outline-none"
                 />
+
                 <Button
                     onPress={() => setClientModalOpen(true)}
-                    className="px-2 py-2 min-w-0 min-w-0 min-h-0 aspect-square rounded-full bg-black/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    className="px-1 py-1 min-w-0 min-h-0 aspect-square rounded-full bg-black/20 text-white flex items-center justify-center"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-4"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
                     </svg>
                 </Button>
             </div>
+
+
 
 
 
@@ -145,11 +177,30 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                     <ModalHeader>Buscar Cliente</ModalHeader>
                     <ModalBody>
                         <div className="flex gap-2">
-                            <Input
-                                placeholder="Buscar por nombre, teléfono o email"
-                                value={clientSearch}
-                                onChange={(e) => setClientSearch(e.target.value)}
-                            />
+                            <div className="relative flex-1">
+                                <Input
+                                    placeholder="Buscar por nombre, teléfono o email"
+                                    value={clientSearch}
+                                    onChange={(e) => setClientSearch(e.target.value)}
+                                />
+                                {clientSearch && (
+                                    <button
+                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        onClick={() => setClientSearch('')}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-4 h-4"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
                             <Button
                                 className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
                                 onPress={() => openClientManagementModal('create')}>+</Button>
@@ -165,10 +216,10 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                                         }`}
                                     key={c.id}
                                     isPressable
-                                    onPress={() => setSelectedClientInModal(c)}>
+                                    onPress={() => selectClient(c)}>
                                     <CardBody>
                                         <p className="font-semibold">{c.name}</p>
-                                        <p className="text-sm text-gray-600">{c.phone}</p>
+                                        <p className="text-sm text-gray-600">{c.phoneNumber}</p>
                                         <p className="text-sm text-gray-600">{c.address}</p>
                                     </CardBody>
                                 </Card>
@@ -188,12 +239,6 @@ const ClientSelector = ({ client, setClient, setPhone, setAddress, clients, onRe
                             onPress={() => selectedClientInModal && openClientManagementModal('edit', selectedClientInModal)}
                             disabled={!selectedClientInModal}>
                             Editar Cliente Seleccionado
-                        </Button>
-                        <Button
-                            onPress={() => selectedClientInModal && selectClient(selectedClientInModal)}
-                            disabled={!selectedClientInModal}
-                            color="primary">
-                            Seleccionar Cliente
                         </Button>
                     </ModalFooter>
                 </ModalContent>

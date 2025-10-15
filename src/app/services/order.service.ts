@@ -1,41 +1,6 @@
 import api from "./api";
 import { IClient } from "../types/clients.type";
-import { IOrder } from "../types/orders.type";
-
-// Interfaces para API
-interface IOrderLine {
-  product: string;
-  quantity: number;
-}
-
-interface IOrderPayload {
-  client: number;
-  deliveryTime: string;
-  contactMethod: string;
-  paymentMethod: string;
-  lines: IOrderLine[];
-}
-
-export interface IOrderDetailLine {
-  id: string;
-  product: string;
-  quantity: string;
-  totalPrice: number;
-  state: string;
-  personalization: unknown[];
-}
-
-export interface IOrderDetail {
-  id: string;
-  state: string;
-  client: string;
-  phone: string;
-  address: string;
-  deliveryTime: string;
-  paymentMethod: string;
-  totalPrice: string;
-  lines: IOrderDetailLine[];
-}
+import { IOrder, IOrderDetail, IOrderPayload, IOrderUpdatePayload } from "../types/orders.type";
 
 // Crear orden
 export async function createOrder(order: IOrderPayload) {
@@ -44,7 +9,7 @@ export async function createOrder(order: IOrderPayload) {
 }
 
 // Actualizar orden
-export async function updateOrder(id: string, order: IOrderPayload) {
+export async function updateOrder(id: string, order: IOrderUpdatePayload) {
   const { data } = await api.patch(`/orders/reception/${id}`, order);
   return data;
 }

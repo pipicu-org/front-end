@@ -27,6 +27,16 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
     const [modal, setModal] = useState(true);
     const { showToast } = useToast();
 
+    // Función para filtrar órdenes por búsqueda
+    const filterOrders = (orders: IOrder[]) => {
+        if (!search.trim()) return orders;
+        const searchLower = search.toLowerCase();
+        return orders.filter(order =>
+            order.id.toLowerCase().includes(searchLower) ||
+            order.name.toLowerCase().includes(searchLower)
+        );
+    };
+
     const stateMapping: { [key: string]: number } = {
         "Creados": 1,
         "Pendientes": 2,
@@ -50,6 +60,7 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
 
     if (isMobile) {
         const allOrders = [...creados, ...pendientes, ...preparados, ...enCamino, ...entregados, ...cancelados];
+        const filteredOrders = filterOrders(allOrders);
         return (
             <div className="flex flex-col h-full">
                 <h1 className="font-poppins font-black text-4xl text-primary">ÓRDENES</h1>
@@ -69,7 +80,7 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto flex flex-col gap-2">
-                        {allOrders.map(order => (
+                        {filteredOrders.map(order => (
                             <div key={order.id} className="p-4 bg-white rounded-lg shadow flex justify-between items-center">
                                 <div className="cursor-pointer flex-1" onClick={() => cambiarOrden?.(order)}>
                                     <p className="font-semibold">Orden #{order.id}</p>
@@ -103,7 +114,7 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
         return (
             <div className="flex flex-col h-full">
                 <h1 className="font-poppins font-black text-4xl text-primary">RESUMEN</h1>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 flex-1 overflow-hidden">
                     <div className="flex justify-between mt-4">
                         <div className="inline-flex text-sm ">
                             <Button onPress={ () => setModal(true)} className="inline-flex items-center h-[30px] bg-[#3D3D3D45] text-white pl-4 pr-4 rounded-l-full">En curso</Button>
@@ -125,18 +136,18 @@ const Summary = ({cambiarOrden, creados, pendientes, preparados, enCamino, entre
                             <Button onPress={() => setPage(page + 1)} className="h-[30px] px-3 rounded-r-full">Next</Button>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
                         {modal ? (
                             <>
-                                <CardKanban cambiarOrden={cambiarOrden} estado="Creados" ordenes={creados} onOrderStateChange={onOrderStateChange} />
-                                <CardKanban cambiarOrden={cambiarOrden} estado="Pendientes" ordenes={pendientes} onOrderStateChange={onOrderStateChange} />
-                                <CardKanban cambiarOrden={cambiarOrden} estado="Preparados" ordenes={preparados} onOrderStateChange={onOrderStateChange} />
-                                <CardKanban cambiarOrden={cambiarOrden} estado="En Camino" ordenes={enCamino} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="Creados" ordenes={filterOrders(creados)} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="Pendientes" ordenes={filterOrders(pendientes)} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="Preparados" ordenes={filterOrders(preparados)} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="En Camino" ordenes={filterOrders(enCamino)} onOrderStateChange={onOrderStateChange} />
                             </>
                         ): (
                             <>
-                                <CardKanban cambiarOrden={cambiarOrden} estado="Entregados" ordenes={entregados} onOrderStateChange={onOrderStateChange} />
-                                <CardKanban cambiarOrden={cambiarOrden} estado="Cancelados" ordenes={cancelados} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="Entregados" ordenes={filterOrders(entregados)} onOrderStateChange={onOrderStateChange} />
+                                <CardKanban cambiarOrden={cambiarOrden} estado="Cancelados" ordenes={filterOrders(cancelados)} onOrderStateChange={onOrderStateChange} />
                             </>
                         )}
 

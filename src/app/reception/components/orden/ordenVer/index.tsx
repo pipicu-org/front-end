@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
-import { getOrderById, IOrderDetail, IOrderDetailLine } from "@/app/services/order.service";
-import { IOrder } from "@/app/types/orders.type";
+import { getOrderById } from "@/app/services/order.service";
+import { IOrder, IOrderDetail, IOrderDetailLine } from "@/app/types/orders.type";
 import { Button } from "@heroui/react";
 
 interface OrdenVerProps {
     orden: IOrder | null;
     onClose?: () => void;
+    onEdit?: () => void;
 }
 
-const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -61,7 +62,7 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
 
     return (
         <div className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto max-h-full">
                 <div className="md:col-span-3 text-primary font-poppins p-4">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex flex-col">
@@ -84,11 +85,11 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                             <div className="flex items-center gap-2">
                                 <div className="w-full">
                                     <Input
-                                        value={orderDetails.phone}
+                                        value={orderDetails.phoneNumber}
                                         icon={"phone-outline-primary"} />
                                 </div>
                                 <Link
-                                    href={`https://wa.me/${orderDetails.phone}`}
+                                    href={`https://wa.me/${orderDetails.phoneNumber}`}
                                     target="_blank">
                                     <div className="flex gap-1 items-center underline hover:text-violet-900">
                                         <span className="leading-4">
@@ -137,7 +138,14 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                         <h3 className="font-black text-lg">RESUMEN</h3>
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
-                        <p>Total: ${orderDetails.totalPrice}</p>
+                        <p>Total: ${orderDetails.total}</p>
+                        <Button
+                            type="button"
+                            size="sm"
+                            className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
+                            onPress={onEdit}>
+                            Editar Orden
+                        </Button>
                     </div>
 
                     <div>
@@ -146,17 +154,12 @@ const OrdenVer = ({ orden, onClose }: OrdenVerProps) => {
                             {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
                                 <div key={line.id} className="border rounded p-2">
                                     <div className="flex justify-between">
-                                        <span className="font-medium">{line.product}</span>
+                                        <span className="font-medium">{line.product.name}</span>
                                         <span>${line.totalPrice.toFixed(2)}</span>
                                     </div>
                                     <div className="text-sm text-gray-600">
-                                        Cantidad: {line.quantity} | Estado: {line.state}
+                                        Cantidad: {line.quantity}
                                     </div>
-                                    {line.personalization && line.personalization.length > 0 && (
-                                        <div className="text-sm">
-                                            Personalizaciones: {JSON.stringify(line.personalization)}
-                                        </div>
-                                    )}
                                 </div>
                             ))}
                         </div>

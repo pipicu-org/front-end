@@ -1,7 +1,7 @@
 export interface IClient {
   id: number;
   name: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
   facebookUsername?: string;
   instagramUsername?: string;

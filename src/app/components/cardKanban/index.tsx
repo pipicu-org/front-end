@@ -4,7 +4,7 @@ import OrderCard from "../OrderCard";
 import { useDrop } from "react-dnd";
 import { updateOrderState } from "../../services/order.service";
 import { useToast } from "@/utils/toast";
-import { IOrder } from "../../types/orders.type";
+import { IOrder} from "../../types/orders.type";
 
 interface CardKanbanProps {
     estado: string,
@@ -58,7 +58,7 @@ const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : 
                 <span className="font-bold">{ordenes.length}</span>
             </div>
             {/* ~~~ Row ~~~ */}
-            <div className="mt-1 flex gap-5  overflow-hidden rounded-xl">
+            <div className="mt-1 flex gap-5 h-[7rem] overflow-hidden rounded-xl">
                 {
                     ordenes.map((orden) => (
                         <OrderCard

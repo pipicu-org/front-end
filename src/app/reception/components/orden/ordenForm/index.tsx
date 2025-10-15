@@ -3,15 +3,15 @@
 
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Button, Divider, Input as HeroInput } from "@heroui/react";
-import { createOrder, updateOrder } from "@/app/services/order.service";
+import { Button, Divider } from "@heroui/react";
+import { createOrder, updateOrder, getOrderById, getClientById } from "@/app/services/order.service";
 import { getProducts, getProductsByCategory } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
 import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";
-import { IOrder } from "../../../../types/orders.type";
+import { IOrder, IOrderPayload, IOrderUpdatePayload, IOrderLinePayload, IOrderUpdateLinePayload } from "../../../../types/orders.type";
 import { IProduct } from "../../../../types/products.type";
 import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
@@ -30,19 +30,11 @@ interface IOrderLine {
     quantity: number;
 }
 
-interface IOrderPayload {
-    client: number;
-    deliveryTime: string;
-    contactMethod: string;
-    paymentMethod: string;
-    lines: IOrderLine[];
-    phone: string;
-    address: string;
-}
-
 const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps, ref) => {
     const { showToast } = useToast();
     const [client, setClient] = useState<number>(orden?.client ? Number(orden.client) : 0);
+    const [clientModalOpen, setClientModalOpen] = useState<boolean>(!orden && !isEdit);
+    const [clientName, setClientName] = useState<string>("");
     const [deliveryTime, setDeliveryTime] = useState<string>(() => {
         if (orden?.deliveryTime) {
             const date = new Date(orden.deliveryTime);
@@ -58,13 +50,12 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         });
         return formatter.format(now);
     });
-    const [contactMethod, setContactMethod] = useState<string>("phone");
-    const [paymentMethod, setPaymentMethod] = useState<string>(orden?.paymentMethod || "cash");
+    const [contactMethod, setContactMethod] = useState<string>("whatsapp");
+    const [paymentMethod, setPaymentMethod] = useState<string>("cash");
     const [lines, setLines] = useState<IOrderLine[]>([]);
     const [clients, setClients] = useState<IClient[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [phone, setPhone] = useState<string>(orden?.phone || "");
-    const [address, setAddress] = useState<string>(orden?.address || "");
+    const [phone, setPhone] = useState<string>("");
+    const [address, setAddress] = useState<string>("");
     const [total, setTotal] = useState(0);
     const [selectedProducts, setSelectedProducts] = useState<{ [key: string]: IProduct }>({});
 
@@ -96,6 +87,63 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     useEffect(() => {
         reloadClients();
     }, []);
+
+    // Load order details when editing
+    useEffect(() => {
+        if (isEdit && orden?.id) {
+            getOrderById(orden.id)
+                .then((details) => {
+                    // Populate form with existing data
+                    setClient(Number(details.client));
+                    setPhone(details.phoneNumber);
+                    setAddress(details.address);
+                    setPaymentMethod(details.paymentMethod);
+                    setContactMethod("whatsapp"); // Default, could be enhanced
+                    setClientName(details.client); // Set client name from order details
+
+                    // Update delivery time from order details
+                    if (details.deliveryTime) {
+                        const date = new Date(details.deliveryTime);
+                        setDeliveryTime(date.toTimeString().slice(0, 5));
+                    }
+
+                    // Load client details to get the actual client name
+                    getClientById(Number(details.client))
+                        .then((clientData: { data: IClient }) => {
+                            setClientName(clientData.data.name); // Update with actual client name
+                        })
+                        .catch(console.error);
+
+                    // Convert order lines to form lines
+                    const formLines: IOrderLine[] = details.lines.map(line => ({
+                        product: line.product.id,
+                        quantity: parseInt(line.quantity)
+                    }));
+                    setLines(formLines);
+
+                    // Set product quantities
+                    const quantities: { [key: string]: number } = {};
+                    const selectedProds: { [key: string]: IProduct } = {};
+                    details.lines.forEach(line => {
+                        quantities[line.product.id] = parseInt(line.quantity);
+                        // Create a minimal product object for display
+                        selectedProds[line.product.id] = {
+                            id: line.product.id,
+                            name: line.product.name,
+                            price: (line.totalPrice / parseInt(line.quantity)).toString(),
+                            preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
+                            category: '',
+                            ingredients: [],
+                            cost: "0", // Default or fetch actual cost if available
+                            maxPrepareable: "0" // Default or fetch actual value if available
+                        };
+                    });
+                    setProductQuantities(quantities);
+                    setSelectedProducts(selectedProds);
+                })
+                .catch(console.error);
+        }
+    }, [isEdit, orden?.id]);
 
     // Cargar categorías
     useEffect(() => {
@@ -152,39 +200,70 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         setTotal(calculateTotal());
     }, [lines, products, selectedProducts]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const submitOrder = async () => {
+        // Validations - relaxed for editing mode
+        if (isEdit) {
+            // In edit mode, allow some fields to be empty
+            if (lines.length === 0) {
+                showToast("Debe agregar al menos un producto", "error");
+                return;
+            }
+        } else {
+            // Strict validation for new orders
+            if (!client || client === 0) {
+                showToast("Debe seleccionar un cliente", "error");
+                return;
+            }
+            if (lines.length === 0) {
+                showToast("Debe agregar al menos un producto", "error");
+                return;
+            }
+            if (!paymentMethod) {
+                showToast("Debe seleccionar un método de pago", "error");
+                return;
+            }
+        }
 
-        // Validations
-        if (!client || client === 0) {
-            showToast("Debe seleccionar un cliente", "error");
-            return;
-        }
-        if (lines.length === 0) {
-            showToast("Debe agregar al menos un producto", "error");
-            return;
-        }
-        if (!paymentMethod) {
-            showToast("Debe seleccionar un método de pago", "error");
-            return;
-        }
+        // setLoading(true);
 
-        setLoading(true);
+        const orderLines: IOrderLinePayload[] = lines.map(line => ({
+            product: {
+                id: parseInt(line.product),
+                name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+            },
+            quantity: line.quantity
+        }));
 
         const payload: IOrderPayload = {
             client,
             deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
             contactMethod,
             paymentMethod,
-            lines,
-            phone,
-            address,
+            lines: orderLines,
         };
 
         try {
             let result;
             if (isEdit && orden) {
-                result = await updateOrder(orden.id, payload);
+                const updateLines: IOrderUpdateLinePayload[] = lines.map(line => ({
+                    id: parseInt(line.product), // This might need adjustment based on actual line IDs
+                    product: {
+                        id: parseInt(line.product),
+                        name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+                    },
+                    quantity: line.quantity
+                }));
+
+                const updatePayload: IOrderUpdatePayload = {
+                    client,
+                    deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
+                    contactMethod,
+                    paymentMethod,
+                    lines: updateLines,
+                };
+
+                result = await updateOrder(orden.id, updatePayload);
+                showToast("Orden actualizada exitosamente", "success");
             } else {
                 result = await createOrder(payload);
                 showToast("Orden creada exitosamente", "success");
@@ -193,8 +272,13 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         } catch (error) {
             console.error("Error saving order:", error);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await submitOrder();
     };
 
     // Función addLine removida ya que ahora se agregan productos desde la grilla
@@ -236,11 +320,11 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     };
 
     useImperativeHandle(ref, () => ({
-        submitForm: handleSubmit
+        submitForm: submitOrder
     }));
 
     return (
-        <form onSubmit={handleSubmit} className="p-2 md:p-6 space-y-2 md:space-y-4">
+        <form onSubmit={handleSubmit} className="p-2  space-y-2 md:space-y-4 h-full min-h-0 ">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl text-primary font-black">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
                 <Button
@@ -252,44 +336,76 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4">
-                <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4 flex-1 overflow-y-hidden min-h-0 max-h-full">
+                <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-2">
                     <ClientSelector
                         client={client}
                         setClient={setClient}
                         clients={clients}
                         onReloadClients={reloadClients}
                         setPhone={setPhone}
-                        setAddress={setAddress} />
+                        setAddress={setAddress}
+                        clientModalOpen={clientModalOpen}
+                        setClientModalOpen={setClientModalOpen}
+                        clientName={clientName}
+                        setClientName={setClientName} />
 
                     <div className="flex flex-col gap-2">
                         <div className="flex gap-3">
-                            <HeroInput value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Teléfono" />
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="Teléfono"
+                                className="flex-1 rounded-md px-3 py-2 text-xs bg-black/10 focus:outline-none"
+                            />
                         </div>
-                        <HeroInput value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Dirección" />
+
+                        <input
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Dirección"
+                            className="flex-1 rounded-md px-3 py-2 text-xs bg-black/10 focus:outline-none"
+                        />
                     </div>
 
-                    <HeroInput
+
+                    {/* <HeroInput
                         label="Hora de entrega"
                         type="time"
                         value={deliveryTime}
                         onChange={(e) => setDeliveryTime(e.target.value)}
                         required
-                    />
+                    /> */}
+
+                    <div className="flex flex-col bg-black/10 rounded-lg px-2 py-1">
+                        <label htmlFor="horaEntrega" className="text-xs font-light text-black/60 ">
+                            Hora de entrega
+                        </label>
+                        <input
+                            id="horaEntrega"
+                            type="time"
+                            value={deliveryTime}
+                            onChange={(e) => setDeliveryTime(e.target.value)}
+                            required
+                            className="rounded-md px-2 py-1 text-xs focus:outline-none"
+                        />
+                    </div>
 
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Donde?</span>
-                        <div className="flex justify-between">
-                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
-                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
-                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"}  onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
+                        <div className="flex justify-between px-1">
+                            <IconButton icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
+                            <IconButton icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
+                            <IconButton icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />
+                            <IconButton icon={"share-solid-dark"} onPress={() => setContactMethod('Other')} selected={contactMethod === 'Other'} />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Cómo?</span>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between px-1">
                             <IconButton nombre="Efectivo" icon="efectivo-solid-dark" onPress={() => setPaymentMethod('cash')} selected={paymentMethod === 'cash'} />
                             <IconButton nombre="Tarjeta" icon="creditCard-solid-dark" onPress={() => setPaymentMethod('card')} selected={paymentMethod === 'card'} />
                             <IconButton nombre="Transferencia" icon="transference-outline-dark" onPress={() => setPaymentMethod('transfer')} selected={paymentMethod === 'transfer'} />
@@ -316,12 +432,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     <Divider />
                     <div className="flex justify-end mb-4">
                         <h3 className="font-black text-lg">${total.toFixed(2)}</h3>
-                    </div>
-
-                    <div className="mt-100">
-                        <Button type="submit" disabled={loading} className="w-full">
-                            {loading ? "Guardando..." : (isEdit ? "Actualizar" : "Crear")}
-                        </Button>
                     </div>
 
                 </div>
