@@ -5,7 +5,7 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Button, Divider } from "@heroui/react";
 import { createOrder, updateOrder, getOrderById, getClientById } from "@/app/services/order.service";
-import { getProducts, getProductsByCategory } from "@/app/services/products.service";
+import { getProducts, getProductsByCategory, getProductById } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
@@ -177,7 +177,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     const response = await getProducts(1, 50);
                     data = response.data;
                 }
-                console.log("Loaded products:", data);
+                // console.log("Loaded products:", data);
                 setProducts(data);
             } catch (error) {
                 setProductError("Error al cargar productos");
@@ -189,6 +189,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         loadProducts();
     }, [selectedCategory]);
 
+   
 
     useEffect(() => {
         const calculateTotal = () => {

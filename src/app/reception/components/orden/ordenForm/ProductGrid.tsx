@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Divider, Tab, Tabs } from "@heroui/react";
+import { Divider, Tab, Tabs } from "@heroui/react";
 import { ICategory } from "@/app/types/categories.type";
 import { IProduct } from "../../../../types/products.type";
 import { useState } from "react";
@@ -71,7 +71,7 @@ const ProductGrid = ({
             }}>
                 {products.map((product) => (
                     // <Card className="w-full rounded-2xl bg-black/20 px-1 self-start h-fit" key={product.id}>
-                    <div className="flex w-full items-center gap-2 rounded-2xl bg-black/10 px-2 py-[0.25rem] mt-1">
+                    <div key={product.id} className="flex w-full items-center gap-2 rounded-2xl bg-black/10 px-2 py-[0.25rem] mt-1">
                         {/* Información del producto - Izquierda */}
                         <div className="flex-1 min-w-0">
                             <span className="font-semibold text-white truncate">
