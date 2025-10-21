@@ -70,7 +70,7 @@ const CustomProductModal = ({
                                     <ul>
                                         {productDetails.recipe.ingredients.map((recipeIngredient: IRecipeIngredient, index: number) => (
                                             <li key={index} className="flex items-center justify-between">
-                                                <span>{recipeIngredient.ingredient.name} - Cantidad: {recipeIngredient.quantity}</span>
+                                                <span>{recipeIngredient.ingredient.name} </span>
                                                 <Button
                                                     size="sm"
                                                     color="danger"
