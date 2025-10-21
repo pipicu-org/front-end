@@ -1,0 +1,50 @@
+[
+  {
+    "day": "2024-01-01",
+    "ingredientId": 1,
+    "ingredientName": "pan",
+    "cost": 1250.5
+  },
+  {
+    "day": "2024-01-02",
+    "ingredientId": 1,
+    "ingredientName": "pan",
+    "cost": 1570.5
+  },
+  {
+    "day": "2024-01-01",
+    "ingredientId": 2,
+    "ingredientName": "carne",
+    "cost": 1250.5
+  },
+  {
+    "day": "2024-01-02",
+    "ingredientId": 2,
+    "ingredientName": "carne",
+    "cost": 1220.5
+  },
+  {
+    "day": "2024-01-01",
+    "ingredientId": 3,
+    "ingredientName": "lechuga",
+    "cost": 850.0
+  },
+  {
+    "day": "2024-01-02",
+    "ingredientId": 3,
+    "ingredientName": "lechuga",
+    "cost": 920.0
+  },
+  {
+    "day": "2024-01-01",
+    "ingredientId": 4,
+    "ingredientName": "tomate",
+    "cost": 650.0
+  },
+  {
+    "day": "2024-01-02",
+    "ingredientId": 4,
+    "ingredientName": "tomate",
+    "cost": 720.0
+  }
+]
