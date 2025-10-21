@@ -1,6 +1,6 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
 import { IProduct, IProductDetail, IRecipeIngredient } from "../../../types/products.type";
-import { IIngredient, IGetIngredients } from "../../../types/ingredients.type";
+import { IIngredient } from "../../../types/ingredients.type";
 import { getProductById } from "@/app/services/products.service";
 import { getIngredients } from "@/app/services/ingredients.service";
 import { useState, useEffect } from "react";
@@ -21,7 +21,9 @@ const CustomProductModal = ({
     const [productDetails, setProductDetails] = useState<IProductDetail | null>(null);
     const [loading, setLoading] = useState(false);
     const [ingredients, setIngredients] = useState<IIngredient[]>([]);
-    const [selectedIngredient, setSelectedIngredient] = useState<string>("");
+    const [, setSelectedIngredient] = useState<string>("");
+
+    
 
     useEffect(() => {
         console.log("productDetails actualizado: ", productDetails);
