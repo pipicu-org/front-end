@@ -1,4 +1,4 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Select, SelectItem, Card, CardBody, CardHeader } from "@heroui/react";
 import { IProduct, IProductDetail, IRecipeIngredient } from "../../../types/products.type";
 import { IIngredient } from "../../../types/ingredients.type";
 import { getProductById } from "@/app/services/products.service";
@@ -61,54 +61,63 @@ const CustomProductModal = ({
                         <p>Cargando...</p>
                     ) : productDetails ? (
                         <div>
-                            <p><strong>Nombre:</strong> {productDetails.name}</p>
-                            <p><strong>Precio:</strong> ${productDetails.price}</p>
-                            <p><strong>Cantidad actual:</strong> {productQuantities[productDetails.id] || 0}</p>
+                            <Card>
+                                <CardBody>
+                                    <p><strong>Nombre:</strong> {productDetails.name}</p>
+                                    <p><strong>Precio:</strong> ${productDetails.price}</p>
+                                    <p><strong>Cantidad actual:</strong> {productQuantities[productDetails.id] || 0}</p>
+                                </CardBody>
+                            </Card>
                             {productDetails.recipe && productDetails.recipe.ingredients && productDetails.recipe.ingredients.length > 0 && (
-                                <div>
-                                    <p><strong>Ingredientes:</strong></p>
-                                    <ul>
-                                        {productDetails.recipe.ingredients.map((recipeIngredient: IRecipeIngredient, index: number) => (
-                                            <li key={index} className="flex items-center justify-between">
-                                                <span>{recipeIngredient.ingredient.name} </span>
-                                                <Button
-                                                    size="sm"
-                                                    color="danger"
-                                                    variant="light"
-                                                    onPress={() => {
-                                                        if (productDetails) {
-                                                            const updatedIngredients = productDetails.recipe.ingredients.filter(
-                                                                (_, i) => i !== index
-                                                            );
-                                                            const updatedProductDetails = {
-                                                                ...productDetails,
-                                                                recipe: {
-                                                                    ...productDetails.recipe,
-                                                                    ingredients: updatedIngredients
-                                                                }
-                                                            };
-                                                            setProductDetails(updatedProductDetails);
-                                                        }
-                                                    }}
-                                                >
-                                                    Remover
-                                                </Button>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                <Card className="mt-4">
+                                    <CardHeader>
+                                        <p><strong>Ingredientes:</strong></p>
+                                    </CardHeader>
+                                    <CardBody>
+                                        <ul>
+                                            {productDetails.recipe.ingredients.map((recipeIngredient: IRecipeIngredient, index: number) => (
+                                                <li key={index} className="flex items-center justify-between">
+                                                    <span>{recipeIngredient.ingredient.name}</span>
+                                                    <Button
+                                                        size="sm"
+                                                        color="danger"
+                                                        variant="light"
+                                                        onPress={() => {
+                                                            if (productDetails) {
+                                                                const updatedIngredients = productDetails.recipe.ingredients.filter(
+                                                                    (_, i) => i !== index
+                                                                );
+                                                                const updatedProductDetails = {
+                                                                    ...productDetails,
+                                                                    recipe: {
+                                                                        ...productDetails.recipe,
+                                                                        ingredients: updatedIngredients
+                                                                    }
+                                                                };
+                                                                setProductDetails(updatedProductDetails);
+                                                            }
+                                                        }}
+                                                    >
+                                                        Remover
+                                                    </Button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </CardBody>
+                                </Card>
                             )}
 
-                            <div className="mt-4">
-                                <p><strong>Agregar Ingrediente:</strong></p>
-                                <div className="mt-2">
-                                    <select
-                                        className="w-full p-2 border border-gray-300 rounded-md"
-                                        value=""
-                                        onChange={(e) => {
-                                            const selected = e.target.value;
+                            <Card className="mt-4">
+                                <CardHeader>
+                                    <p><strong>Agregar Ingrediente:</strong></p>
+                                </CardHeader>
+                                <CardBody>
+                                    <Select
+                                        placeholder="Seleccionar ingrediente"
+                                        onSelectionChange={(keys) => {
+                                            const selected = Array.from(keys)[0] as string;
                                             console.log("--------------------------");
-                                            
+
                                             console.log("Seleccionado:", selected);
                                             console.log("Ingredientes disponibles:", ingredients);
                                             if (selected && productDetails) {
@@ -148,17 +157,16 @@ const CustomProductModal = ({
                                             }
                                         }}
                                     >
-                                        <option value="">Seleccionar ingrediente</option>
                                         {ingredients
                                             .filter(ing => !productDetails?.recipe?.ingredients?.some(sel => sel.ingredient.id.toString() === ing.id.toString()))
                                             .map((ingredient) => (
-                                                <option key={ingredient.id} value={ingredient.id}>
+                                                <SelectItem key={ingredient.id}>
                                                     {ingredient.name}
-                                                </option>
+                                                </SelectItem>
                                             ))}
-                                    </select>
-                                </div>
-                            </div>
+                                    </Select>
+                                </CardBody>
+                            </Card>
                         </div>
                     ) : (
                         <p>No se pudo cargar la información del producto.</p>
