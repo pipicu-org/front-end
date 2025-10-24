@@ -1,7 +1,10 @@
 export interface IPurchaseItem {
   id: number;
   purchaseId: number;
-  ingredientId: number;
+  ingredient:{
+    name:string;
+    id:number;
+  }
   cost: string;
   quantity: string;
   unitId: number;
@@ -12,7 +15,10 @@ export interface IPurchaseItem {
 
 export interface IPurchase {
   id: number;
-  providerId: number;
+  provider : {
+    name: string;
+    id: number;
+  }
   createdAt: string;
   updatedAt: string;
   purchaseItems: IPurchaseItem[];

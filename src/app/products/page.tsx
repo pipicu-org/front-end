@@ -14,14 +14,15 @@ const Products = () => {
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-6">Gestión de Productos</h1>
+            <h1 className="text-3xl font-bold mb-6">Gestión de Productos</h1>
             <Tabs
                 selectedKey={activeTab}
                 onSelectionChange={(key) => setActiveTab(key as string)}
                 aria-label="Gestión de productos"
                 className="w-full"
+                classNames={{ tabList: "bg-gray-500/20 text-black",  tabContent: "text-black" }}
             >
-                <Tab key="products" title="Productos">
+                <Tab key="products" title="Productos" >
                     <ProductManagement />
                 </Tab>
                 <Tab key="ingredients" title="Ingredientes">

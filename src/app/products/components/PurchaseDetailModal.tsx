@@ -26,7 +26,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <strong>Proveedor ID:</strong> {purchase.providerId}
+                                <strong>Proveedor ID:</strong> {purchase.provider.id}
                             </div>
                             <div>
                                 <strong>Fecha de Creación:</strong> {new Date(purchase.createdAt).toLocaleString()}
@@ -53,7 +53,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
                                 <TableBody>
                                     {purchase.purchaseItems.map((item) => (
                                         <TableRow key={item.id}>
-                                            <TableCell>{item.ingredientId}</TableCell>
+                                            <TableCell>{item.ingredient.id}</TableCell>
                                             <TableCell>${parseFloat(item.cost).toFixed(2)}</TableCell>
                                             <TableCell>{parseFloat(item.quantity)}</TableCell>
                                             <TableCell>{item.unitId}</TableCell>
