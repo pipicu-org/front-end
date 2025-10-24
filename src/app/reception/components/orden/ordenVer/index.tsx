@@ -4,17 +4,19 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
-import { getOrderById } from "@/app/services/order.service";
+import { getOrderById, updateOrderState } from "@/app/services/order.service";
 import { IOrder, IOrderDetail, IOrderDetailLine } from "@/app/types/orders.type";
 import { Button } from "@heroui/react";
 
 interface OrdenVerProps {
-    orden: IOrder | null;
-    onClose?: () => void;
-    onEdit?: () => void;
-}
+     orden: IOrder | null;
+     onClose?: () => void;
+     onEdit?: () => void;
+     onDelete?: () => void;
+     onOrderStateChange?: () => void;
+  }
 
-const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -22,7 +24,14 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
         if (orden?.id) {
             setLoading(true);
             getOrderById(orden.id)
-                .then(setOrderDetails)
+                .then((details) => {
+                    setOrderDetails(details);
+                    // Update the order state in the parent component
+                    if (orden && details.state !== orden.state) {
+                        // The state has changed, we need to update the parent
+                        // This will be handled by onOrderStateChange callback
+                    }
+                })
                 .catch(console.error)
                 .finally(() => setLoading(false));
         } else {
@@ -139,13 +148,54 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
                         <p>Total: ${orderDetails.total}</p>
-                        <Button
-                            type="button"
-                            size="sm"
-                            className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
-                            onPress={onEdit}>
-                            Editar Orden
-                        </Button>
+                        <div className="flex gap-2 mt-2">
+                            <Button
+                                type="button"
+                                size="sm"
+                                className="px-4 py-2 bg-primary text-white rounded-md"
+                                onPress={onEdit}>
+                                Editar Orden
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                                onPress={() => {
+                                    updateOrderState(parseInt(orderDetails.id), 5)
+                                        .then(() => {
+                                            alert("Orden completada exitosamente");
+                                            onOrderStateChange?.();
+                                            onClose?.();
+                                        })
+                                        .catch((error: unknown) => {
+                                            console.error("Error completing order:", error);
+                                            alert("Error al completar la orden");
+                                        });
+                                }}>
+                                Completar
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                color="danger"
+                                variant="light"
+                                onPress={() => {
+                                    if (window.confirm("¿Estás seguro de que quieres cancelar esta orden?")) {
+                                        updateOrderState(parseInt(orderDetails.id), 6)
+                                            .then(() => {
+                                                alert("Orden cancelada exitosamente");
+                                                onOrderStateChange?.();
+                                                onClose?.();
+                                            })
+                                            .catch((error: unknown) => {
+                                                console.error("Error canceling order:", error);
+                                                alert("Error al cancelar la orden");
+                                            });
+                                    }
+                                }}>
+                                Cancelar
+                            </Button>
+                        </div>
                     </div>
 
                     <div>

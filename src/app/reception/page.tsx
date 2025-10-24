@@ -105,6 +105,7 @@ const Reception = () => {
                             cambiarEstado("ver");
                             reloadAllOrders();
                         }}
+                        onOrderStateChange={reloadAllOrders}
                     />
                 ) : (
                     <Summary
@@ -176,6 +177,7 @@ const Reception = () => {
                                 cambiarEstado("ver");
                                 reloadAllOrders();
                             }}
+                            onOrderStateChange={reloadAllOrders}
                         />
                     </div>
                 </div>
