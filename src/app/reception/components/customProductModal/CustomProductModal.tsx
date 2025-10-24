@@ -1,25 +1,35 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Select, SelectItem, Card, CardBody, CardHeader } from "@heroui/react";
 import { IProduct, IProductDetail, IRecipeIngredient } from "../../../types/products.type";
 import { IIngredient } from "../../../types/ingredients.type";
-import { getProductById } from "@/app/services/products.service";
+import { getProductDetailById, createProduct } from "@/app/services/products.service";
 import { getIngredients } from "@/app/services/ingredients.service";
 import { useState, useEffect } from "react";
 
 interface CustomProductModalProps {
-    isOpen: boolean;
-    onOpenChange: (isOpen: boolean) => void;
-    selectedProduct: IProduct | null;
-    productQuantities: { [key: string]: number };
-}
+     isOpen: boolean;
+     onOpenChange: (isOpen: boolean) => void;
+     selectedProduct: IProduct | null;
+     productQuantities: { [key: string]: number };
+     onCustomProductCreated?: (customProduct: IProduct) => void;
+     onCustomProductUpdated?: (customProduct: IProduct) => void;
+     customProducts?: IProduct[];
+     isCustomProduct?: boolean;
+ }
 
 const CustomProductModal = ({
-    isOpen,
-    onOpenChange,
-    selectedProduct,
-    productQuantities,
-}: CustomProductModalProps) => {
+     isOpen,
+     onOpenChange,
+     selectedProduct,
+     productQuantities,
+     onCustomProductCreated,
+     onCustomProductUpdated,
+     customProducts = [],
+     isCustomProduct = false,
+ }: CustomProductModalProps) => {
     const [productDetails, setProductDetails] = useState<IProductDetail | null>(null);
+    const [originalIngredients, setOriginalIngredients] = useState<IRecipeIngredient[]>([]);
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [ingredients, setIngredients] = useState<IIngredient[]>([]);
     const [, setSelectedIngredient] = useState<string>("");
 
@@ -32,26 +42,76 @@ const CustomProductModal = ({
     useEffect(() => {
         if (isOpen && selectedProduct) {
             setLoading(true);
-            Promise.all([
-                getProductById(selectedProduct.id),
-                getIngredients("", 1, 100) // Get all ingredients
-            ])
-                .then(([productResponse, ingredientsResponse]) => {
-                    setProductDetails(productResponse as unknown as IProductDetail);
-                    setIngredients(ingredientsResponse.data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                })
-                .finally(() => {
+            if (isCustomProduct) {
+                // Load from custom products state
+                const customProduct = customProducts.find(p => p.id === selectedProduct.id);
+                if (customProduct) {
+                    // Create a mock product details from custom product
+                    const mockProductDetails: IProductDetail = {
+                        id: parseInt(customProduct.id.replace('custom-', '')), // Extract number from custom id
+                        name: customProduct.name,
+                        price: customProduct.price,
+                        preTaxPrice: customProduct.preTaxPrice,
+                        category: { id: -1, name: "Custom" },
+                        recipe: {
+                            id: 0, // Mock id
+                            cost: parseFloat(customProduct.cost || "0"),
+                            ingredients: customProduct.ingredients?.map(ing => ({
+                                id: ing.id,
+                                quantity: ing.quantity.toString(),
+                                ingredient: {
+                                    id: ing.id,
+                                    name: "Ingredient " + ing.id, // Mock name, you might need to fetch actual ingredient names
+                                    stock: 0 // Mock stock
+                                }
+                            })) || []
+                        },
+                        recipeId: 0, // Mock
+                        categoryId: -1, // Mock
+                        createdAt: new Date().toISOString(), // Mock
+                        updatedAt: new Date().toISOString() // Mock
+                    };
+                    setProductDetails(mockProductDetails);
+                    setOriginalIngredients(mockProductDetails.recipe?.ingredients || []);
+                    // Still need ingredients for adding new ones
+                    getIngredients("", 1, 100)
+                        .then(ingredientsResponse => {
+                            setIngredients(ingredientsResponse.data);
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching ingredients:", error);
+                        })
+                        .finally(() => {
+                            setLoading(false);
+                        });
+                } else {
                     setLoading(false);
-                });
+                }
+            } else {
+                // Load from services
+                Promise.all([
+                    getProductDetailById(selectedProduct.id),
+                    getIngredients("", 1, 100) // Get all ingredients
+                ])
+                    .then(([productResponse, ingredientsResponse]) => {
+                        setProductDetails(productResponse);
+                        setOriginalIngredients(productResponse.recipe?.ingredients || []);
+                        setIngredients(ingredientsResponse.data);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching data:", error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            }
         } else {
             setProductDetails(null);
+            setOriginalIngredients([]);
             setIngredients([]);
             setSelectedIngredient("");
         }
-    }, [isOpen, selectedProduct]);
+    }, [isOpen, selectedProduct, isCustomProduct, customProducts]);
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
@@ -175,6 +235,60 @@ const CustomProductModal = ({
                 <ModalFooter>
                     <Button color="danger" variant="light" onPress={() => onOpenChange(false)}>
                         Cerrar
+                    </Button>
+                    <Button
+                        color="primary"
+                        isLoading={saving}
+                        onPress={async () => {
+                            if (!productDetails) return;
+
+                            const currentIngredients = productDetails.recipe?.ingredients || [];
+                            const hasChanges = JSON.stringify(currentIngredients) !== JSON.stringify(originalIngredients);
+
+                            if (hasChanges) {
+                                setSaving(true);
+                                try {
+                                    if (isCustomProduct && selectedProduct) {
+                                        // Update existing custom product
+                                        const updatedCustomProduct: IProduct = {
+                                            ...selectedProduct,
+                                            ingredients: currentIngredients.map(ing => ({
+                                                id: ing.ingredient.id,
+                                                quantity: parseInt(ing.quantity)
+                                            }))
+                                        };
+                                        onCustomProductUpdated?.(updatedCustomProduct);
+                                        console.log("Producto custom actualizado localmente");
+                                    } else {
+                                        // Create new custom product
+                                        const customProduct: IProduct = {
+                                            id: `custom-${Date.now()}`, // Generate a unique ID
+                                            name: `${productDetails.name} (Custom)`,
+                                            preTaxPrice: productDetails.preTaxPrice,
+                                            price: productDetails.price,
+                                            category: productDetails.category.name,
+                                            cost: productDetails.recipe?.cost?.toString() || "0",
+                                            maxPrepareable: "1", // Default for custom products
+                                            ingredients: currentIngredients.map(ing => ({
+                                                id: ing.ingredient.id,
+                                                quantity: parseInt(ing.quantity)
+                                            }))
+                                        };
+                                        onCustomProductCreated?.(customProduct);
+                                        console.log("Producto custom creado localmente");
+                                    }
+                                    onOpenChange(false);
+                                } catch (error) {
+                                    console.error("Error guardando producto custom:", error);
+                                } finally {
+                                    setSaving(false);
+                                }
+                            } else {
+                                onOpenChange(false);
+                            }
+                        }}
+                    >
+                        Guardar Cambios
                     </Button>
                 </ModalFooter>
             </ModalContent>

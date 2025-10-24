@@ -53,3 +53,10 @@ export async function getProductDetailById(id: string): Promise<IProductDetail> 
   const { data } = await api.get(`/products/${id}`);
   return data;
 }
+
+// Obtener todos los productos personalizados con paginación
+export async function getAllCustomProductWithPagination(page: number = 1, limit: number = 10): Promise<IGetProducts> {
+  const params: Record<string, unknown> = { page, limit };
+  const { data }: { data: IGetProducts } = await api.get("/products/custom-products", { params });
+  return data;
+}

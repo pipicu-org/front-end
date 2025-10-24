@@ -5,30 +5,36 @@ import { useState } from "react";
 import CustomProductModal from "../../customProductModal/CustomProductModal";
 
 interface ProductGridProps {
-    products: IProduct[];
-    productLoading: boolean;
-    productError: string | null;
-    categories: ICategory[];
-    categoriesLoading: boolean;
-    categoriesError: string | null;
-    selectedCategory: number | undefined;
-    setSelectedCategory: (category: number | undefined) => void;
-    productQuantities: { [key: string]: number };
-    changeProductQuantity: (productId: string, delta: number) => void;
-}
+     products: IProduct[];
+     productLoading: boolean;
+     productError: string | null;
+     categories: ICategory[];
+     categoriesLoading: boolean;
+     categoriesError: string | null;
+     selectedCategory: number | undefined;
+     setSelectedCategory: (category: number | undefined) => void;
+     productQuantities: { [key: string]: number };
+     changeProductQuantity: (productId: string, delta: number) => void;
+     customProducts: IProduct[];
+     onCustomProductCreated: (customProduct: IProduct) => void;
+     onCustomProductUpdated: (customProduct: IProduct) => void;
+ }
 
 const ProductGrid = ({
-    products,
-    productLoading,
-    productError,
-    categories,
-    categoriesLoading,
-    categoriesError,
-    selectedCategory,
-    setSelectedCategory,
-    productQuantities,
-    changeProductQuantity,
-}: ProductGridProps) => {
+     products,
+     productLoading,
+     productError,
+     categories,
+     categoriesLoading,
+     categoriesError,
+     selectedCategory,
+     setSelectedCategory,
+     productQuantities,
+     changeProductQuantity,
+     customProducts,
+     onCustomProductCreated,
+     onCustomProductUpdated,
+ }: ProductGridProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
 
@@ -136,15 +142,45 @@ const ProductGrid = ({
                         </CardBody>
                     </Card>
                 ))}
+                {/* Empty custom product slots */}
+                {selectedCategory === -1 && Array.from({ length: Math.max(0, 3 - customProducts.length) }, (_, index) => (
+                    <Card key={`empty-custom-${index}`} className="w-full rounded-2xl bg-black/10 px-2 py-[0.25rem] mt-1 opacity-0">
+                        <CardBody className="p-0">
+                            <div className="flex w-full items-center gap-2">
+                                <div className="flex-1 min-w-0">
+                                    <span className="font-semibold text-white truncate">Producto vacío</span>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                    <span className="text-white text-sm">$0</span>
+                                    <Divider orientation="vertical" />
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-sm text-white min-w-[1ch] text-center">0</span>
+                                        <Button size="sm" className="bg-black text-white w-6 h-6 rounded-full text-sm min-w-0 p-0" disabled>+</Button>
+                                    </div>
+                                    <Button size="sm" variant="light" className="hover:text-white rounded-md p-2 min-w-0" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardBody>
+                    </Card>
+                ))}
             </div>
 
             {/* Modal de configuración del producto */}
-            <CustomProductModal
-                isOpen={isModalOpen}
-                onOpenChange={setIsModalOpen}
-                selectedProduct={selectedProduct}
-                productQuantities={productQuantities}
-            />
+             <CustomProductModal
+                 isOpen={isModalOpen}
+                 onOpenChange={setIsModalOpen}
+                 selectedProduct={selectedProduct}
+                 productQuantities={productQuantities}
+                 onCustomProductCreated={onCustomProductCreated}
+                 onCustomProductUpdated={onCustomProductUpdated}
+                 customProducts={customProducts}
+                 isCustomProduct={selectedProduct ? selectedProduct.id.startsWith('custom-') : false}
+             />
         </div>
     );
 };

@@ -9,15 +9,16 @@ import OrdenForm from "../ordenForm";
 import { IOrder, ORDER_UI_STATE } from "../../../../types/orders.type";
 
 interface OrderModalProps {
-    orden: IOrder | null;
-    estado: ORDER_UI_STATE;
-    setEstado: (nuevoEstado: ORDER_UI_STATE) => void;
-    setSaveOrderCallback?: (callback: (() => void) | null) => void;
-    isMobile?: boolean;
-    onSave?: (order: IOrder) => void;
-}
+     orden: IOrder | null;
+     estado: ORDER_UI_STATE;
+     setEstado: (nuevoEstado: ORDER_UI_STATE) => void;
+     setSaveOrderCallback?: (callback: (() => void) | null) => void;
+     isMobile?: boolean;
+     onSave?: (order: IOrder) => void;
+     onOrderStateChange?: () => void;
+ }
 
-const OrderModal = ({ orden, estado, setEstado, setSaveOrderCallback, isMobile, onSave }: OrderModalProps) => {
+const OrderModal = ({ orden, estado, setEstado, setSaveOrderCallback, isMobile, onSave, onOrderStateChange }: OrderModalProps) => {
     const formRef = useRef<{ submitForm: () => void } | null>(null);
 
     useEffect(() => {
@@ -30,7 +31,7 @@ const OrderModal = ({ orden, estado, setEstado, setSaveOrderCallback, isMobile, 
 
     const componentes: Record<ORDER_UI_STATE, ReactNode> = {
         default: <OrdenDefault />,
-        ver: <OrdenVer orden={orden} onClose={() => setEstado('default')} onEdit={() => setEstado('editar')} />,
+        ver: <OrdenVer orden={orden} onClose={() => setEstado('default')} onEdit={() => setEstado('editar')} onOrderStateChange={onOrderStateChange} />,
         editar: <OrdenForm ref={formRef} orden={orden} isEdit={true} onSave={onSave} onClose={() => setEstado('default')} />,
         nueva: <OrdenForm ref={formRef} orden={null} isEdit={false} onSave={onSave} onClose={() => setEstado('default')} />,
     };

@@ -4,8 +4,8 @@
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Button, Divider } from "@heroui/react";
-import { createOrder, updateOrder, getOrderById, getClientById } from "@/app/services/order.service";
-import { getProducts, getProductsByCategory } from "@/app/services/products.service";
+import { createOrder, updateOrder, getOrderById, getClientById, deleteOrder } from "@/app/services/order.service";
+import { getProducts, getProductsByCategory, createProduct } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
 import { ICategory } from "@/app/types/categories.type";
@@ -17,13 +17,14 @@ import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
 import ProductGrid from "./ProductGrid";
 import OrderLines from "./OrderLines";
+import ProgressModal from "./ProgressModal";
 
 interface OrdenFormProps {
-    orden: IOrder | null;
-    isEdit: boolean;
-    onSave?: (order: IOrder) => void;
-    onClose?: () => void;
-}
+     orden: IOrder | null;
+     isEdit: boolean;
+     onSave?: (order: IOrder) => void;
+     onClose?: () => void;
+ }
 
 interface IOrderLine {
     product: string;
@@ -70,13 +71,25 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
+    const [customProducts, setCustomProducts] = useState<IProduct[]>([]);
+    const [customProductsLoading, setCustomProductsLoading] = useState(false);
+    const [progressModalOpen, setProgressModalOpen] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    const handleCustomProductCreated = (customProduct: IProduct) => {
+        setCustomProducts(prev => [...prev, customProduct]);
+    };
+
+    const handleCustomProductUpdated = (updatedCustomProduct: IProduct) => {
+        setCustomProducts(prev => prev.map(p => p.id === updatedCustomProduct.id ? updatedCustomProduct : p));
+    };
 
     // Seleccionar primera categoría por defecto
-    useEffect(() => {
-        if (categories.length > 0 && selectedCategory === undefined) {
-            setSelectedCategory(categories[0].id);
-        }
-    }, [categories, selectedCategory]);
+     useEffect(() => {
+         if (categories.length > 0 && selectedCategory === undefined) {
+             setSelectedCategory(categories[0].id);
+         }
+     }, [categories, selectedCategory]);
 
     const reloadClients = () => {
         searchClients('', 1).then(response => {
@@ -115,79 +128,125 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         .catch(console.error);
 
                     // Convert order lines to form lines
-                    const formLines: IOrderLine[] = details.lines.map(line => ({
-                        product: line.product.id,
-                        quantity: parseInt(line.quantity)
-                    }));
-                    setLines(formLines);
+                     const formLines: IOrderLine[] = details.lines.map(line => ({
+                         product: line.product.id,
+                         quantity: parseInt(line.quantity)
+                     }));
+                     setLines(formLines);
 
-                    // Set product quantities
-                    const quantities: { [key: string]: number } = {};
-                    const selectedProds: { [key: string]: IProduct } = {};
-                    details.lines.forEach(line => {
-                        quantities[line.product.id] = parseInt(line.quantity);
-                        // Create a minimal product object for display
-                        selectedProds[line.product.id] = {
-                            id: line.product.id,
-                            name: line.product.name,
-                            price: (line.totalPrice / parseInt(line.quantity)).toString(),
-                            preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
-                            category: '',
-                            ingredients: [],
-                            cost: "0", // Default or fetch actual cost if available
-                            maxPrepareable: "0" // Default or fetch actual value if available
-                        };
-                    });
-                    setProductQuantities(quantities);
-                    setSelectedProducts(selectedProds);
+                     // Set product quantities and load custom products
+                     const quantities: { [key: string]: number } = {};
+                     const selectedProds: { [key: string]: IProduct } = {};
+                     const customProds: IProduct[] = [];
+
+                     details.lines.forEach(line => {
+                         quantities[line.product.id] = parseInt(line.quantity);
+                         // Check if this is a custom product (name contains "(custom)")
+                         if (line.product.name.includes("(custom)")) {
+                             // Create custom product object
+                             const customProduct: IProduct = {
+                                 id: `custom-${Date.now()}-${Math.random()}`, // Generate unique ID for state management
+                                 name: line.product.name,
+                                 price: (line.totalPrice / parseInt(line.quantity)).toString(),
+                                 preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
+                                 category: "Custom",
+                                 ingredients: [], // We don't have ingredient details from order, but can be loaded if needed
+                                 cost: "0",
+                                 maxPrepareable: "1"
+                             };
+                             customProds.push(customProduct);
+                             selectedProds[customProduct.id] = customProduct;
+                             // Update the form line to use the new custom product ID
+                             const lineIndex = formLines.findIndex(fl => fl.product === line.product.id);
+                             if (lineIndex >= 0) {
+                                 formLines[lineIndex].product = customProduct.id;
+                             }
+                         } else {
+                             // Regular product
+                             selectedProds[line.product.id] = {
+                                 id: line.product.id,
+                                 name: line.product.name,
+                                 price: (line.totalPrice / parseInt(line.quantity)).toString(),
+                                 preTaxPrice: (line.totalPrice / parseInt(line.quantity)).toString(),
+                                 category: '',
+                                 ingredients: [],
+                                 cost: "0",
+                                 maxPrepareable: "0"
+                             };
+                         }
+                     });
+
+                     setProductQuantities(quantities);
+                     setSelectedProducts(selectedProds);
+                     if (customProds.length > 0) {
+                         setCustomProducts(customProds);
+                     }
                 })
                 .catch(console.error);
         }
     }, [isEdit, orden?.id]);
 
     // Cargar categorías
-    useEffect(() => {
-        const loadCategories = async () => {
-            setCategoriesLoading(true);
-            setCategoriesError(null);
-            try {
-                const data = await getCategories();
-                setCategories(data);
-            } catch (error) {
-                setCategoriesError("Error al cargar categorías");
-                console.error(error);
-            } finally {
-                setCategoriesLoading(false);
-            }
-        };
-        loadCategories();
-    }, []);
+     useEffect(() => {
+         const loadCategories = async () => {
+             setCategoriesLoading(true);
+             setCategoriesError(null);
+             try {
+                 const data = await getCategories();
+                 setCategories(data);
+             } catch (error) {
+                 setCategoriesError("Error al cargar categorías");
+                 console.error(error);
+             } finally {
+                 setCategoriesLoading(false);
+             }
+         };
+
+         loadCategories();
+     }, []);
+
+     // Actualizar categorías con "Custom" cuando haya productos custom
+     useEffect(() => {
+         setCategories(prev => {
+             const hasCustom = prev.some(cat => cat.id === -1);
+             if (customProducts.length > 0 && !hasCustom) {
+                 const customCategory: ICategory = { id: -1, name: "Custom" };
+                 return [customCategory, ...prev];
+             } else if (customProducts.length === 0 && hasCustom) {
+                 return prev.filter(cat => cat.id !== -1);
+             }
+             return prev;
+         });
+     }, [customProducts]);
 
     // Cargar productos
-    useEffect(() => {
-        const loadProducts = async () => {
-            setProductLoading(true);
-            setProductError(null);
-            try {
-                let data: IProduct[];
-                if (selectedCategory) {
-                    const response = await getProductsByCategory(selectedCategory);
-                    data = response.data;
-                } else {
-                    const response = await getProducts(1, 50);
-                    data = response.data;
-                }
-                // console.log("Loaded products:", data);
-                setProducts(data);
-            } catch (error) {
-                setProductError("Error al cargar productos");
-                console.error(error);
-            } finally {
-                setProductLoading(false);
-            }
-        };
-        loadProducts();
-    }, [selectedCategory]);
+     useEffect(() => {
+         const loadProducts = async () => {
+             setProductLoading(true);
+             setProductError(null);
+             try {
+                 let data: IProduct[];
+                 if (selectedCategory === -1) {
+                     // Usar productos custom desde el estado
+                     data = customProducts;
+                 } else if (selectedCategory) {
+                     const response = await getProductsByCategory(selectedCategory,1,50);
+                     data = response.data;
+                 } else {
+                     const response = await getProducts(1, 50);
+                     data = response.data;
+                 }
+                 // console.log("Loaded products:", data);
+                 setProducts(data);
+             } catch (error) {
+                 setProductError("Error al cargar productos");
+                 console.error(error);
+             } finally {
+                 setProductLoading(false);
+             }
+         };
+         loadProducts();
+     }, [selectedCategory, customProducts]);
 
    
 
@@ -225,55 +284,178 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
             }
         }
 
-        // setLoading(true);
+        // Build query queue
+        const queryQueue: Array<{
+            type: 'createProduct' | 'createOrder' | 'updateOrder';
+            data: any;
+            retryCount: number;
+        }> = [];
 
-        const orderLines: IOrderLinePayload[] = lines.map(line => ({
-            product: {
-                id: parseInt(line.product),
-                name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
-            },
-            quantity: line.quantity
-        }));
+        // Add custom product creation queries
+        customProducts.forEach(customProduct => {
+            queryQueue.push({
+                type: 'createProduct',
+                data: {
+                    name: `${customProduct.name}`,
+                    preTaxPrice: parseFloat(customProduct.preTaxPrice),
+                    price: parseFloat(customProduct.price),
+                    category: 1, // Default category, you might want to adjust this
+                    productTypeId: "2",
+                    ingredients: customProduct.ingredients || []
+                },
+                retryCount: 0
+            });
+        });
 
-        const payload: IOrderPayload = {
-            client,
-            deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
-            contactMethod,
-            paymentMethod,
-            lines: orderLines,
-        };
+        // Add order creation/update query
+        if (isEdit && orden) {
+            queryQueue.push({
+                type: 'updateOrder',
+                data: {
+                    orderId: orden.id,
+                    payload: null // Will be built after custom products are created
+                },
+                retryCount: 0
+            });
+        } else {
+            queryQueue.push({
+                type: 'createOrder',
+                data: {
+                    payload: null // Will be built after custom products are created
+                },
+                retryCount: 0
+            });
+        }
+
+        // Open progress modal
+        setProgressModalOpen(true);
+        setProgress(0);
+
+        const totalQueries = queryQueue.length;
+        const createdCustomProducts: { [key: string]: any } = {};
+        let customProductIndex = 0;
+
+        // Copias locales para actualizar en lugar de setState asíncrono
+        let localLines = [...lines];
+        let localSelectedProducts = { ...selectedProducts };
 
         try {
-            let result;
-            if (isEdit && orden) {
-                const updateLines: IOrderUpdateLinePayload[] = lines.map(line => ({
-                    id: parseInt(line.product), // This might need adjustment based on actual line IDs
-                    product: {
-                        id: parseInt(line.product),
-                        name: selectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
-                    },
-                    quantity: line.quantity
-                }));
+            for (let i = 0; i < queryQueue.length; i++) {
+                const query = queryQueue[i];
+                let success = false;
 
-                const updatePayload: IOrderUpdatePayload = {
-                    client,
-                    deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
-                    contactMethod,
-                    paymentMethod,
-                    lines: updateLines,
-                };
+                while (!success && query.retryCount < 2) {
+                    try {
+                        let response;
+                        switch (query.type) {
+                            case 'createProduct':
+                                response = await createProduct(query.data);
+                                if (response && typeof response === 'object' && 'id' in response) {
+                                    createdCustomProducts[customProducts[customProductIndex].id] = response;
+                                    customProductIndex++;
+                                    success = true;
+                                }
+                                break;
+                            case 'createOrder':
+                            case 'updateOrder':
+                                // Actualizar copias locales con IDs reales
+                                if (customProducts.length > 0) {
+                                    localLines = localLines.map(line => {
+                                        const productId = line.product;
+                                        if (productId.startsWith('custom-') && createdCustomProducts[productId]) {
+                                            return { ...line, product: createdCustomProducts[productId].id.toString() };
+                                        }
+                                        return line;
+                                    });
 
-                result = await updateOrder(orden.id, updatePayload);
-                showToast("Orden actualizada exitosamente", "success");
-            } else {
-                result = await createOrder(payload);
-                showToast("Orden creada exitosamente", "success");
+                                    Object.keys(createdCustomProducts).forEach(tempId => {
+                                        const realProduct = createdCustomProducts[tempId];
+                                        if (localSelectedProducts[tempId]) {
+                                            delete localSelectedProducts[tempId];
+                                            localSelectedProducts[realProduct.id.toString()] = {
+                                                ...realProduct,
+                                                id: realProduct.id.toString()
+                                            };
+                                        }
+                                    });
+                                }
+
+                                // Build order payload usando copias locales
+                                const orderLines: IOrderLinePayload[] = localLines.map(line => ({
+                                    product: {
+                                        id: parseInt(line.product),
+                                        name: localSelectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+                                    },
+                                    quantity: line.quantity
+                                }));
+
+                                const payload: IOrderPayload = {
+                                    client,
+                                    deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
+                                    contactMethod,
+                                    paymentMethod,
+                                    lines: orderLines,
+                                };
+
+                                if (query.type === 'updateOrder') {
+                                    const updateLines: IOrderUpdateLinePayload[] = localLines.map(line => ({
+                                        id: parseInt(line.product), // Assuming this is the product ID, but for updates it might need line ID - adjust if necessary
+                                        product: {
+                                            id: parseInt(line.product),
+                                            name: localSelectedProducts[line.product]?.name || products.find(p => p.id === line.product)?.name || ''
+                                        },
+                                        quantity: line.quantity
+                                    }));
+
+                                    const updatePayload: IOrderUpdatePayload = {
+                                        client,
+                                        deliveryTime: new Date(`${new Date().toISOString().split('T')[0]}T${deliveryTime}:00`).toISOString(),
+                                        contactMethod,
+                                        paymentMethod,
+                                        lines: updateLines,
+                                    };
+
+                                    response = await updateOrder(orden!.id, updatePayload);
+                                } else {
+                                    response = await createOrder(payload);
+                                }
+
+                                if (response && typeof response === 'object' && 'id' in response) {
+                                    success = true;
+                                    onSave?.(response);
+                                }
+                                break;
+                        }
+
+                        if (success) {
+                            setProgress(((i + 1) / totalQueries) * 100);
+                        } else {
+                            query.retryCount++;
+                            if (query.retryCount >= 2) {
+                                throw new Error(`Query ${query.type} failed after retries`);
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error in query ${query.type}:`, error);
+                        query.retryCount++;
+                        if (query.retryCount >= 2) {
+                            throw error;
+                        }
+                    }
+                }
             }
-            onSave?.(result);
+
+            // Actualizar estados al final con las copias locales
+            setLines(localLines);
+            setSelectedProducts(localSelectedProducts);
+
+            showToast(isEdit ? "Orden actualizada exitosamente" : "Orden creada exitosamente", "success");
         } catch (error) {
             console.error("Error saving order:", error);
+            showToast("Error al guardar la orden", "error");
         } finally {
-            // setLoading(false);
+            setProgressModalOpen(false);
+            setProgress(0);
         }
     };
 
@@ -281,6 +463,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         e.preventDefault();
         await submitOrder();
     };
+
 
     // Función addLine removida ya que ahora se agregan productos desde la grilla
 
@@ -327,15 +510,15 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     return (
         <form onSubmit={handleSubmit} className="p-2  space-y-2 md:space-y-4 h-full min-h-0 ">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-primary font-black">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
-                <Button
-                    type="button"
-                    size="sm"
-                    className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
-                    onPress={onClose}>
-                    x
-                </Button>
-            </div>
+                 <h2 className="text-2xl text-primary font-black">{isEdit ? "Editar Orden" : "Nueva Orden"}</h2>
+                 <Button
+                     type="button"
+                     size="sm"
+                     className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                     onPress={onClose}>
+                     x
+                 </Button>
+             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-4 flex-1 overflow-y-hidden min-h-0 max-h-full">
                 <div className="md:col-span-3 flex flex-col space-y-2 md:space-y-2">
@@ -424,6 +607,9 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                         setSelectedCategory={setSelectedCategory}
                         productQuantities={productQuantities}
                         changeProductQuantity={changeProductQuantity}
+                        customProducts={customProducts}
+                        onCustomProductCreated={handleCustomProductCreated}
+                        onCustomProductUpdated={handleCustomProductUpdated}
                     />
                 </div>
 
@@ -437,6 +623,12 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
                 </div>
             </div>
+
+            <ProgressModal
+                isOpen={progressModalOpen}
+                progress={progress}
+                onClose={() => setProgressModalOpen(false)}
+            />
         </form>
     );
 });
