@@ -1,7 +1,7 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Select, SelectItem, Card, CardBody, CardHeader } from "@heroui/react";
 import { IProduct, IProductDetail, IRecipeIngredient } from "../../../types/products.type";
 import { IIngredient } from "../../../types/ingredients.type";
-import { getProductDetailById, createProduct } from "@/app/services/products.service";
+import { getProductDetailById } from "@/app/services/products.service";
 import { getIngredients } from "@/app/services/ingredients.service";
 import { useState, useEffect } from "react";
 

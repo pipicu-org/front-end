@@ -16,7 +16,7 @@ interface OrdenVerProps {
      onOrderStateChange?: () => void;
   }
 
-const OrdenVer = ({ orden, onClose, onEdit, onDelete, onOrderStateChange }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -167,7 +167,7 @@ const OrdenVer = ({ orden, onClose, onEdit, onDelete, onOrderStateChange }: Orde
                                             onOrderStateChange?.();
                                             onClose?.();
                                         })
-                                        .catch((error: any) => {
+                                        .catch((error: unknown) => {
                                             console.error("Error completing order:", error);
                                             alert("Error al completar la orden");
                                         });
@@ -187,7 +187,7 @@ const OrdenVer = ({ orden, onClose, onEdit, onDelete, onOrderStateChange }: Orde
                                                 onOrderStateChange?.();
                                                 onClose?.();
                                             })
-                                            .catch((error: any) => {
+                                            .catch((error: unknown) => {
                                                 console.error("Error canceling order:", error);
                                                 alert("Error al cancelar la orden");
                                             });

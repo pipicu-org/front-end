@@ -4,7 +4,7 @@
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Button, Divider } from "@heroui/react";
-import { createOrder, updateOrder, getOrderById, getClientById, deleteOrder } from "@/app/services/order.service";
+import { createOrder, updateOrder, getOrderById, getClientById } from "@/app/services/order.service";
 import { getProducts, getProductsByCategory, createProduct } from "@/app/services/products.service";
 import { searchClients } from "@/app/services/clients.service";
 import { getCategories } from "@/app/services/categories.service";
@@ -12,7 +12,7 @@ import { ICategory } from "@/app/types/categories.type";
 import { IClient } from "@/app/types/clients.type";
 import { useToast } from "@/utils/toast";
 import { IOrder, IOrderPayload, IOrderUpdatePayload, IOrderLinePayload, IOrderUpdateLinePayload } from "../../../../types/orders.type";
-import { IProduct } from "../../../../types/products.type";
+import { IProduct, IProductPayload } from "../../../../types/products.type";
 import IconButton from "@/app/components/iconButton";
 import ClientSelector from "./ClientSelector";
 import ProductGrid from "./ProductGrid";
@@ -72,7 +72,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
     const [customProducts, setCustomProducts] = useState<IProduct[]>([]);
-    const [customProductsLoading, setCustomProductsLoading] = useState(false);
+    
     const [progressModalOpen, setProgressModalOpen] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -194,7 +194,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
              try {
                  const data = await getCategories();
                  setCategories(data);
-             } catch (error) {
+             } catch (error: unknown) {
                  setCategoriesError("Error al cargar categorías");
                  console.error(error);
              } finally {
@@ -286,8 +286,16 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
         // Build query queue
         const queryQueue: Array<{
-            type: 'createProduct' | 'createOrder' | 'updateOrder';
-            data: any;
+            type: 'createProduct';
+            data: IProductPayload;
+            retryCount: number;
+        } | {
+            type: 'createOrder';
+            data: { payload: IOrderPayload | null };
+            retryCount: number;
+        } | {
+            type: 'updateOrder';
+            data: { orderId: string; payload: IOrderPayload | null };
             retryCount: number;
         }> = [];
 
@@ -300,7 +308,6 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
                     preTaxPrice: parseFloat(customProduct.preTaxPrice),
                     price: parseFloat(customProduct.price),
                     category: 1, // Default category, you might want to adjust this
-                    productTypeId: "2",
                     ingredients: customProduct.ingredients || []
                 },
                 retryCount: 0
@@ -332,12 +339,12 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
         setProgress(0);
 
         const totalQueries = queryQueue.length;
-        const createdCustomProducts: { [key: string]: any } = {};
+        const createdCustomProducts: { [key: string]: IProduct } = {};
         let customProductIndex = 0;
 
         // Copias locales para actualizar en lugar de setState asíncrono
         let localLines = [...lines];
-        let localSelectedProducts = { ...selectedProducts };
+        const localSelectedProducts = { ...selectedProducts };
 
         try {
             for (let i = 0; i < queryQueue.length; i++) {
