@@ -13,6 +13,7 @@ const ingredientSchema = z.object({
   name: z.string().min(1, "Nombre requerido"),
   unitId: z.number().min(1, "Unidad requerida"),
   lossFactor: z.number().min(0, "Factor de pérdida debe ser positivo"),
+  cost: z.number().min(0, "Costo debe ser positivo"),
 });
 
 type IngredientFormData = z.infer<typeof ingredientSchema>;
@@ -54,12 +55,14 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
         name: editingIngredient.name,
         unitId: editingIngredient.unitId,
         lossFactor: parseFloat(editingIngredient.lossFactor),
+        cost: editingIngredient.cost,
       });
     } else {
       reset({
         name: "",
         unitId: 1,
         lossFactor: 0,
+        cost: 0
       });
     }
   }, [editingIngredient, reset]);
@@ -120,6 +123,23 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
                   type="number"
                   step="0.01"
                   label="Factor de Pérdida"
+                  value={field.value.toString()}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                  errorMessage={errors.lossFactor?.message}
+                  isInvalid={!!errors.lossFactor}
+                />
+              )}
+            />
+            
+            <Controller
+              name="cost"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="number"
+                  step="0.01"
+                  label="Costo"
                   value={field.value.toString()}
                   onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                   errorMessage={errors.lossFactor?.message}

@@ -132,6 +132,7 @@ const IngredientManagement = () => {
                                 <TableColumn>Nombre</TableColumn>
                                 <TableColumn>Unidad ID</TableColumn>
                                 <TableColumn>Stock</TableColumn>
+                                <TableColumn>Costo</TableColumn>
                                 <TableColumn>Factor de Pérdida</TableColumn>
                                 <TableColumn>Creado</TableColumn>
                                 <TableColumn>Actualizado</TableColumn>
@@ -144,6 +145,7 @@ const IngredientManagement = () => {
                                         <TableCell>{ingredient.name}</TableCell>
                                         <TableCell>{ingredient.unitId}</TableCell>
                                         <TableCell>{ingredient.stock}</TableCell>
+                                        <TableCell>{ingredient.cost}</TableCell>
                                         <TableCell>{ingredient.lossFactor}</TableCell>
                                         <TableCell>{new Date(ingredient.createdAt).toLocaleDateString()}</TableCell>
                                         <TableCell>{new Date(ingredient.updatedAt).toLocaleDateString()}</TableCell>
