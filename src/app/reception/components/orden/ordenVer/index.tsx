@@ -70,8 +70,8 @@ const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps)
     };
 
     return (
-        <div className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto max-h-full">
+        <div className="h-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 flex-1 overflow-hidden max-h-full overflow-x-hidden">
                 <div className="md:col-span-3 text-primary font-poppins p-4">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex flex-col">
@@ -121,10 +121,10 @@ const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps)
 
                         {/* Métodos de contacto */}
                         <div className="flex justify-between">
-                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                            <IconButton  icon={"whatsapp-solid-dark"} />
+                            <IconButton  icon={"instagram-solid-dark"} />
+                            <IconButton icon={"facebook-solid-dark"} />
+                            <IconButton  icon={"share-solid-dark"} />
                         </div>
 
                         {/* Método de pago */}
@@ -148,18 +148,18 @@ const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps)
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
                         <p>Total: ${orderDetails.total}</p>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col mt-2 gap-1">
                             <Button
                                 type="button"
                                 size="sm"
-                                className="px-4 py-2 bg-primary text-white rounded-md"
+                                color="default"
                                 onPress={onEdit}>
                                 Editar Orden
                             </Button>
                             <Button
                                 type="button"
                                 size="sm"
-                                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                                color="success"
                                 onPress={() => {
                                     updateOrderState(parseInt(orderDetails.id), 5)
                                         .then(() => {
@@ -177,8 +177,9 @@ const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps)
                             <Button
                                 type="button"
                                 size="sm"
+                                variant="solid"
                                 color="danger"
-                                variant="light"
+                                
                                 onPress={() => {
                                     if (window.confirm("¿Estás seguro de que quieres cancelar esta orden?")) {
                                         updateOrderState(parseInt(orderDetails.id), 6)
@@ -203,7 +204,7 @@ const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps)
                         <div className="space-y-2">
                             {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
                                 <div key={line.id} className="border rounded p-2">
-                                    <div className="flex justify-between">
+                                    <div className="flex flex-col justify-between sm:flex-row">
                                         <span className="font-medium">{line.product.name}</span>
                                         <span>${line.totalPrice.toFixed(2)}</span>
                                     </div>

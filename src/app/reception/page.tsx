@@ -61,7 +61,7 @@ const Reception = () => {
     const [saveOrderCallback, setSaveOrderCallback] = useState<(() => void) | null>(null);
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        const checkMobile = () => setIsMobile(window.innerWidth < 900);
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
