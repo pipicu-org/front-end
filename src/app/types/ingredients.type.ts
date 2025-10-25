@@ -4,6 +4,7 @@ export interface IIngredient {
   unitId: number;
   stock: number;
   lossFactor: string;
+  cost: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,5 +20,6 @@ export interface IGetIngredients {
 export interface IIngredientPayload {
   name: string;
   unitId: number;
+  cost?: number;
   lossFactor: number;
 }
