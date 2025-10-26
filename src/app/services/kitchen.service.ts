@@ -1,22 +1,5 @@
+import api from "./api";
 import { IKitchenOrdersResponse, IComandaOrdersResponse } from "../types/orders.type";
-
-// Create a separate axios instance for kitchen API
-import axios from "axios";
-
-const kitchenApi = axios.create({
-  baseURL: "http://localhost:9091/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-kitchenApi.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("Kitchen API Error:", error.response?.data || error.message);
-    return Promise.reject(error);
-  }
-);
 
 // Get kitchen orders for fire table
 export async function getKitchenOrders(
@@ -27,13 +10,13 @@ export async function getKitchenOrders(
   const params: Record<string, unknown> = { page, limit };
   if (productId) params.productId = productId;
 
-  const { data } = await kitchenApi.get("/orders/kitchen", { params });
+  const { data } = await api.get("/orders/kitchen", { params });
   return data;
 }
 
 // Get comanda orders for command table
 export async function getComandaOrders(): Promise<IComandaOrdersResponse> {
-  const { data } = await kitchenApi.get("/orders/comanda/kitchen");
+  const { data } = await api.get("/orders/comanda/kitchen");
   return data;
 }
 
