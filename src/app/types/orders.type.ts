@@ -65,3 +65,64 @@ export interface IOrderUpdateLinePayload {
   };
   quantity: number;
 }
+
+// Kitchen-specific interfaces
+export interface IKitchenOrderItem {
+  orderId: number;
+  lineId: number;
+  preparationId: string;
+  product: {
+    id: number;
+    name: string;
+  };
+  quantity: string;
+  recipeIngredients: {
+    ingredientId: number;
+    ingredientName: string;
+    quantity: number;
+    unitName: string;
+  }[];
+}
+
+export interface IKitchenOrdersResponse {
+  total: number;
+  page: number;
+  limit: number;
+  data: IKitchenOrderItem[];
+}
+
+export interface IComandaOrderLine {
+  lineId: number;
+  quantity: number;
+  product: {
+    id: number;
+    name: string;
+  };
+  recipe: {
+    ingredient: {
+      id: number;
+      name: string;
+    };
+    unit: {
+      id: number;
+      name: string;
+    };
+    quantity: number;
+  }[];
+}
+
+export interface IComandaOrder {
+  orderId: number;
+  client: {
+    id: number;
+    name: string;
+  };
+  lines: IComandaOrderLine[];
+}
+
+export interface IComandaOrdersResponse {
+  page: number;
+  limit: number;
+  total: number;
+  data: IComandaOrder[];
+}

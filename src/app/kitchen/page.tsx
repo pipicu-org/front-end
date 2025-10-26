@@ -1,15 +1,15 @@
-import Comanda from "./components/comanda";
-import TablaDeFuegos from "./components/tablaDeFuegos";
+import Command from "./components/command";
+import FireTable from "./components/fireTable";
 
 const Kitchen = () => {
   return (
     <div className="grid grid-cols-7 items-stretch gap-7">
       <div className="col-span-4">
-        <TablaDeFuegos/>
+        <FireTable/>
       </div>
       <div className="col-span-3 flex flex-col">
-        <Comanda/>
-        
+        <Command/>
+
       </div>
     </div>
   )
