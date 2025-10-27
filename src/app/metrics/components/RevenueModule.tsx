@@ -17,10 +17,12 @@ import { Line, Pie } from 'react-chartjs-2';
 import {
   getGMVByDay,
   getGPByDay,
+  getMarginByDay,
+  getMrgByDay,
   getGMVByPaymentMethod,
   getGMVByContactMethod
 } from "../../services/metrics.service";
-import { GMVByDay, GPByDay, GMVByPaymentMethod, GMVByContactMethod, DateRange } from "../../types/metrics.type";
+import { GMVByDay, GPByDay, MarginByDay, MrgByDay, GMVByPaymentMethod, GMVByContactMethod, DateRange } from "../../types/metrics.type";
 
 ChartJS.register(
   CategoryScale,
@@ -36,6 +38,8 @@ ChartJS.register(
 const RevenueModule = ({ dateRange, refreshKey }: { dateRange: DateRange; refreshKey: number }) => {
   const [gmvData, setGmvData] = useState<GMVByDay[]>([]);
   const [gpData, setGpData] = useState<GPByDay[]>([]);
+  const [marginData, setMarginData] = useState<MarginByDay[]>([]);
+  const [mrgData, setMrgData] = useState<MrgByDay[]>([]);
   const [paymentMethodData, setPaymentMethodData] = useState<GMVByPaymentMethod[]>([]);
   const [contactMethodData, setContactMethodData] = useState<GMVByContactMethod[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,15 +50,19 @@ const RevenueModule = ({ dateRange, refreshKey }: { dateRange: DateRange; refres
       setLoading(true);
       try {
 
-        const [gmv, gp, paymentMethods, contactMethods] = await Promise.all([
+        const [gmv, gp, margin, mrg, paymentMethods, contactMethods] = await Promise.all([
           getGMVByDay(dateRange),
-          getGPByDay(),
+          getGPByDay(dateRange),
+          getMarginByDay(dateRange),
+          getMrgByDay(dateRange),
           getGMVByPaymentMethod(),
           getGMVByContactMethod()
         ]);
 
         setGmvData(gmv);
         setGpData(gp);
+        setMarginData(margin);
+        setMrgData(mrg);
         setPaymentMethodData(paymentMethods);
         setContactMethodData(contactMethods);
       } catch (error) {
@@ -85,6 +93,28 @@ const RevenueModule = ({ dateRange, refreshKey }: { dateRange: DateRange; refres
       data: gpData.map(item => item.gp),
       borderColor: 'rgb(255, 99, 132)',
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      tension: 0.1
+    }]
+  };
+
+  const marginChartData = {
+    labels: marginData.map(item => item.day),
+    datasets: [{
+      label: 'Margen',
+      data: marginData.map(item => item.margin),
+      borderColor: 'rgb(54, 162, 235)',
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      tension: 0.1
+    }]
+  };
+
+  const mrgChartData = {
+    labels: mrgData.map(item => item.day),
+    datasets: [{
+      label: 'MRG',
+      data: mrgData.map(item => item.mrg),
+      borderColor: 'rgb(255, 205, 86)',
+      backgroundColor: 'rgba(255, 205, 86, 0.2)',
       tension: 0.1
     }]
   };
@@ -155,7 +185,7 @@ const RevenueModule = ({ dateRange, refreshKey }: { dateRange: DateRange; refres
           </CardHeader>
           <CardBody>
             <pre className="text-xs bg-gray-100 p-4 rounded overflow-auto max-h-60">
-              {JSON.stringify({ gmvData, gpData, paymentMethodData, contactMethodData }, null, 2)}
+              {JSON.stringify({ gmvData, gpData, marginData, mrgData, paymentMethodData, contactMethodData }, null, 2)}
             </pre>
           </CardBody>
         </Card>
@@ -187,6 +217,34 @@ const RevenueModule = ({ dateRange, refreshKey }: { dateRange: DateRange; refres
           </CardHeader>
           <CardBody>
             <Line data={gpChartData} options={chartOptions} />
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold">Margen por día</h3>
+            <Tooltip content="Muestra la evolución diaria del margen de beneficio">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-help">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+              </svg>
+            </Tooltip>
+          </CardHeader>
+          <CardBody>
+            <Line data={marginChartData} options={chartOptions} />
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold">MRG por día</h3>
+            <Tooltip content="Muestra la evolución diaria del MRG (Margen de Rentabilidad)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-help">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+              </svg>
+            </Tooltip>
+          </CardHeader>
+          <CardBody>
+            <Line data={mrgChartData} options={chartOptions} />
           </CardBody>
         </Card>
 
