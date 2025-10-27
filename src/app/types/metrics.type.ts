@@ -10,6 +10,16 @@ export interface GPByDay {
   gp: number;
 }
 
+export interface MarginByDay {
+  day: string;
+  margin: number;
+}
+
+export interface MrgByDay {
+  day: string;
+  mrg: number;
+}
+
 export interface GMVByPaymentMethod {
   paymentMethod: string;
   gmv: number;
