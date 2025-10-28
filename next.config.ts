@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://api.pipicucu.vmdigitai.com/api/:path*",
+        // destination: "https://api.pipicucu.vmdigitai.com/api/:path*",
+        destination: "https://preview-pipicucuapi-backend-qrp2oh-unljxj-31-97-92-203.traefik.me/api/:path"
       },
     ];
   },

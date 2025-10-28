@@ -4,17 +4,19 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import IconButton from "@/app/components/iconButton";
 import Input from "@/app/components/input";
-import { getOrderById } from "@/app/services/order.service";
+import { getOrderById, updateOrderState } from "@/app/services/order.service";
 import { IOrder, IOrderDetail, IOrderDetailLine } from "@/app/types/orders.type";
 import { Button } from "@heroui/react";
 
 interface OrdenVerProps {
-    orden: IOrder | null;
-    onClose?: () => void;
-    onEdit?: () => void;
-}
+     orden: IOrder | null;
+     onClose?: () => void;
+     onEdit?: () => void;
+     onDelete?: () => void;
+     onOrderStateChange?: () => void;
+  }
 
-const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
+const OrdenVer = ({ orden, onClose, onEdit, onOrderStateChange }: OrdenVerProps) => {
     const [orderDetails, setOrderDetails] = useState<IOrderDetail | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -22,7 +24,14 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
         if (orden?.id) {
             setLoading(true);
             getOrderById(orden.id)
-                .then(setOrderDetails)
+                .then((details) => {
+                    setOrderDetails(details);
+                    // Update the order state in the parent component
+                    if (orden && details.state !== orden.state) {
+                        // The state has changed, we need to update the parent
+                        // This will be handled by onOrderStateChange callback
+                    }
+                })
                 .catch(console.error)
                 .finally(() => setLoading(false));
         } else {
@@ -61,8 +70,8 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
     };
 
     return (
-        <div className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto max-h-full">
+        <div className="h-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 flex-1 overflow-hidden max-h-full overflow-x-hidden">
                 <div className="md:col-span-3 text-primary font-poppins p-4">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex flex-col">
@@ -112,10 +121,10 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
 
                         {/* Métodos de contacto */}
                         <div className="flex justify-between">
-                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                            <IconButton  icon={"whatsapp-solid-dark"} />
+                            <IconButton  icon={"instagram-solid-dark"} />
+                            <IconButton icon={"facebook-solid-dark"} />
+                            <IconButton  icon={"share-solid-dark"} />
                         </div>
 
                         {/* Método de pago */}
@@ -139,13 +148,55 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                         <p>ID: {orderDetails.id}</p>
                         <p>Estado: {orderDetails.state}</p>
                         <p>Total: ${orderDetails.total}</p>
-                        <Button
-                            type="button"
-                            size="sm"
-                            className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
-                            onPress={onEdit}>
-                            Editar Orden
-                        </Button>
+                        <div className="flex flex-col mt-2 gap-1">
+                            <Button
+                                type="button"
+                                size="sm"
+                                color="default"
+                                onPress={onEdit}>
+                                Editar Orden
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                color="success"
+                                onPress={() => {
+                                    updateOrderState(parseInt(orderDetails.id), 5)
+                                        .then(() => {
+                                            alert("Orden completada exitosamente");
+                                            onOrderStateChange?.();
+                                            onClose?.();
+                                        })
+                                        .catch((error: unknown) => {
+                                            console.error("Error completing order:", error);
+                                            alert("Error al completar la orden");
+                                        });
+                                }}>
+                                Completar
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="solid"
+                                color="danger"
+                                
+                                onPress={() => {
+                                    if (window.confirm("¿Estás seguro de que quieres cancelar esta orden?")) {
+                                        updateOrderState(parseInt(orderDetails.id), 6)
+                                            .then(() => {
+                                                alert("Orden cancelada exitosamente");
+                                                onOrderStateChange?.();
+                                                onClose?.();
+                                            })
+                                            .catch((error: unknown) => {
+                                                console.error("Error canceling order:", error);
+                                                alert("Error al cancelar la orden");
+                                            });
+                                    }
+                                }}>
+                                Cancelar
+                            </Button>
+                        </div>
                     </div>
 
                     <div>
@@ -153,7 +204,7 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                         <div className="space-y-2">
                             {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
                                 <div key={line.id} className="border rounded p-2">
-                                    <div className="flex justify-between">
+                                    <div className="flex flex-col justify-between sm:flex-row">
                                         <span className="font-medium">{line.product.name}</span>
                                         <span>${line.totalPrice.toFixed(2)}</span>
                                     </div>

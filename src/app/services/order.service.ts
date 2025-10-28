@@ -78,3 +78,9 @@ export async function updateOrderState(orderId: number, stateId: number) {
   const { data } = await api.patch("/orders/state", { orderId, stateId });
   return data;
 }
+
+// Eliminar orden
+export async function deleteOrder(id: string) {
+  const { data } = await api.delete(`/orders/reception/${id}`);
+  return data;
+}

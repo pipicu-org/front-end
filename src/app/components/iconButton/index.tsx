@@ -19,8 +19,8 @@ const IconButton = ({nombre, icon, onPress, selected} : IconButtonProps) => {
     }
 
     return (
-        <Button style={style} className={`flex flex-col items-center justify-center w-[90px] rounded-2xl  py-7 ${selected ? 'ring-2 ring-blue-500' : ''}`} onPress={onPress}>
-            {icon && <Image src={`/icons/${icon}.svg`} alt={nombre || icon} width={20} height={20} className="w-[20px]" loading="lazy" />}
+        <Button style={style} className={`flex flex-col min-w-auto min-h-auto items-center justify-center w-full rounded-2xl  py-7 ${selected ? 'ring-2 ring-blue-500' : ''}`} onPress={onPress}>
+            {icon && <Image src={`/icons/${icon}.svg`} alt={nombre || icon} width={20} height={20} className="w-[20px] min-w-[20px]" loading="lazy" />}
             {nombre && <span className="text-dark">{nombre}</span>}
         </Button>
     )
