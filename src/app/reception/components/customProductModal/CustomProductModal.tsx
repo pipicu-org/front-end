@@ -61,7 +61,7 @@ const CustomProductModal = ({
                                 quantity: ing.quantity.toString(),
                                 ingredient: {
                                     id: ing.id,
-                                    name: "Ingredient " + ing.id, // Mock name, you might need to fetch actual ingredient names
+                                    name: "Ingredient " + ing.id, // Will be updated with real names after fetching ingredients
                                     stock: 0 // Mock stock
                                 }
                             })) || []
@@ -77,6 +77,29 @@ const CustomProductModal = ({
                     getIngredients("", 1, 100)
                         .then(ingredientsResponse => {
                             setIngredients(ingredientsResponse.data);
+                            // Update mock product details with real ingredient names
+                            if (customProduct && customProduct.ingredients) {
+                                const updatedIngredients = customProduct.ingredients.map(ing => {
+                                    const realIngredient = ingredientsResponse.data.find(i => String(i.id) === String(ing.id));
+                                    return {
+                                        id: ing.id,
+                                        quantity: ing.quantity.toString(),
+                                        ingredient: {
+                                            id: ing.id,
+                                            name: realIngredient ? realIngredient.name : "Ingredient " + ing.id,
+                                            stock: realIngredient ? realIngredient.stock : 0
+                                        }
+                                    };
+                                });
+                                const updatedMockProductDetails = {
+                                    ...mockProductDetails,
+                                    recipe: {
+                                        ...mockProductDetails.recipe,
+                                        ingredients: updatedIngredients
+                                    }
+                                };
+                                setProductDetails(updatedMockProductDetails);
+                            }
                         })
                         .catch((error) => {
                             console.error("Error fetching ingredients:", error);
@@ -115,7 +138,7 @@ const CustomProductModal = ({
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
             <ModalContent>
-                <ModalHeader>Configuración del Producto</ModalHeader>
+                <ModalHeader>Custom Product</ModalHeader>
                 <ModalBody>
                     {loading ? (
                         <p>Cargando...</p>
