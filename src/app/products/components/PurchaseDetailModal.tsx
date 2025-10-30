@@ -18,7 +18,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
-            <ModalContent>
+            <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                 <ModalHeader>
                     Detalle de Compra #{purchase.id}
                 </ModalHeader>

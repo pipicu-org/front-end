@@ -43,7 +43,7 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
     resolver: zodResolver(ingredientSchema),
     defaultValues: {
       name: editingIngredient?.name || "",
-      unitId: editingIngredient?.unitId || 1,
+      unitId: editingIngredient?.unit.id || 1,
       lossFactor: parseFloat(editingIngredient?.lossFactor || "0"),
     }
   });
@@ -52,7 +52,7 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
     if (editingIngredient) {
       reset({
         name: editingIngredient.name,
-        unitId: editingIngredient.unitId,
+        unitId: editingIngredient.unit.id,
         lossFactor: parseFloat(editingIngredient.lossFactor),
       });
     } else {
@@ -71,7 +71,7 @@ const IngredientForm = ({ isOpen, onClose, editingIngredient, onSave }: Ingredie
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} backdrop="opaque">
-      <ModalContent style={{ background: 'linear-gradient(to right, rgba(242, 220, 230, 1) 0%, rgba(245, 225, 220, 1) 50%, rgba(250, 235, 210, 1) 70%, rgba(255, 240, 205, 1) 90%, rgba(255, 245, 210, 1) 100%)' }}>
+      <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
         <ModalHeader>
           {editingIngredient ? "Editar Ingrediente" : "Nuevo Ingrediente"}
         </ModalHeader>

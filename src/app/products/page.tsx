@@ -20,7 +20,7 @@ const Products = () => {
                 onSelectionChange={(key) => setActiveTab(key as string)}
                 aria-label="Gestión de productos"
                 className="w-full"
-                classNames={{ tabList: "bg-gray-500/20 text-black",  tabContent: "text-black" }}
+                classNames={{ tabList: "bg-gray-400/20 text-black",  tabContent: "text-black" }}
             >
                 <Tab key="products" title="Productos" >
                     <ProductManagement />

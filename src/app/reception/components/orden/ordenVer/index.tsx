@@ -61,27 +61,36 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
     };
 
     return (
-        <div className="h-full">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 flex-1 overflow-y-auto max-h-full">
-                <div className="md:col-span-3 text-primary font-poppins p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex flex-col">
-                            <span className="flex text-3xl font-black">{formatTime(orderDetails.deliveryTime)}</span>
-                            <span className="text-sm">Hora de entrega</span>
-                        </div>
-                        <Button
-                            type="button"
-                            size="sm"
-                            className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
-                            onPress={onClose}>
-                            x
-                        </Button>
-                    </div>
+        <div className="h-full flex flex-col">
+            <div className="flex justify-between items-start p-4 pb-2">
+                <div className="flex flex-col">
+                    <span className="text-3xl font-black">{formatTime(orderDetails.deliveryTime)}</span>
+                    <span className="text-sm">Hora de entrega</span>
+                </div>
+                <Button
+                    type="button"
+                    size="sm"
+                    className="px-1 py-0 min-w-0 w-fit aspect-square min-h-0 rounded-full bg-black/20 text-white"
+                    onPress={onClose}>
+                    x
+                </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+                <div className="text-primary font-poppins px-4 pb-4">
 
-                    <div className="pt-5 flex flex-col gap-4">
+                    <div className="flex flex-col gap-4">
                         <span className="font-black">¿Quién?</span>
                         <div className="flex flex-col gap-3">
                             <Input value={orderDetails.client} icon={"user-solid-primary"} />
+
+                            {/* Métodos de contacto */}
+                            <div className="flex justify-start gap-1">
+                                <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
+                                <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
+                                <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
+                                <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
+                            </div>
+
                             <div className="flex items-center gap-2">
                                 <div className="w-full">
                                     <Input
@@ -110,61 +119,52 @@ const OrdenVer = ({ orden, onClose, onEdit }: OrdenVerProps) => {
                             <Input value={orderDetails.address} icon={"www-outline-primary"} />
                         </div>
 
-                        {/* Métodos de contacto */}
-                        <div className="flex justify-between">
-                            <IconButton nombre={"Whatsapp"} icon={"whatsapp-solid-dark"} />
-                            <IconButton nombre={"Instagram"} icon={"instagram-solid-dark"} />
-                            <IconButton nombre={"Facebook"} icon={"facebook-solid-dark"} />
-                            <IconButton nombre={"Otro"} icon={"share-solid-dark"} />
-                        </div>
-
-                        {/* Método de pago */}
-                        <div className="flex flex-col gap-2">
-                            <span className="font-black">¿Cómo?</span>
-                            <div className="flex justify-between">
-                                <IconButton
-                                    nombre={orderDetails.paymentMethod === 'cash' ? "Efectivo" :
-                                        orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
-                                            orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
-                                    icon={getPaymentIcon(orderDetails.paymentMethod)}
-                                />
+                        {/* Método de pago y Resumen */}
+                        <div className="flex gap-4">
+                            <div className="flex flex-col gap-2 flex-1">
+                                <span className="font-black">¿Cómo?</span>
+                                <div className="flex justify-between">
+                                    <IconButton
+                                        nombre={orderDetails.paymentMethod === 'cash' ? "Efectivo" :
+                                            orderDetails.paymentMethod === 'transfer' ? "Transferencia" :
+                                                orderDetails.paymentMethod === 'card' ? "Débito" : "Otros"}
+                                        icon={getPaymentIcon(orderDetails.paymentMethod)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2 flex-1">
+                                <span className="font-black">RESUMEN</span>
+                                <div className="text-sm">
+                                    <p>ID: {orderDetails.id}</p>
+                                    <p>Estado: {orderDetails.state}</p>
+                                    <p>Total: ${orderDetails.total}</p>
+                                </div>
+                                <div className="mt-2">
+                                    <h4 className="font-black mb-2">Productos</h4>
+                                    <div className="space-y-1 max-h-24 overflow-y-auto">
+                                        {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
+                                            <div key={line.id} className="border rounded-sm px-2 py-1">
+                                                <div className="text-sm font-medium">{line.product.name}</div>
+                                                <div className="flex justify-between text-xs text-gray-600">
+                                                    <span>Cantidad: {line.quantity}</span>
+                                                    <span>${line.totalPrice.toFixed(2)}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
+                                        onPress={onEdit}>
+                                        Editar Orden
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="md:col-span-2 p-4">
-                    <div className="mb-4">
-                        <h3 className="font-black text-lg">RESUMEN</h3>
-                        <p>ID: {orderDetails.id}</p>
-                        <p>Estado: {orderDetails.state}</p>
-                        <p>Total: ${orderDetails.total}</p>
-                        <Button
-                            type="button"
-                            size="sm"
-                            className="mt-2 px-4 py-2 bg-primary text-white rounded-md"
-                            onPress={onEdit}>
-                            Editar Orden
-                        </Button>
-                    </div>
-
-                    <div>
-                        <h4 className="font-black mb-2">Productos</h4>
-                        <div className="space-y-2">
-                            {orderDetails.lines && orderDetails.lines.map((line: IOrderDetailLine) => (
-                                <div key={line.id} className="border rounded p-2">
-                                    <div className="flex justify-between">
-                                        <span className="font-medium">{line.product.name}</span>
-                                        <span>${line.totalPrice.toFixed(2)}</span>
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                        Cantidad: {line.quantity}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     );

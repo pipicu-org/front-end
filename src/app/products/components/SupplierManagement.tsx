@@ -144,12 +144,12 @@ const SupplierManagement = () => {
                         value={search}
                         onChange={(e) => handleSearch(e.target.value)}
                         className="max-w-md"
-                        classNames={{ inputWrapper: "bg-gray-500/20", input: "text-black placeholder:text-black" }}
+                        classNames={{ inputWrapper: "bg-gray-400/20", input: "text-black placeholder:text-black" }}
                     />
                     <select
                         value={sort}
                         onChange={(e) => handleSort(e.target.value)}
-                        className="px-3 py-2 border rounded-md md:w-1/3"
+                        className="px-3 py-2 border rounded-md md:w-1/3 text-sm"
                     >
                         <option value="name">Ordenar por Nombre</option>
                         <option value="createdAt">Ordenar por Fecha de Creación</option>
@@ -176,7 +176,7 @@ const SupplierManagement = () => {
                     <EmptyState message="No hay proveedores disponibles" />
                 ) : view === "table" ? (
                     <div className="h-full flex flex-col">
-                        <Table aria-label="Tabla de Proveedores" className="flex-1 text-lg" isStriped>
+                        <Table aria-label="Tabla de Proveedores" className="flex-1 text-xl" isStriped>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
@@ -260,7 +260,7 @@ const SupplierManagement = () => {
 
             {/* Supplier Modal */}
             <Modal isOpen={isOpen} onClose={onClose} backdrop="opaque">
-                <ModalContent style={{ background: 'linear-gradient(to right, rgba(242, 220, 230, 1) 0%, rgba(245, 225, 220, 1) 50%, rgba(250, 235, 210, 1) 70%, rgba(255, 240, 205, 1) 90%, rgba(255, 245, 210, 1) 100%)' }}>
+                <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                     <ModalHeader>
                         {editingSupplier ? "Editar Proveedor" : "Nuevo Proveedor"}
                     </ModalHeader>
@@ -292,7 +292,7 @@ const SupplierManagement = () => {
             </Modal>
 
             {/* Delete Confirmation Modal */}
-            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                 <ModalContent>
                     <ModalHeader>
                         Confirmar Eliminación

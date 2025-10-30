@@ -109,7 +109,7 @@ const IngredientManagement = () => {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="max-w-md"
-                    classNames={{ inputWrapper: "bg-gray-500/20", input: "text-black placeholder:text-black" }}
+                    classNames={{ inputWrapper: "bg-gray-400/20", input: "text-black placeholder:text-black" }}
                 />
                 <div className="flex items-center gap-2">
                     {!isMobile && <ToggleView view={view} onToggle={() => setView(view === "table" ? "cards" : "table")} />}
@@ -129,11 +129,11 @@ const IngredientManagement = () => {
                     <EmptyState message="No hay ingredientes disponibles" />
                 ) : view === "table" ? (
                     <div className="h-full flex flex-col">
-                        <Table aria-label="Tabla de Ingredientes" className="flex-1 text-lg" isStriped>
+                        <Table aria-label="Tabla de Ingredientes" className="flex-1 text-xl" isStriped>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
-                                <TableColumn>Unidad ID</TableColumn>
+                                <TableColumn>Unidad</TableColumn>
                                 <TableColumn>Stock</TableColumn>
                                 <TableColumn>Factor de Pérdida</TableColumn>
                                 <TableColumn>Creado</TableColumn>
@@ -145,7 +145,7 @@ const IngredientManagement = () => {
                                     <TableRow key={ingredient.id}>
                                         <TableCell>{ingredient.id}</TableCell>
                                         <TableCell>{ingredient.name}</TableCell>
-                                        <TableCell>{ingredient.unitId}</TableCell>
+                                        <TableCell>{ingredient.unit.name}</TableCell>
                                         <TableCell>{ingredient.stock}</TableCell>
                                         <TableCell>{ingredient.lossFactor}</TableCell>
                                         <TableCell>{new Date(ingredient.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</TableCell>
@@ -191,7 +191,7 @@ const IngredientManagement = () => {
                                             <h4 className="font-semibold">{ingredient.name}</h4>
                                         </CardHeader>
                                         <CardBody>
-                                            <p>Unidad ID: {ingredient.unitId}</p>
+                                            <p>Unidad ID: {ingredient.unit.id}</p>
                                             <p>Factor de Pérdida: {ingredient.lossFactor}</p>
                                             <p>Creado: {new Date(ingredient.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</p>
                                             <p>Actualizado: {new Date(ingredient.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</p>
@@ -230,7 +230,7 @@ const IngredientManagement = () => {
                 }}
             />
 
-            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                 <ModalContent>
                     <ModalHeader>
                         Confirmar Eliminación

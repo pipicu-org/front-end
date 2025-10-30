@@ -395,7 +395,7 @@ const OrdenForm = forwardRef(({ orden, isEdit, onSave, onClose }: OrdenFormProps
 
                     <div className="flex flex-col gap-2">
                         <span className="font-black">¿Donde?</span>
-                        <div className="flex justify-between px-1">
+                        <div className="flex justify-between px-1 gap-2">
                             <IconButton icon={"whatsapp-solid-dark"} onPress={() => setContactMethod('whatsapp')} selected={contactMethod === 'whatsapp'} />
                             <IconButton icon={"instagram-solid-dark"} onPress={() => setContactMethod('Instagram')} selected={contactMethod === 'Instagram'} />
                             <IconButton icon={"facebook-solid-dark"} onPress={() => setContactMethod('Facebook')} selected={contactMethod === 'Facebook'} />

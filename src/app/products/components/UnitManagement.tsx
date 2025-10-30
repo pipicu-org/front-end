@@ -108,7 +108,7 @@ const UnitManagement = () => {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="max-w-md"
-                    classNames={{ inputWrapper: "bg-gray-500/20", input: "text-black placeholder:text-black" }}
+                    classNames={{ inputWrapper: "bg-gray-400/20", input: "text-black placeholder:text-black" }}
                 />
                 <div className="flex items-center gap-2">
                     {!isMobile && <ToggleView view={view} onToggle={() => setView(view === "table" ? "cards" : "table")} />}
@@ -128,7 +128,7 @@ const UnitManagement = () => {
                     <EmptyState message="No hay unidades disponibles" />
                 ) : view === "table" ? (
                     <div className="h-full flex flex-col">
-                        <Table aria-label="Tabla de Unidades" className="flex-1 text-lg" isStriped>
+                        <Table aria-label="Tabla de Unidades" className="flex-1 text-xl" isStriped>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
@@ -224,7 +224,7 @@ const UnitManagement = () => {
                 }}
             />
 
-            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                 <ModalContent>
                     <ModalHeader>
                         Confirmar Eliminación

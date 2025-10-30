@@ -40,7 +40,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
       setEditableProductDetail(null);
       setDetailError(null);
     }
-  }, [editingProduct?.id]);
+  }, [editingProduct]);
 
   useEffect(() => {
     if (isOpen && !editingProduct) {
@@ -57,7 +57,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
         recipe: { id: 0, cost: 0, ingredients: [] }
       });
     }
-  }, [isOpen, editingProduct]);
+  }, [isOpen]);
 
   const onSubmit = async () => {
     if (!editableProductDetail) return;
@@ -135,7 +135,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl" backdrop="opaque">
-      <ModalContent style={{ background: 'linear-gradient(to right, rgba(242, 220, 230, 1) 0%, rgba(245, 225, 220, 1) 50%, rgba(250, 235, 210, 1) 70%, rgba(255, 240, 205, 1) 90%, rgba(255, 245, 210, 1) 100%)' }}>
+      <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
         <ModalHeader>
           {editingProduct ? "Editar Producto" : "Nuevo Producto"}
         </ModalHeader>
