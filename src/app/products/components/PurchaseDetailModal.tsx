@@ -18,7 +18,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
-            <ModalContent>
+            <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
                 <ModalHeader>
                     Detalle de Compra #{purchase.id}
                 </ModalHeader>
@@ -26,7 +26,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <strong>Proveedor ID:</strong> {purchase.providerId}
+                                <strong>Proveedor ID:</strong> {purchase.provider.id}
                             </div>
                             <div>
                                 <strong>Fecha de Creación:</strong> {new Date(purchase.createdAt).toLocaleString()}
@@ -53,7 +53,7 @@ const PurchaseDetailModal = ({ isOpen, onClose, purchase }: PurchaseDetailModalP
                                 <TableBody>
                                     {purchase.purchaseItems.map((item) => (
                                         <TableRow key={item.id}>
-                                            <TableCell>{item.ingredientId}</TableCell>
+                                            <TableCell>{item.ingredient.id}</TableCell>
                                             <TableCell>${parseFloat(item.cost).toFixed(2)}</TableCell>
                                             <TableCell>{parseFloat(item.quantity)}</TableCell>
                                             <TableCell>{item.unitId}</TableCell>

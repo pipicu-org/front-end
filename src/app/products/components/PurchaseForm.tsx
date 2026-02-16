@@ -37,9 +37,9 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
             fetchUnits();
             if (purchase) {
                 setFormData({
-                    providerId: purchase.providerId,
+                    providerId: purchase.provider.id,
                     purchaseItems: purchase.purchaseItems.map(item => ({
-                        ingredientId: item.ingredientId,
+                        ingredientId: item.ingredient.id,
                         cost: parseFloat(item.cost),
                         quantity: parseFloat(item.quantity),
                         unitId: item.unitId,
@@ -151,9 +151,9 @@ const PurchaseForm = ({ isOpen, onClose, purchase, onSuccess }: PurchaseFormProp
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="4xl">
-            <ModalContent>
-                <ModalHeader>
+        <Modal isOpen={isOpen} onClose={onClose} size="4xl" backdrop="opaque">
+            <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
+                <ModalHeader >
                     {purchase ? "Editar Compra" : "Nueva Compra"}
                 </ModalHeader>
                 <ModalBody>

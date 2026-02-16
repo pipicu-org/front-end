@@ -40,7 +40,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
       setEditableProductDetail(null);
       setDetailError(null);
     }
-  }, [editingProduct?.id]);
+  }, [editingProduct]);
 
   useEffect(() => {
     if (isOpen && !editingProduct) {
@@ -57,7 +57,7 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
         recipe: { id: 0, cost: 0, ingredients: [] }
       });
     }
-  }, [isOpen, editingProduct]);
+  }, [isOpen]);
 
   const onSubmit = async () => {
     if (!editableProductDetail) return;
@@ -134,8 +134,8 @@ const ProductForm = ({ isOpen, onClose, editingProduct, categories, ingredients,
     !editableProductDetail?.recipe.ingredients.some(sel => sel.ingredient.id.toString() === ing.id.toString())
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="2xl">
-      <ModalContent>
+    <Modal isOpen={isOpen} onClose={onClose} size="2xl" backdrop="opaque">
+      <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
         <ModalHeader>
           {editingProduct ? "Editar Producto" : "Nuevo Producto"}
         </ModalHeader>

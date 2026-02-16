@@ -11,7 +11,7 @@ module.exports = {
         black: "var(--heroui-black)",
       },
       fontFamily: {
-        // poppins: ['poppins', 'sans-serif'],
+        poppins: ['poppins', 'sans-serif'],
       },
     },
   },

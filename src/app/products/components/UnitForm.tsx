@@ -50,8 +50,8 @@ const UnitForm = ({ isOpen, onClose, editingUnit, onSave }: UnitFormProps) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <Modal isOpen={isOpen} onClose={onClose} backdrop="opaque">
+      <ModalContent className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
         <ModalHeader>
           {editingUnit ? "Editar Unidad" : "Nueva Unidad"}
         </ModalHeader>

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Card, CardBody, CardHeader, Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, useDisclosure } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import { motion } from "framer-motion";
 import { getProducts, createProduct, updateProduct, deleteProduct } from "../../services/products.service";
 import { getCategories } from "../../services/categories.service";
@@ -20,7 +20,10 @@ const ProductManagement = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [page, setPage] = useState(1);
     const [limit] = useState(10);
+    const [productToDelete, setProductToDelete] = useState<IProduct | null>(null);
+    const [deleteConfirmationText, setDeleteConfirmationText] = useState<string>("");
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     // Detect mobile
     const [isMobile, setIsMobile] = useState(false);
@@ -91,9 +94,18 @@ const ProductManagement = () => {
         onOpen();
     };
 
-    const handleDelete = (id: string) => {
-        if (confirm("¿Estás seguro de eliminar este producto?")) {
-            deleteMutation.mutate(id);
+    const handleDelete = (product: IProduct) => {
+        setProductToDelete(product);
+        setDeleteConfirmationText("");
+        onDeleteOpen();
+    };
+
+    const handleConfirmDelete = () => {
+        if (productToDelete && deleteConfirmationText === "eliminar") {
+            deleteMutation.mutate(productToDelete.id);
+            onDeleteClose();
+            setProductToDelete(null);
+            setDeleteConfirmationText("");
         }
     };
 
@@ -122,36 +134,39 @@ const ProductManagement = () => {
 
     return (
         <div className="space-y-6 flex flex-col h-full">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <h2 className="text-xl font-semibold">Productos</h2>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ">
+                <h2 className="text-2xl font-semibold">Productos</h2>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 ">
+                <div className="flex flex-col md:flex-row gap-4 flex-1 ">
+                    <Input
+                        placeholder="Buscar productos..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="max-w-md"
+                        classNames={{ inputWrapper: "bg-gray-400/20", input: "text-black placeholder:text-black" }}
+                    />
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="px-3 py-2 border rounded-md md:w-1/3 text-sm"
+                    >
+                        <option value="all">Todas las categorías</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id.toString()}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <div className="flex items-center gap-2">
                     {!isMobile && <ToggleView view={view} onToggle={() => setView(view === "table" ? "cards" : "table")} />}
                     <Button color="primary" onPress={handleCreate}>
                         Nuevo Producto
                     </Button>
                 </div>
-            </div>
-
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-                <Input
-                    placeholder="Buscar productos..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="md:w-1/3"
-                />
-                <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-3 py-2 border rounded-md md:w-1/3"
-                >
-                    <option value="all">Todas las categorías</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id.toString()}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
             </div>
 
             {/* Content */}
@@ -163,8 +178,13 @@ const ProductManagement = () => {
                 ) : filteredProducts.length === 0 ? (
                     <EmptyState message="No hay productos disponibles" />
                 ) : view === "table" ? (
-                    <div className="h-full flex flex-col">
-                        <Table aria-label="Tabla de Productos" className="flex-1" isStriped>
+                    <div className="h-full flex flex-col" >
+                        <Table aria-label="Tabla de Productos" className="flex-1 text-xl text-black" isStriped
+                          /*classNames={{
+                            tbody:"[&_tr:nth-child(even)]:bg-gray-400/20 tramsparent ",
+                            wrapper:"bg-gray-400/20",
+                          }}*/
+                        >
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Nombre</TableColumn>
@@ -186,14 +206,14 @@ const ProductManagement = () => {
                                         <TableCell>{product.category || "N/A"}</TableCell>
                                         <TableCell>{product.maxPrepareable}</TableCell>
                                         <TableCell>
-                                            <div className="flex space-x-2">
-                                                <Button size="sm" onPress={() => handleEdit(product)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <div className="flex justify-center space-x-1">
+                                                <Button size="sm" variant="light" onPress={() => handleEdit(product)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 0 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/>
                                                     </svg>
                                                 </Button>
-                                                <Button size="sm" color="danger" onPress={() => handleDelete(product.id)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                <Button size="sm" variant="light" color="danger" onPress={() => handleDelete(product)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
                                                     </svg>
                                                 </Button>
@@ -229,14 +249,14 @@ const ProductManagement = () => {
                                             <p>Precio: ${product.price}</p>
                                             <p>Categoría: {categories.find(c => c.id === parseInt(product.category))?.name || "N/A"}</p>
                                             <p>Receta: {product.ingredients?.map(ing => `${ing.quantity} x Ingrediente ${ing.id}`).join(", ") || "Sin receta"}</p>
-                                            <div className="flex space-x-2 mt-4">
-                                                <Button size="sm" onPress={() => handleEdit(product)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <div className="flex justify-center space-x-1 mt-4">
+                                                <Button size="sm" variant="light" onPress={() => handleEdit(product)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 0 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/>
                                                     </svg>
                                                 </Button>
-                                                <Button size="sm" color="danger" onPress={() => handleDelete(product.id)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                                <Button size="sm" variant="light" color="danger" onPress={() => handleDelete(product)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
                                                     </svg>
                                                 </Button>
@@ -271,6 +291,32 @@ const ProductManagement = () => {
                     }
                 }}
             />
+
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} className="bg-gradient-to-r from-pink-50 via-pink-25 to-yellow-50">
+                <ModalContent>
+                    <ModalHeader>
+                        Confirmar Eliminación
+                    </ModalHeader>
+                    <ModalBody>
+                        <p>¿Estás seguro de que deseas eliminar el producto <strong>{productToDelete?.name}</strong>?</p>
+                        <p>Esta acción no se puede deshacer.</p>
+                        <Input
+                            label="Escribe 'eliminar' para confirmar"
+                            value={deleteConfirmationText}
+                            onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                            placeholder="eliminar"
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="light" onPress={onDeleteClose}>
+                            Cancelar
+                        </Button>
+                        <Button color="danger" onPress={handleConfirmDelete} isDisabled={deleteConfirmationText !== "eliminar"}>
+                            Eliminar
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 };

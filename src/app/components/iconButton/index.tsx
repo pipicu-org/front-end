@@ -9,7 +9,15 @@ interface IconButtonProps{
 }
 
 const IconButton = ({nombre, icon, onPress, selected} : IconButtonProps) => {
-    const style = {
+    const isGold = nombre === 'Efectivo' || nombre === 'Tarjeta' || nombre === 'Transferencia' || nombre === 'Preparados';
+    const style = isGold ? {
+        background: `linear-gradient(
+                      135deg,
+                      rgba(255, 215, 0, 0.5) 0%,
+                      rgba(255, 215, 0, 0.05) 66%,
+                      rgba(255, 215, 0, 0.6) 100%
+                    ), #ffffff`
+    } : {
         background: `linear-gradient(
                       135deg,
                       rgba(161, 161, 161, 0.5) 0%,

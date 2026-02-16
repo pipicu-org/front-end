@@ -25,6 +25,16 @@ const stateMapping: { [key: string]: number } = {
 const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : CardKanbanProps) => {
     const { showToast } = useToast();
 
+    const getLightColor = (estado: string) => {
+        switch (estado) {
+            case 'Pendientes': return 'bg-brown-600 shadow-[0_0_10px_5px_rgba(101,67,33,1)]';
+            case 'Preparados': return 'bg-yellow-500 shadow-[0_0_10px_5px_rgba(255,215,0,1)]';
+            case 'En Camino': return 'bg-emerald-500 shadow-[0_0_10px_5px_rgba(16,185,129,1)]';
+            case 'Cancelados': return 'bg-red-700 shadow-[0_0_10px_5px_rgba(185,28,28,1)]';
+            default: return 'bg-white shadow-[0_0_10px_5px_rgba(255,255,255,1)]';
+        }
+    };
+
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'order',
         drop: async (item: { id: number; currentState: string }) => {
@@ -49,9 +59,9 @@ const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : 
         <div ref={drop} className={`rounded-xl p-3 bg-[#290D1B0D] ${isOver ? 'bg-[#290D1B1D]' : ''}`}>
             {/* ~~~ Header ~~~ */}
             <div className="flex items-center justify-between">
-                <div className="inline-flex items-center gap-2">
+                <div className="inline-flex items-center gap-3">
                     {/* ~~~ Pelotita ~~~ */}
-                    <div className="w-[5px] h-[5px] bg-white rounded-full shadow-[0_0_10px_5px_rgba(255,255,255,1)]"></div>
+                    <div className={`w-[5px] h-[5px] rounded-full ${getLightColor(estado)}`}></div>
                     <h2 className="font-bold">{estado}</h2>
                 </div>
                 
@@ -65,6 +75,7 @@ const CardKanban = ( {cambiarOrden, estado, ordenes = [], onOrderStateChange} : 
                             key={orden.id}
                             orden={orden}
                             cambiarOrden={cambiarOrden}
+                            estado={estado}
                         />
                     ))
                 }

@@ -40,7 +40,7 @@ const StockMovementManagement = () => {
     return (
         <div className="space-y-6 flex flex-col h-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <h2 className="text-xl font-semibold">Movimientos de Stock</h2>
+                <h2 className="text-2xl font-semibold">Movimientos de Stock</h2>
                 <div className="flex items-center gap-2">
                     {!isMobile && <ToggleView view={view} onToggle={() => setView(view === "table" ? "cards" : "table")} />}
                 </div>
@@ -56,13 +56,13 @@ const StockMovementManagement = () => {
                     <EmptyState message="No hay movimientos de stock disponibles" />
                 ) : view === "table" ? (
                     <div className="h-full flex flex-col">
-                        <Table aria-label="Tabla de Movimientos de Stock" className="flex-1" isStriped>
+                        <Table aria-label="Tabla de Movimientos de Stock" className="flex-1 text-xl" isStriped>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
-                                <TableColumn>Ingrediente ID</TableColumn>
+                                <TableColumn>Ingrediente</TableColumn>
                                 <TableColumn>Cantidad</TableColumn>
-                                <TableColumn>Unidad ID</TableColumn>
-                                <TableColumn>Tipo Movimiento ID</TableColumn>
+                                <TableColumn>Unidad</TableColumn>
+                                <TableColumn>Tipo Movimiento</TableColumn>
                                 <TableColumn>Compra Item ID</TableColumn>
                                 <TableColumn>Creado</TableColumn>
                                 <TableColumn>Actualizado</TableColumn>
@@ -71,13 +71,13 @@ const StockMovementManagement = () => {
                                 {stockMovements.map((movement) => (
                                     <TableRow key={movement.id}>
                                         <TableCell>{movement.id}</TableCell>
-                                        <TableCell>{movement.ingredientId}</TableCell>
+                                        <TableCell>{movement.ingredient.name}</TableCell>
                                         <TableCell>{movement.quantity}</TableCell>
-                                        <TableCell>{movement.unitId}</TableCell>
-                                        <TableCell>{movement.stockMovementTypeId}</TableCell>
+                                        <TableCell>{movement.unit.name}</TableCell>
+                                        <TableCell>{movement.stockMovementType.name}</TableCell>
                                         <TableCell>{movement.purchaseItemId || "N/A"}</TableCell>
-                                        <TableCell>{new Date(movement.createdAt).toLocaleDateString()}</TableCell>
-                                        <TableCell>{new Date(movement.updatedAt).toLocaleDateString()}</TableCell>
+                                        <TableCell>{new Date(movement.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</TableCell>
+                                        <TableCell>{new Date(movement.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -105,13 +105,13 @@ const StockMovementManagement = () => {
                                             <h4 className="font-semibold">Movimiento {movement.id}</h4>
                                         </CardHeader>
                                         <CardBody>
-                                            <p>Ingrediente ID: {movement.ingredientId}</p>
+                                            <p>Ingrediente ID: {movement.ingredient.id}</p>
                                             <p>Cantidad: {movement.quantity}</p>
-                                            <p>Unidad ID: {movement.unitId}</p>
-                                            <p>Tipo Movimiento ID: {movement.stockMovementTypeId}</p>
+                                            <p>Unidad: {movement.unit.id}</p>
+                                            <p>Tipo Movimiento: {movement.stockMovementType.name}</p>
                                             <p>Compra Item ID: {movement.purchaseItemId || "N/A"}</p>
-                                            <p>Creado: {new Date(movement.createdAt).toLocaleDateString()}</p>
-                                            <p>Actualizado: {new Date(movement.updatedAt).toLocaleDateString()}</p>
+                                            <p>Creado: {new Date(movement.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</p>
+                                            <p>Actualizado: {new Date(movement.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace(/ (\w+)/, (match, month) => ' ' + month.charAt(0).toUpperCase() + month.slice(1))}</p>
                                         </CardBody>
                                     </Card>
                                 </motion.div>

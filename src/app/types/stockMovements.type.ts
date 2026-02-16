@@ -1,9 +1,18 @@
 export interface IStockMovement {
   id: number;
-  ingredientId: number;
+  ingredient:{
+    id:number;
+    name:string;
+  }
   quantity: string;
-  unitId: number;
-  stockMovementTypeId: number;
+  unit:{
+    id:number;
+    name:string;
+  }
+  stockMovementType:{
+    id:number;
+    name:string;
+  }
   purchaseItemId: number | null;
   createdAt: string;
   updatedAt: string;
